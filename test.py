@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 from sqlalchemy.orm import sessionmaker
-from Class.user import User
+from dbmodel.user import User
 engine = create_engine('postgresql://postgres:qwer1234@192.168.50.38:5432/postgres') # 연결
 # postgresql://유저이름:비밀번호@ip주소:port/데이터베이스이름
 

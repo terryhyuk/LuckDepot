@@ -1,6 +1,6 @@
 
 from sqlalchemy import Column,String, Double, Integer
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 
 
 Base = declarative_base()
@@ -13,4 +13,8 @@ class Hub(Base) :
     name = Column(String)
     lat = Column(Double)
     lng = Column(Double)
+    
+    deliver = relationship("Deliver", back_populates="hub")
+    managements = relationship("Management", back_populates="hub")
+
 

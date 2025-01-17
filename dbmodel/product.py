@@ -1,5 +1,5 @@
 from sqlalchemy import Column,String, Integer
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 
 
 Base = declarative_base()
@@ -12,4 +12,9 @@ class Product(Base) :
     name = Column(String)
     price = Column(Integer)
     image = Column(String)
+    quantity = Column(Integer)
+
+    orderdetail = relationship("OrderDetail", back_populates="product")
+    management = relationship("Management", back_populates="product")
+
 

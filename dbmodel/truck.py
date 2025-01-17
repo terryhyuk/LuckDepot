@@ -1,5 +1,5 @@
 from sqlalchemy import Column,String
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 class Truck(Base) :
@@ -9,4 +9,7 @@ class Truck(Base) :
 
     id = Column(String, primary_key=True) 
     poissession = Column(String)
+
+    deliver = relationship("Deliver", back_populates="truck")
+
 
