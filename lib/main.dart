@@ -5,6 +5,7 @@ import 'package:lucky_depot/model/driver.dart';
 import 'package:lucky_depot/model/truck.dart';
 import 'package:lucky_depot/view/page/customer_management.dart';
 import 'package:lucky_depot/view/page/dashboard.dart';
+import 'package:lucky_depot/view/page/delivery_driver.dart';
 import 'package:lucky_depot/view/page/inventory_management.dart';
 import 'package:lucky_depot/view/page/logistics_hub.dart';
 import 'package:lucky_depot/view/page/sales_analytics.dart';
@@ -74,6 +75,11 @@ class _MyAppState extends State<MyApp> {
         GetPage(
           name: '/logistics',
           page: () => const LogisticsHub(),
+          transition: Transition.noTransition,
+        ),
+        GetPage(
+          name: '/delivery_driver',
+          page: () => const DeliveryDriver(),
           transition: Transition.noTransition,
         ),
       ],

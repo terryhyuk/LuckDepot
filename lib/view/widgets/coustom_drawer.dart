@@ -60,6 +60,14 @@ class CustomDrawer extends StatelessWidget {
                 onTap: () => drawerController.navigateToPage(4),
               ),
             ),
+          Obx(() => ListTile(
+                selected: drawerController.selectedIndex.value == 5,
+                selectedTileColor: Colors.white,
+                leading: const Icon(Icons.drive_eta_rounded),
+                title: const Text('Delivery Driver'),
+                onTap: () => drawerController.navigateToPage(5),
+              ),
+            ),
         ],
       ),
     );

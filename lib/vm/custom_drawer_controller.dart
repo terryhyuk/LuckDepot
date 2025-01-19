@@ -35,6 +35,11 @@ class CustomDrawerController extends GetxController {
           '/logistics',
           preventDuplicates: false,
         );
+      case 5:
+        Get.toNamed(
+          '/delivery_driver',
+          preventDuplicates: false,
+        );
     }
   }
 }

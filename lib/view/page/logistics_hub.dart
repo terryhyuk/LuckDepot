@@ -51,7 +51,7 @@ class _LogisticsHubState extends State<LogisticsHub> {
                       children: [
                         // 왼쪽 지도
                         Expanded(
-                          flex: 3,
+                          flex: 2,
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -69,7 +69,7 @@ class _LogisticsHubState extends State<LogisticsHub> {
                               child: FlutterMap(
                                 options: MapOptions(
                                   initialCenter: HubLocations.getInitialLocation(),
-                                  initialZoom: 7,
+                                  initialZoom: 18,
                                 ),
                                 children: [
                                   TileLayer(
@@ -84,7 +84,7 @@ class _LogisticsHubState extends State<LogisticsHub> {
                                         height: 80,
                                         child: Column(
                                           children: [
-                                            Icon(Icons.location_on, color: Colors.red),
+                                            const Icon(Icons.location_on, color: Colors.red),
                                             Container(
                                               padding: const EdgeInsets.all(4),
                                               color: Colors.white,
