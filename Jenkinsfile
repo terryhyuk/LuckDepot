@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_NAME = "luckydepot"
-        DOCKER_IMAGE_TAG = "${PROJECT_NAME}-${BUILD_NUMBER}"
+        DOCKER_IMAGE_TAG = "luckydepot-${BUILD_NUMBER}"
         DOCKER_IMAGE = "${PROJECT_NAME}:${DOCKER_IMAGE_TAG}"
     }
 
@@ -30,7 +29,7 @@ pipeline {
                     docker push "${DOCKER_IMAGE}"
                     
                     echo "Pushing Docker Image with tag: latest"
-                    docker push "${DOCKER_REGISTRY}/${PROJECT_NAME}:latest"
+                    docker push "${DOCKER_REGISTRY}/luckydepot:latest"
                 '''
             }
         }
