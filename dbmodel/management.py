@@ -14,5 +14,5 @@ class Management(Base) :
     quantity = Column(Integer)
     change_date = Column(TIMESTAMP)
     
-    product = relationship("Product", back_populates="management")
-    hub = relationship("Hub", back_populates="management")
+    # product = relationship("Product", back_populates="management")
+    # hub = relationship("Hub", back_populates="management")

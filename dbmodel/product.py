@@ -14,7 +14,7 @@ class Product(Base) :
     image = Column(String)
     quantity = Column(Integer)
 
-    orderdetail = relationship("OrderDetail", back_populates="product")
-    management = relationship("Management", back_populates="product")
+    # orderdetail = relationship("OrderDetail", back_populates="product")
+    # management = relationship("Management", back_populates="product")
 
 

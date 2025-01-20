@@ -10,6 +10,6 @@ class Truck(Base) :
     id = Column(String, primary_key=True) 
     poissession = Column(String)
 
-    deliver = relationship("Deliver", back_populates="truck")
+    # deliver = relationship("Deliver", back_populates="truck")
 
 

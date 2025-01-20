@@ -14,7 +14,7 @@ class Hub(Base) :
     lat = Column(Double)
     lng = Column(Double)
     
-    deliver = relationship("Deliver", back_populates="hub")
-    managements = relationship("Management", back_populates="hub")
+    # deliver = relationship("Deliver", back_populates="hub")
+    # managements = relationship("Management", back_populates="hub")
 
 

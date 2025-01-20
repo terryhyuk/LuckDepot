@@ -16,5 +16,5 @@ class Order(Base) :
     oredr_date = Column(TIMESTAMP)
     order_product = Column(String)
     
-    user = relationship("User", back_populates="order") # 관계 표시, sql쿼리 없이 관련된 테이블 접근 가능,  데이터 동기화
+    # user = relationship("User", back_populates="order") # 관계 표시, sql쿼리 없이 관련된 테이블 접근 가능,  데이터 동기화
 
