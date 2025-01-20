@@ -1,7 +1,6 @@
 from sqlalchemy import Column,String
-from sqlalchemy.orm import declarative_base, relationship
-
-Base = declarative_base()
+from sqlalchemy.orm import relationship
+from database.model.base import Base
 class Truck(Base) :
     
     __tablename__ = 'truck' # 테이블명
