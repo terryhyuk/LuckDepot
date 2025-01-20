@@ -3,8 +3,8 @@ pipeline {
     environment {
         DOCKER_IMAGE_TAG = "luckydepot-${BUILD_NUMBER}"
         DOCKER_IMAGE = "luckydepot:${DOCKER_IMAGE_TAG}"
-        REMOTE_HOST = "192.168.50.38"  // Ubuntu 서버 IP 주소
-        REMOTE_USER = "jenkins"      // Ubuntu 서버 사용자명
+        REMOTE_HOST = "192.168.50.38"
+        REMOTE_USER = "jenkins"
     }
 
     stages {
@@ -23,21 +23,12 @@ pipeline {
                 '''
             }
         }
-        // stage("Deploy") {
-        //     steps {
-        //         sh '''
-        //             echo "Deploying Docker Image with tag: ${DOCKER_IMAGE_TAG}"
-        //             DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG} \
-        //             docker-compose -f docker-compose.yml up -d --build
-        //         '''
-        //     }
-        // }
         stage('Deploy') {
             steps {
                 sh '''
                     echo "Deploying application with Docker Compose"
                     DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG} \
-                    docker-compose -f docker-compose.yml up -d --build
+                    docker compose -f docker-compose.yml up -d --build
                 '''
             }
         }
