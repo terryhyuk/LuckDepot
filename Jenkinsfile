@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE_TAG = "luckydepot-${BUILD_NUMBER}"
-        DOCKER_IMAGE = "${PROJECT_NAME}:${DOCKER_IMAGE_TAG}"
+        DOCKER_IMAGE = "luckydepot:${DOCKER_IMAGE_TAG}"
     }
 
     stages {

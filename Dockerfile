@@ -12,12 +12,14 @@ WORKDIR /LUCKYDEPOT/fastapi
 # Install system dependencies for psycopg2
 RUN apt-get update && apt-get install -y \
     gcc \
+    g++ \
     libpq-dev \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
 COPY ./fastapi/requirements.txt ./requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 # ENV DATESPOT_DB=""
 # ENV DATESPOT_DB_USER=""
