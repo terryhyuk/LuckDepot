@@ -10,7 +10,7 @@ from datetime import datetime
 router = APIRouter()
 
 # 단일 주문 조회
-@router.get('/select/{user_seq}')
+@router.get('/select/{user_id}')
 async def order_select(user_id : str, session : Session = Depends(db.session)):
     try :
         order = session.query(Order).filter(Order.user_id == user_id).all()
