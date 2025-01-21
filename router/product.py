@@ -131,7 +131,9 @@ async def remove_product(product_id: int, session: Session = Depends(db.session)
 async def get_file(image: str):
     """
     `이미지 보기`\n
-    ID와 일치하는 Product 삭제하기 \n
+    해당 상품의 이미지 Attribute를 넣으면 이미지 반환 \n
+    사용밥 : http://192.168.50.38:8000/product/view/{DB의 image column값 넣어주기}
+    사용 예시 : http://192.168.50.38:8000/product/view/Tables_1.jpg
     :return:
     """
     file_path = os.path.join(UPLOAD_FOLDER, image)
