@@ -99,3 +99,23 @@ class SqlFailureEx(APIException):
             code=f"{StatusCode.HTTP_500}{'2'.zfill(4)}",
             ex=ex,
         )
+
+class UpdateDataNotFoundEx(APIException):
+    def __init__(self, ex: Exception = None):
+        super().__init__(
+            status_code=StatusCode.HTTP_404,
+            code=f"{StatusCode.HTTP_404}{'4'.zfill(4)}",
+            msg="업데이트 하려는 데이터가 존재하지 않습니다.",
+            detail="Data does not exist.",
+            ex=ex,
+        )
+
+class DeleteDataNotFoundEx(APIException):
+    def __init__(self, ex: Exception = None):
+        super().__init__(
+            status_code=StatusCode.HTTP_404,
+            code=f"{StatusCode.HTTP_404}{'5'.zfill(4)}",
+            msg="삭제하려고 하는 데이터가 존재하지 않습니다.",
+            detail="Data does not exist.",
+            ex=ex,
+        )

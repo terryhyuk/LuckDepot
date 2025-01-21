@@ -1,4 +1,3 @@
-
 import uvicorn
 from fastapi import FastAPI, Depends
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -6,11 +5,15 @@ from fastapi.security import APIKeyHeader
 from starlette.middleware.cors import CORSMiddleware
 from middlewares.trusted_hosts import TrustedHostMiddleware
 from database.conn import connection
-from router.test import router as test_router
-from router.auth import router as auth_router
 from middlewares.token_validator import access_control
 from static.hosts import TRUSTED_HOSTS
 from router.order_router import router as order_router
+
+# router
+from router.test import router as test_router
+from router.auth import router as auth_router
+from router.product import router as product_router
+
 
 API_KEY_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
 
@@ -24,7 +27,6 @@ def create_app():
     # 데이터 베이스 이니셜라이즈
     connection.db.init_app(app)
 
-    # 미들웨어 정의
     app.add_middleware(middleware_class=BaseHTTPMiddleware, dispatch=access_control)
     app.add_middleware(
         CORSMiddleware,
