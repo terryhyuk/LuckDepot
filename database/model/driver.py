@@ -1,8 +1,7 @@
 from sqlalchemy import Column,String, Integer
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
+from database.model.base import Base
 
-
-Base = declarative_base()
 class Driver(Base) :
     
     __tablename__ = 'driver' # 테이블명
