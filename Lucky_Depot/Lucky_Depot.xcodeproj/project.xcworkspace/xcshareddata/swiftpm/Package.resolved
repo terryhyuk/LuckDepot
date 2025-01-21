@@ -1,5 +1,5 @@
 {
-  "originHash" : "29332ba4f28cd0173f2ced57e406e103b3b9b5bbace5fe95355fa9e476174fbb",
+  "originHash" : "c974176c0ed91a19cbf7ddea19441762a4dabc428cabb79f5c6e992d72e05b4a",
   "pins" : [
     {
       "identity" : "payment-sdk-ios",
@@ -8,6 +8,24 @@
       "state" : {
         "revision" : "6675653c776b352ae8bf47ab13fe8e326d47b27c",
         "version" : "0.1.34"
+      }
+    },
+    {
+      "identity" : "realm-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-core.git",
+      "state" : {
+        "revision" : "85eeca41654cc9070ad81a21a4b1d153ad467c33",
+        "version" : "14.13.1"
+      }
+    },
+    {
+      "identity" : "realm-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-swift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "1f09fb14dd9d275b5686016fe8508d491b87cb0b"
       }
     },
     {

@@ -105,7 +105,7 @@ struct ProductView: View {
         NavigationLink(destination: DetailView(), label: {
             VStack(alignment:.leading,content: {
                 
-                Image(product.image)
+                Image(product.imagePath)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width:170, height: 150)

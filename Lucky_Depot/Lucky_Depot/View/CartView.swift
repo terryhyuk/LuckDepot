@@ -10,10 +10,10 @@ import SwiftUI
 struct CartView: View {
     
     @State var cartList: [Product] = [
-        Product(code: "1", name: "copper", price: 12.5, image: "namsan", quantity: 1,category: "Art"),
-        Product(code: "2", name: "aluminium", price: 130.3, image: "hyeondai", quantity:1, category: "Art"),
-        Product(code: "3", name: "lithium", price: 15.4, image: "lithium", quantity:1, category: "Music"),
-        Product(code: "4", name: "nickel", price: 14.5, image: "nickel",  quantity:1, category: "Sports")
+        Product(code: "1", name: "copper", price: 12.5, imagePath: "namsan", quantity: 1,category: "Art"),
+        Product(code: "2", name: "aluminium", price: 130.3, imagePath: "hyeondai", quantity:1, category: "Art"),
+        Product(code: "3", name: "lithium", price: 15.4, imagePath: "lithium", quantity:1, category: "Music"),
+        Product(code: "4", name: "nickel", price: 14.5, imagePath: "nickel",  quantity:1, category: "Sports")
     ]
 
     @Binding var selectedTab: Tab
@@ -56,7 +56,7 @@ struct CartView: View {
                                     HStack(content: {
                                         // 제품 사진 및 네비게이션
                                         NavigationLink(destination: DetailView()) {
-                                            Image(product.image)
+                                            Image(product.imagePath)
                                                 .resizable()
                                                 .frame(width: 100, height: 100)
                                                 .scaledToFit()

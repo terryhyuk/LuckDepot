@@ -9,7 +9,8 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct OrderProduct: View {
-    let product: Product
+//    let product: Product
+    let product: RealMProduct
     
     var body: some View {
         HStack {
@@ -41,5 +42,5 @@ struct OrderProduct: View {
 }
 
 #Preview {
-    OrderProduct(product: Product(id: "11", name: "123", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"))
+//    OrderProduct(product: Product(id: "11", name: "123", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"))
 }
