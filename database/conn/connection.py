@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contextlib import asynccontextmanager
 from static import hosts
-from database.model import deliver,driver,hub,order,orderdetail,product,truck,user,management
+from database.model import deliver,driver,hub,order,orderdetail,product,truck,user,management,admin
 import logging
 
 class SQLAlchemy:
@@ -21,7 +21,6 @@ class SQLAlchemy:
         :return:
         """
         database_url = f'postgresql://postgres:qwer1234@{hosts.POSTGRESQL_HOST}:5432/postgres'
-        print(database_url)
         # postgresql://유저이름:비밀번호@ip주소:port/데이터베이스이름
         pool_recycle = 900
 
