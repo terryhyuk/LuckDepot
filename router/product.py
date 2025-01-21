@@ -6,7 +6,7 @@ from database.conn.connection import db
 from starlette.responses import JSONResponse
 from errors import exceptions as ex
 
-router = APIRouter(prefix="/product")
+router = APIRouter()
 
 """
     get : 조회 // status:200
