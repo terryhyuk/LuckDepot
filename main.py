@@ -7,13 +7,15 @@ from middlewares.trusted_hosts import TrustedHostMiddleware
 from database.conn import connection
 from middlewares.token_validator import access_control
 from static.hosts import TRUSTED_HOSTS
-from router.order_router import router as order_router
+
 
 # router
 from router.test import router as test_router
 from router.auth import router as auth_router
 from router.product import router as product_router
-
+from router.order_router import router as order_router
+# from router.orderdetail import router as orderdetail_router
+from router.orderdetail import router as od_router
 
 API_KEY_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
 
@@ -44,8 +46,10 @@ def create_app():
 app = create_app()
 
 app.include_router(auth_router, tags=["Auth"], prefix="/auth")
-app.include_router(order_router, tags=["order"], prefix="/order")
+app.include_router(order_router, tags=["Order"], prefix="/order")
 app.include_router(test_router, tags=["Test"],prefix="/test", dependencies=[Depends(API_KEY_HEADER)])
 app.include_router(product_router, tags=["Product"],prefix="/product", dependencies=[Depends(API_KEY_HEADER)])
+app.include_router(od_router, tags=["Detail"], prefix="/detail")
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

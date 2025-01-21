@@ -7,7 +7,7 @@ class Order(Base) :
     __table_args__ = {'schema': 'luckydepot'} # 스키마명 
 
     id = Column(VARCHAR, primary_key=True) 
-    user_id = Column(Integer, ForeignKey('luckydepot.user.id')) # 외래키 user id
+    user_seq = Column(Integer, ForeignKey('luckydepot.user.seq')) # 외래키 user seq
     payment_type = Column(String)
     price = Column(Integer)
     address = Column(String)

@@ -5,7 +5,8 @@ from database.model.base import Base
 class User(Base):
     __tablename__ = 'user'  # 테이블명
     __table_args__ = {'schema': 'luckydepot'} # 스키마명 
-    id = Column(String, primary_key=True)
+    seq = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(String)
     name = Column(String)
     login_type = Column(String)
     
