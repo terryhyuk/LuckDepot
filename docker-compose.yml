@@ -12,5 +12,5 @@ services:
       LUCKYDEPOT_DB_USER: "postgres"
       LUCKYDEPOT_DB_PASSWORD: "qwer1234"
       LUCKYDEPOT_DB_TABLE: "luckydepot" # schema?
-      LUCKYDEPOT_PORT: "5432"
+      LUCKYDEPOT_PORT: "3306"
       BUCKET_NAME: "luckydepot-image"
