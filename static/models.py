@@ -20,6 +20,15 @@ class AdminLogin(BaseModel):
         from_attributes = True
 
 
+class ProductCreate(BaseModel):
+    name: str
+    price: int
+    image: str
+    quantity: int
+    category_id: int
+
+
+
 class SnsType(str, Enum):
     email: str = "email"
     facebook: str = "facebook"
