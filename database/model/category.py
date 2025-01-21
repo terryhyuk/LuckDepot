@@ -11,5 +11,5 @@ class Category(Base) :
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     name = Column(String)
 
-    # product = relationship("Product", back_populates="category")
+    product = relationship("Product", back_populates="category")
 

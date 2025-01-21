@@ -13,5 +13,5 @@ class Driver(Base) :
     password = Column(String)
     full_time = Column(String)
 
-    # deliver = relationship("Deliver", back_populates="driver")
+    deliver = relationship("Deliver", back_populates="driver")
 

@@ -12,5 +12,5 @@ class OrderDetail(Base) :
     price = Column(Integer)
     quantity = Column(Integer) 
 
-    # user = relationship("User", back_populates="orderdetail")
-    # product = relationship("Product", back_populates="orderdetail")
+    user = relationship("User", back_populates="orderdetail")
+    product = relationship("Product", back_populates="orderdetail")

@@ -15,9 +15,9 @@ class Deliver(Base) :
     start_date = Column(TIMESTAMP)
     end_date = Column(TIMESTAMP)
 
-    # driver = relationship("Driver", back_populates="deliver")
-    # hub = relationship("Hub", back_populates="deliver")
-    # truck = relationship("Truck", back_populates="deliver")
+    driver = relationship("Driver", back_populates="deliver")
+    hub = relationship("Hub", back_populates="deliver")
+    truck = relationship("Truck", back_populates="deliver")
 
     
 
