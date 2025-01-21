@@ -1,9 +1,7 @@
 
 from sqlalchemy import Column,String, Double, Integer
-from sqlalchemy.orm import declarative_base, relationship
-
-
-Base = declarative_base()
+from sqlalchemy.orm import relationship
+from database.model.base import Base
 class Hub(Base) :
     
     __tablename__ = 'hub' # 테이블명
@@ -15,6 +13,6 @@ class Hub(Base) :
     lng = Column(Double)
     
     deliver = relationship("Deliver", back_populates="hub")
-    managements = relationship("Management", back_populates="hub")
+    management = relationship("Management", back_populates="hub")
 
 
