@@ -83,7 +83,7 @@ async def insert(session : Session = Depends(db.session), id : str = None, user_
 
 
 
-@router.get('/delete')
+@router.delete('/delete')
 async def delete(session : Session = Depends(db.session), order_id : str = None):
     try :
         order = session.query(Order).filter(Order.id == order_id).first()
