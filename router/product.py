@@ -1,10 +1,14 @@
 from database.model.product import Product
-from database.model.product import Product
-from fastapi import APIRouter, Depends
+from database.model.category import Category
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.conn.connection import db
-from starlette.responses import JSONResponse
+from starlette.responses import FileResponse
 from errors import exceptions as ex
+from static.models import ProductCreate
+import os
+
+UPLOAD_FOLDER = 'crawling_img'
 
 router = APIRouter()
 
@@ -26,9 +30,9 @@ async def index(session: Session = Depends(db.session)):
     :return:
     """
     product = session.query(Product).all()
-    return product
+    return {"result" :product}
 
-# 상품 하나의 정보 가져오기
+# 상품 하나의 정보 가져오는 API
 @router.get("/{product_id}", status_code=200)
 async def get_product_detail(product_id: int, session: Session = Depends(db.session)):
     """
@@ -37,32 +41,41 @@ async def get_product_detail(product_id: int, session: Session = Depends(db.sess
     :return:
     """
     product = session.query(Product).filter(Product.id == product_id).first()
-    return product
-
+    return {"result" :product}
 
 # 새로운 상품을 등록하는 API
-# @router.post("/{product_id}")
-# async def update_product_quantity(name, session: Session = Depends(db.session)):
-#     """
-#     `상품 등록`\n
-#     서비스에 새로운 상품 등록 \n
-#     :return:
-#     """
-#     try:
-#         product = session.query(Product).filter(Product.id == product_id).first()
-#         if not product:
-#             raise ex.UpdateDataNotFoundEx() 
+@router.post("/", status_code=201)
+async def create_product(product: ProductCreate, session: Session = Depends(db.session)):
+    """
+    `상품 등록`\n
+    서비스에 새로운 상품 등록 \n
+    """
+    try:
+        # category_id 유효성 확인
+        category = session.query(Category).filter(Category.id == product.category_id).first()
+        if not category:
+            raise HTTPException(status_code=400, detail="Invalid category_id. Category not found.")
 
-#         product.quantity = quantity
-#         session.commit()
-#         session.refresh(product) 
-#         return {"result": "수정이 성공적으로 완료되었습니다."}
+        # 새로운 Product 생성
+        new_product = Product(
+            name=product.name,
+            price=product.price,
+            image=product.image,
+            quantity=product.quantity,
+            category_id=product.category_id
+        )
+        session.add(new_product)
+        session.commit()
+        session.refresh(new_product)
+
+        return {"result": "생성이 성공적으로 완료되었습니다."}
     
-#     except ex.APIException as api_ex:
-#         raise api_ex
-    
-#     except Exception as e:
-#         raise ex.SqlFailureEx(ex=e)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()  # 전체 예외 출력
+        raise HTTPException(status_code=500, detail=str(e))  # 원래 에러 메시지 반환
+
+
 
 
 # 상품 재고 수정하는 API
@@ -112,3 +125,18 @@ async def remove_product(product_id: int, session: Session = Depends(db.session)
     
     except Exception as e:
         raise ex.SqlFailureEx(ex=e)
+
+
+@router.get("/view/{image}", response_class=FileResponse)
+async def get_file(image: str):
+    """
+    `이미지 보기`\n
+    ID와 일치하는 Product 삭제하기 \n
+    :return:
+    """
+    file_path = os.path.join(UPLOAD_FOLDER, image)
+
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    return FileResponse(file_path, media_type="image/jpeg")

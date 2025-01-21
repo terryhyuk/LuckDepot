@@ -26,7 +26,7 @@ from static.models import SnsType, Token, UserToken, UserRegister, AdminLogin
 """
 
 
-router = APIRouter(prefix="/auth")
+router = APIRouter()
 
 
 @router.post("/register/{sns_type}", status_code=201, response_model=Token)
@@ -76,7 +76,6 @@ async def login(sns_type: SnsType, admin_info: AdminLogin, session : Session = D
 
 async def is_email_exist(email: str, session: Session = Depends(db.session)):
     get_email = session.query(User).filter(User.id == email)
-    #  User.get(email=email)
     if get_email:
         return True
     return False
@@ -85,7 +84,7 @@ async def is_email_exist(email: str, session: Session = Depends(db.session)):
 def create_access_token(*, data: dict = None, expires_delta: int = None):
     to_encode = data.copy()
     if expires_delta:
-        to_encode.update({"exp": datetime.utcnow() + timedelta(hours=expires_delta)})
+        to_encode.update({"exp": datetime.now() + timedelta(hours=expires_delta)})
     encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
     print(encoded_jwt)
     return encoded_jwt

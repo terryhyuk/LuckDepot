@@ -11,6 +11,7 @@
 .packages
 .pub-cache/
 .pub/
+crawling_img/
 build/
 coverage/
 lib/generated_plugin_registrant.dart

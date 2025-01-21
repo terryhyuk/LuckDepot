@@ -1,8 +1,8 @@
 from sqlalchemy import Column,String, TIMESTAMP, Integer, ForeignKey
-from sqlalchemy.orm import declarative_base,relationship
+from sqlalchemy.orm import relationship
+from database.model.base import Base
 
 
-Base = declarative_base()
 class Category(Base) :
     
     __tablename__ = 'category' # 테이블명
