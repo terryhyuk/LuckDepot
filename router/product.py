@@ -3,10 +3,12 @@ from database.model.category import Category
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.conn.connection import db
-from starlette.responses import JSONResponse
+from starlette.responses import FileResponse
 from errors import exceptions as ex
 from static.models import ProductCreate
+import os
 
+UPLOAD_FOLDER = 'crawling_img'
 
 router = APIRouter()
 
@@ -123,3 +125,18 @@ async def remove_product(product_id: int, session: Session = Depends(db.session)
     
     except Exception as e:
         raise ex.SqlFailureEx(ex=e)
+
+
+@router.get("/view/{image}", response_class=FileResponse)
+async def get_file(image: str):
+    """
+    `이미지 보기`\n
+    ID와 일치하는 Product 삭제하기 \n
+    :return:
+    """
+    file_path = os.path.join(UPLOAD_FOLDER, image)
+
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    return FileResponse(file_path, media_type="image/jpeg")

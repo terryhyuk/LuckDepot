@@ -1,7 +1,8 @@
-import uvicorn
+import uvicorn, os
 from fastapi import FastAPI, Depends
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.security import APIKeyHeader
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 from middlewares.trusted_hosts import TrustedHostMiddleware
 from database.conn import connection
@@ -14,7 +15,7 @@ from router.test import router as test_router
 from router.auth import router as auth_router
 from router.product import router as product_router
 
-
+static_dir = "../crawiling_img"
 API_KEY_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
 
 def create_app():
@@ -42,6 +43,7 @@ def create_app():
 
 
 app = create_app()
+
 
 app.include_router(auth_router, tags=["Auth"], prefix="/auth")
 app.include_router(order_router, tags=["order"], prefix="/order")
