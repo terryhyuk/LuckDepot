@@ -7,7 +7,7 @@ class OrderDetail(Base) :
     __table_args__ = {'schema': 'luckydepot'} # 스키마명 
 
     id = Column(String, primary_key=True) 
-    user_seq = Column(Integer,ForeignKey('luckydepot.user.seq')) # 외래키 user seq
+    user_id = Column(Integer,ForeignKey('luckydepot.user.id')) # 외래키 user seq
     product_id = Column(Integer, ForeignKey('luckydepot.product.id')) # 외래키 product id
     price = Column(Integer)
     quantity = Column(Integer) 

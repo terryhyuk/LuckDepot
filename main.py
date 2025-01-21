@@ -8,6 +8,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from database.conn import connection
 import router.test as test
+import router.order_router as order_router
 from static import hosts
 
 def create_app():
@@ -34,7 +35,9 @@ def create_app():
 
     # 라우터 정의
     app.include_router(test.router)
+    app.include_router(order_router.router, prefix='/order', tags=['order'])
     print(hosts.POSTGRESQL_HOST)
+    # print(order_test.POSTGRESQL_HOST)
     return app
 
 
