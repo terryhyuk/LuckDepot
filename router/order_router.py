@@ -10,7 +10,7 @@ from datetime import datetime
 router = APIRouter()
 
 # 단일 주문 조회
-@router.get('/select/{user_seq}')
+@router.get('/select/{user_id}')
 async def order_select(user_id : str, session : Session = Depends(db.session)):
     try :
         order = session.query(Order).filter(Order.user_id == user_id).all()
@@ -19,7 +19,7 @@ async def order_select(user_id : str, session : Session = Depends(db.session)):
     except Exception as e: 
         print('orders error',e)
         session.close()
-        return {'results' : e}
+        return {'result' : e}
     
 
 
@@ -31,7 +31,9 @@ async def get_orders(session: Session = Depends(db.session)):
             Order.user_id,
             func.sum(Order.price).label('total_price'),
             func.count(Order.user_id).label('order_count'),
-            func.max(Order.order_date).label('recent_order_date') 
+            func.max(Order.order_date).label('recent_order_date'),
+            func.sum(func.sum(Order.price)).over().label('total_sum'),
+            func.avg(func.sum(Order.price)).over().label('total_avg')
         ).join(
             User,
             Order.user_id == User.id
@@ -41,7 +43,8 @@ async def get_orders(session: Session = Depends(db.session)):
         ).order_by(
             desc('total_price')
         ).all()
-        
+        if not orders :
+            print('주문 목록이 비어있습니다.')
         return { "result": 
                 [
                     {
@@ -52,7 +55,9 @@ async def get_orders(session: Session = Depends(db.session)):
                     'recent_order_date' : order[4].strftime('%Y-%m-%d')
                     }
                 for order in orders
-                ]
+                ],
+                'sum': orders[0][5],
+                'avg' : orders[0][6]
             }
     except Exception as e:
         session.close()
@@ -83,7 +88,7 @@ async def insert(session : Session = Depends(db.session), id : str = None, user_
 
 
 
-@router.get('/delete')
+@router.delete('/delete')
 async def delete(session : Session = Depends(db.session), order_id : str = None):
     try :
         order = session.query(Order).filter(Order.id == order_id).first()
