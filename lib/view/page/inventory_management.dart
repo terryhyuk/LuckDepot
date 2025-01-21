@@ -1,45 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucky_depot/model/coustom_text_form_field.dart';
 import 'package:lucky_depot/view/widgets/coustom_drawer.dart';
-import 'package:lucky_depot/view/widgets/coustom_text_form_field.dart';
-import 'package:lucky_depot/vm/custom_drawer_controller.dart';
+import 'package:lucky_depot/view/widgets/coustom_text_form_field_widget.dart';
+import 'package:lucky_depot/vm/inventory_management_controller.dart';
 
-class InventoryManagement extends StatefulWidget {
-  const InventoryManagement({super.key});
+class InventoryManagement extends StatelessWidget {
+  InventoryManagement({super.key});
 
-  @override
-  State<InventoryManagement> createState() => _InventoryManagementState();
-}
-
-class _InventoryManagementState extends State<InventoryManagement> {
-  late List<String> categories = [];
-  String? selectedCategory;
-
-  @override
-  void initState() {
-    super.initState();
-    // 컨트롤러 초기화
-    Get.put(CustomDrawerController());
-    categories = [
-      'Tables',
-      'Chairs',
-      'Bookcases',
-      'Storage',
-      'Paper',
-      'Binders',
-      'Copiers',
-      'Envelopes',
-      'Fasteners'];
-  }
+  final _controller = Get.put(InventoryManagementController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Row(
         children: [
-          // 왼쪽 메인 드로워
           CustomDrawer(),
-
           Expanded(
             child: Container(
               color: Colors.grey[100],
@@ -65,6 +41,7 @@ class _InventoryManagementState extends State<InventoryManagement> {
                             child: Padding(
                               padding: const EdgeInsets.all(16),
                               child: Form(
+                                key: _controller.formKey,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -76,56 +53,77 @@ class _InventoryManagementState extends State<InventoryManagement> {
                                       ),
                                     ),
                                     const SizedBox(height: 16),
-                                    // 카테고리 선택 드롭다운
-                                    DropdownButtonFormField<String>(
-                                      decoration: const InputDecoration(
-                                        labelText: 'Category',
-                                        border: OutlineInputBorder(),
+                                    Obx(() => DropdownButtonFormField<String>(
+                                          decoration: const InputDecoration(
+                                            labelText: 'Category',
+                                            border: OutlineInputBorder(),
+                                          ),
+                                          value: _controller.selectedCategory
+                                                  .value.isEmpty
+                                              ? null
+                                              : _controller
+                                                  .selectedCategory.value,
+                                          hint: const Text('Select category'),
+                                          items: _controller.categories
+                                              .map((category) {
+                                            return DropdownMenuItem<String>(
+                                              value: category,
+                                              child: Text(category),
+                                            );
+                                          }).toList(),
+                                          onChanged: _controller.updateCategory,
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please select a category';
+                                            }
+                                            return null;
+                                          },
+                                        )),
+                                    const SizedBox(height: 16),
+                                    CustomTextFormFieldWidget(
+                                      controller: _controller.nameController,
+                                      config: TextFormFieldConfig(
+                                        labelText: 'Product Name',
+                                        textInputAction: TextInputAction.next,
                                       ),
-                                      value: selectedCategory,
-                                      items: categories.map((String category) {
-                                        return DropdownMenuItem<String>(
-                                          value: category,
-                                          child: Text(category),
-                                        );
-                                      }).toList(),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedCategory = newValue;
-                                        });
-                                      },
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please select a category';
-                                        }
-                                        return null;
-                                      },
+                                      labelText: '',
                                     ),
                                     const SizedBox(height: 16),
-                                    CustomTextFormField(
-                                      controller: TextEditingController(),
-                                      labelText: 'Product Name',
+                                    CustomTextFormFieldWidget(
+                                      controller:
+                                          _controller.descriptionController,
+                                      config: TextFormFieldConfig(
+                                        labelText: 'Description',
+                                        textInputAction: TextInputAction.next,
+                                      ),
+                                      labelText: '',
                                     ),
                                     const SizedBox(height: 16),
-                                    CustomTextFormField(
-                                      controller: TextEditingController(),
-                                      labelText: 'Description',
+                                    CustomTextFormFieldWidget(
+                                      controller: _controller.priceController,
+                                      config: TextFormFieldConfig(
+                                        labelText: 'Price',
+                                        isNumber: true,
+                                        textInputAction: TextInputAction.next,
+                                      ),
+                                      labelText: '',
                                     ),
                                     const SizedBox(height: 16),
-                                    CustomTextFormField(
-                                      controller: TextEditingController(),
-                                      labelText: 'Price',
-                                      isNumber: true,
-                                    ),
-                                    const SizedBox(height: 16),
-                                    CustomTextFormField(
-                                      controller: TextEditingController(),
-                                      labelText: 'Quantity',
-                                      isNumber: true,
+                                    CustomTextFormFieldWidget(
+                                      controller:
+                                          _controller.quantityController,
+                                      config: TextFormFieldConfig(
+                                        labelText: 'Quantity',
+                                        isNumber: true,
+                                        textInputAction: TextInputAction.done,
+                                      ),
+                                      labelText: '',
                                     ),
                                     const SizedBox(height: 24),
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () =>
+                                          _controller.saveProduct(context),
                                       style: ElevatedButton.styleFrom(
                                         minimumSize:
                                             const Size(double.infinity, 50),
@@ -159,56 +157,120 @@ class _InventoryManagementState extends State<InventoryManagement> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      // 카테고리 필터 드롭다운
-                                      DropdownButton<String>(
-                                        hint: const Text('Filter by Category'),
-                                        value: selectedCategory,
-                                        items: [
-                                          const DropdownMenuItem<String>(
-                                            value: null,
-                                            child: Text('All Categories'),
+                                      Row(
+                                        children: [
+                                          Obx(() => DropdownButton<String>(
+                                                hint: const Text(
+                                                    'Filter by Category'),
+                                                value: _controller
+                                                        .selectedCategory
+                                                        .value
+                                                        .isEmpty
+                                                    ? null
+                                                    : _controller
+                                                        .selectedCategory.value,
+                                                items: [
+                                                  const DropdownMenuItem<
+                                                      String>(
+                                                    value: '',
+                                                    child:
+                                                        Text('All Categories'),
+                                                  ),
+                                                  ..._controller.categories
+                                                      .map((String category) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: category,
+                                                      child: Text(category),
+                                                    );
+                                                  }).toList(),
+                                                ],
+                                                onChanged:
+                                                    _controller.updateCategory,
+                                              )),
+                                          const SizedBox(width: 16),
+                                          SizedBox(
+                                            width: 200,
+                                            child: TextField(
+                                              controller:
+                                                  _controller.searchController,
+                                              decoration: InputDecoration(
+                                                hintText: 'Search products',
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 8,
+                                                ),
+                                              ),
+                                              onChanged:
+                                                  _controller.searchProducts,
+                                            ),
                                           ),
-                                          ...categories.map((String category) {
-                                            return DropdownMenuItem<String>(
-                                              value: category,
-                                              child: Text(category),
-                                            );
-                                          }).toList(),
                                         ],
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            selectedCategory = newValue;
-                                          });
-                                        },
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 16),
+                                  const Row(
+                                    children: [
+                                      Expanded(flex: 2, child: Text('Name')),
+                                      Expanded(
+                                          flex: 2, child: Text('Category')),
+                                      Expanded(
+                                          flex: 3, child: Text('Description')),
+                                      Expanded(flex: 1, child: Text('Price')),
+                                      Expanded(
+                                          flex: 1, child: Text('Quantity')),
+                                      Expanded(flex: 1, child: Text('Actions')),
+                                    ],
+                                  ),
+                                  const Divider(),
                                   Expanded(
-                                    child: ListView.builder(
-                                      itemCount: 0,
-                                      itemBuilder: (context, index) {
-                                        return Card(
-                                          child: ListTile(
-                                            title: const Text('Product Name'),
-                                            subtitle: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                    child: Obx(() => ListView.builder(
+                                          itemCount: _controller
+                                              .filteredProducts.length,
+                                          itemBuilder: (context, index) {
+                                            final product = _controller
+                                                .filteredProducts[index];
+                                            return Row(
                                               children: [
-                                                const Text('Category'),
-                                                const Text('Description'),
-                                                const Text('Price: \$0'),
-                                                const Text('Quantity: 0'),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: Text(product.name)),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child:
+                                                        Text(product.category)),
+                                                Expanded(
+                                                    flex: 3,
+                                                    child: Text(
+                                                        product.description)),
+                                                Expanded(
+                                                    flex: 1,
+                                                    child: Text(
+                                                        '\$${product.price}')),
+                                                Expanded(
+                                                    flex: 1,
+                                                    child: Text(
+                                                        '${product.quantity}')),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: IconButton(
+                                                    icon: const Icon(
+                                                        Icons.delete),
+                                                    onPressed: () => _controller
+                                                        .deleteProduct(
+                                                            context, index),
+                                                  ),
+                                                ),
                                               ],
-                                            ),
-                                            trailing: IconButton(
-                                              icon: const Icon(Icons.delete),
-                                              onPressed: () {},
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                            );
+                                          },
+                                        )),
                                   ),
                                 ],
                               ),

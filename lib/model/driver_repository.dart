@@ -2,7 +2,6 @@
 // driver 등록 및 삭제
 
 import 'package:flutter/foundation.dart';
-import 'package:hive_ce/hive.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:lucky_depot/model/driver.dart';
 

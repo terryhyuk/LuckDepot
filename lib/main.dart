@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:lucky_depot/model/driver.dart';
 import 'package:lucky_depot/model/truck.dart';
-import 'package:lucky_depot/view/page/customer_management.dart';
+import 'package:lucky_depot/view/widgets/customer_management.dart';
 import 'package:lucky_depot/view/page/dashboard.dart';
 import 'package:lucky_depot/view/page/delivery_driver.dart';
 import 'package:lucky_depot/view/page/inventory_management.dart';
@@ -64,12 +64,12 @@ class _MyAppState extends State<MyApp> {
         ),
         GetPage(
           name: '/inventory',
-          page: () => const InventoryManagement(),
+          page: () => InventoryManagement(),
           transition: Transition.noTransition,
         ),
         GetPage(
           name: '/customer',
-          page: () => const CustomerManagement(),
+          page: () => CustomerManagement(),
           transition: Transition.noTransition,
         ),
         GetPage(
@@ -79,7 +79,7 @@ class _MyAppState extends State<MyApp> {
         ),
         GetPage(
           name: '/delivery_driver',
-          page: () => const DeliveryDriver(),
+          page: () => DeliveryDriver(),
           transition: Transition.noTransition,
         ),
       ],
