@@ -35,3 +35,4 @@ Redis == 5.2.1
 SQLAlchemy==2.0.30
 bcrypt==3.2.0
 psycopg2==2.9.10
+email-validator==2.2.0
