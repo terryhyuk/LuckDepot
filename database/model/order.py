@@ -12,7 +12,7 @@ class Order(Base) :
     price = Column(Integer)
     address = Column(String)
     order_date = Column(TIMESTAMP)
-    order_product = Column(String)
+    status = Column(String)
     
     user = relationship("User", back_populates="order") # 관계 표시, sql쿼리 없이 관련된 테이블 접근 가능,  데이터 동기화
 
