@@ -8,8 +8,8 @@ import 'package:lucky_depot/vm/customer_controller.dart';
 
 class CustomerManagement extends StatelessWidget {
   CustomerManagement({super.key});
-
-  final CustomerController customerCount = Get.put(CustomerController());
+    
+  final CustomerController customer = Get.put(CustomerController());
 
   @override
   Widget build(BuildContext context) {
@@ -37,29 +37,28 @@ class CustomerManagement extends StatelessWidget {
                       StatCardWidget(
                         data: StatCard(
                           title: 'Total Customers',
-                          value: '${customerCount.totalCustomers.value}',
+                          value: '${customer.totalCustomers.value}',
                         ),
                       ),
                       const SizedBox(width: 16),
                       StatCardWidget(
                         data: StatCard(
                           title: 'Total Payment',
-                          value: '\$${customerCount.totalPayment.value.toStringAsFixed(0)}',
+                          value: '\$${customer.totalPayment.value.toStringAsFixed(0)}',
                         ),
                       ),
                       const SizedBox(width: 16),
                       StatCardWidget(
                         data: StatCard(
                           title: 'Average Purchase',
-                          value: '\$${customerCount.averagePurchase.value.toStringAsFixed(0)}',
+                          value: '\$${customer.averagePurchase.value.toStringAsFixed(0)}',
                         ),
                       ),
                     ],
-                  ),
-                ),
+                  )),
                   const SizedBox(height: 24),
                   const Expanded(
-                    child: CustomerTable(),  // 고객 테이블 위젯 추가 필요
+                    child: CustomerTable(),
                   ),
                 ],
               ),
