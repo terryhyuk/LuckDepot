@@ -13,43 +13,43 @@ struct CategoryView: View {
     @State var selectedType: String = "All"
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                backgroundColor
-                  .ignoresSafeArea()
-                VStack(alignment: .leading, content: {
+        
+        ZStack {
+            backgroundColor
+              .ignoresSafeArea()
+            VStack(alignment: .leading, content: {
+                
+                VStack(content: {
                     
-                    VStack(content: {
-                        
-                        Category(selectedType: $selectedType)
-                            .padding(.vertical, 10)
-                        
-                        ScrollView {
-                            LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
-                                ForEach(productList, id: \.code, content: {
-                                    product in
+                    Category(selectedType: $selectedType)
+                        .padding(.vertical, 10)
+                    
+                    ScrollView {
+                        LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
+                            ForEach(productList, id: \.id, content: {
+                                product in
+                                
+                                if selectedType == product.category {
                                     
-                                    if selectedType == product.category {
-                                        
-                                        ProductView(product:product)
-                                        
-                                    } else if selectedType == "All" {
-                                        
-                                        ProductView(product:product)
-                                    }
-                                   
-                                })
+                                    ProductView(product:product)
+                                    
+                                } else if selectedType == "All" {
+                                    
+                                    ProductView(product:product)
+                                }
+                               
                             })
-                        }.padding(.horizontal)
-                        Spacer()
-                    })
-                    
-                    
+                        })
+                    }.padding(.horizontal)
+                    Spacer()
                 })
-                .navigationTitle("Categories")
-            }
-            
+                
+                
+            })
+            .navigationTitle("Categories")
         }
+            
+        
       
       
         
@@ -102,7 +102,7 @@ struct ProductView: View {
     let product: Product // product를 저장할 변수
 
     var body: some View {
-        NavigationLink(destination: DetailView(), label: {
+        NavigationLink(destination: DetailView(product: product), label: {
             VStack(alignment:.leading,content: {
                 
                 Image(product.imagePath)

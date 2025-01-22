@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CryptoKit
 
 class OrderViewModel: ObservableObject {
     let baseURL = "http://127.0.0.1:8000/"
@@ -16,22 +17,31 @@ class OrderViewModel: ObservableObject {
         formatter.dateFormat = "yyMMddHHmmss" // 원하는 형식 설정
         let formattedDate = formatter.string(from: currentDate)
         
-        let orderNum:String = formattedDate+"1"
+        // SHA-256 해싱
+        let hashedData = SHA256.hash(data: Data(formattedDate.utf8))
+
+        // 16진수 문자열로 변환
+        let hexString = hashedData.compactMap { String(format: "%02x", $0) }.joined()
+
+        // 12자리로 자르기
+        let result = String(hexString.prefix(11))
+        
+        let orderNum = result + "1" // 1 은 유저 시퀀스
         
         return orderNum
     }
     
-    func orderDetailFlatten(productList: [Product]) -> String{
-        // 아래와 같이 문자열로 리턴
-        // 제품아이디/갯수/총가격,제품아이디/갯수/총가격,제품아이디/갯수/총가격,제품아이디/갯수/총가격
-        
-        let orderInfoStr = ""
-        return orderInfoStr
-    }
+//    func orderDetailFlatten(productList: [Product]) -> String{
+//        // 아래와 같이 문자열로 리턴
+//        // 제품아이디/갯수/총가격,제품아이디/갯수/총가격,제품아이디/갯수/총가격,제품아이디/갯수/총가격
+//        
+//        let orderInfoStr = ""
+//        return orderInfoStr
+//    }
     
-    func insertOrder(user_id:String, payment_type:String, price:Int, address:String) async{
+    func insertOrder(user_id:String, order_id:String, payment_type:String, price:Double, address:String) async{
         // 데이터 전달 값 URL 설정
-        var urlPath = baseURL + "insertOrder?user_id=\(user_id)&payment_type=\(payment_type)&price=\(price)&address=\(address)"
+        var urlPath = baseURL + "insertOrder?user_id=\(user_id)&order_id=\(order_id)&payment_type=\(payment_type)&price=\(price)&address=\(address)"
         urlPath = urlPath.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
         let url = URL(string: urlPath)!
         
@@ -44,9 +54,9 @@ class OrderViewModel: ObservableObject {
         }
     }
     
-    func insertOrderDetail(user_id:String, order_id:String, orderInfo:String) async{
+    func insertOrderDetail(user_id:String, order_id:String, product_id:String, price:Double, quantity:Int) async{
         // 데이터 전달 값 URL 설정
-        var urlPath = baseURL + "insertOrderDetail?user_id=\(user_id)&order_id=\(order_id)&orderInfo=\(orderInfo)"
+        var urlPath = baseURL + "insertOrderDetail?user_id=\(user_id)&order_id=\(order_id)&product_id=\(product_id)&price=\(price)&quantity=\(quantity)"
         urlPath = urlPath.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
         let url = URL(string: urlPath)!
         

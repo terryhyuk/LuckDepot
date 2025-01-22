@@ -19,13 +19,13 @@ struct PaymentsView: View {
 //        Product(id: "2", name: "제품2", price: 2334, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
 //    ]
     
-    @StateObject private var shoppingBasketViewModel = ShoppingBasketViewModel()
+    @ObservedObject var shoppingBasketViewModel: ShoppingBasketViewModel
+    @StateObject var orderViewModel: OrderViewModel = OrderViewModel()
     
     @Binding var navigationPath: NavigationPath
     
     // 텍스트 필드
     @State private var deliveryAddress: String = ""
-    @State private var contactNumber: String = ""
     
     // 에러 알람
     @State var errorAlert: Bool = false
@@ -34,13 +34,10 @@ struct PaymentsView: View {
     // 결제화면 상태
     @State private var showPaymentView: Bool = false
     
-    @State var paymentInfo: PaymentInfo = DefaultPaymentInfo(
-        amount: 1000,
-        orderId: "9lD0azJWxjBY0KOIumGzH",
-        orderName: "토스 티셔츠 외 2건",
-        customerName: "박토스"
-    )
-
+    @State var orderId: String?
+    @State var paymentInfo: PaymentInfo?
+    @State var totalPrice: Double = 0
+    
     
     var body: some View {
         VStack {
@@ -64,11 +61,10 @@ struct PaymentsView: View {
                             .scaledToFit()
                             .frame(width: 24, height: 32)
                         
-                        Text("주문 상품")
+                        Text("배송지")
                     })
                     
                     TextField("주소를 입력하세요", text: $deliveryAddress)
-                    TextField("전화번호를 입력하세요", text: $contactNumber)
                 }
                 
                 VStack(alignment: .leading) {
@@ -85,11 +81,13 @@ struct PaymentsView: View {
                     HStack {
                         Text("상품 금액")
                         Spacer()
-                        Text("₩488,000")
+//                        Text("₩488,000")
+                        Text("$"+String(format : "%.2f", totalPrice))
                     }
                     .padding(.vertical, 4)
                     
                     HStack {
+                        // 어떻게 할지 물어보기
                         Text("배송비")
                         Spacer()
                         Text("무료")
@@ -103,7 +101,8 @@ struct PaymentsView: View {
                         Text("총 결제금액")
                             .fontWeight(.bold)
                         Spacer()
-                        Text("₩488,000")
+//                        Text("₩488,000")
+                        Text("$"+String(format : "%.2f", totalPrice))
                             .fontWeight(.bold)
                             .foregroundStyle(.blue)
                     }
@@ -111,10 +110,19 @@ struct PaymentsView: View {
                     
                     VStack {
                         Button(action: {
-                            if deliveryAddress.isEmpty || contactNumber.isEmpty {
-                                errorMessage = "주소나 연락처를 입력해주세요."
+                            if deliveryAddress.isEmpty {
+                                errorMessage = "주소를 입력해주세요."
                                 errorAlert = true
                             } else {
+                                let orderName = createOrderName()
+                                orderId = orderViewModel.createOrderNum()
+                                paymentInfo = DefaultPaymentInfo(
+                                    amount: totalPrice,
+                                    orderId: orderId!,
+                                    orderName: orderName,
+                                    customerName: "박토스" // 유저이름
+                               )
+                                
                                 showPaymentView = true
                             }
                         }, label: {
@@ -135,14 +143,21 @@ struct PaymentsView: View {
                             TossPaymentsView(
                                 clientKey: Constants.clientKey,
                                 paymentMethod: .CARD,
-                                paymentInfo: paymentInfo,
+                                paymentInfo: paymentInfo!,
                                 isPresented: $showPaymentView)
                             .onSuccess { key, id, amount in
-//                                print(key,id,amount)
+                                //                                print(key,id,amount)
                                 navigationPath.append("SuccessView")
+                                
+                                // 주문 정보 입력
+                                Task{
+                                    await orderViewModel.insertOrder(user_id: "1", order_id: orderId!, payment_type: "card", price: totalPrice, address: deliveryAddress)
+
+                                    await insertDetails()
+                                }
                             }
                             .onFail({code, message, id in
-//                                print(code, message, id)
+                                //                                print(code, message, id)
                                 errorMessage = message
                                 errorAlert = true
                             })
@@ -151,9 +166,45 @@ struct PaymentsView: View {
                 }
             }
         }
+        .onAppear(perform: {
+            totalPrice = shoppingBasketViewModel.totalPrice()
+        })
+    }
+    
+    func createOrderName() -> String {
+        if shoppingBasketViewModel.productCounts == 1 {
+            return shoppingBasketViewModel.products[0].name
+        } else {
+            return shoppingBasketViewModel.products[0].name + " and " + String(shoppingBasketViewModel.productCounts - 1) + " items"
+
+        }
+    }
+    
+    func insertDetails() async {
+        for i in 0..<shoppingBasketViewModel.productCounts {
+            await orderViewModel.insertOrderDetail(
+                user_id: "1",
+                order_id: orderId!,
+                product_id: shoppingBasketViewModel.products[i].id,
+                price: shoppingBasketViewModel.products[i].price,
+                quantity: shoppingBasketViewModel.products[i].quantity
+            )
+        }
     }
 }
 
-#Preview {
-//    PaymentsView()
+//#Preview {
+////    PaymentsView()
+//}
+
+struct PaymentsView_Previews: PreviewProvider {
+    @State static var navigationPath = NavigationPath()
+    @StateObject static var shoppingBasketViewModel = ShoppingBasketViewModel()
+
+    static var previews: some View {
+        PaymentsView(
+            shoppingBasketViewModel: shoppingBasketViewModel,
+            navigationPath: $navigationPath
+        )
+    }
 }

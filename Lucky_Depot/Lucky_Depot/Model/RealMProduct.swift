@@ -14,5 +14,5 @@ class RealMProduct: Object {
     @Persisted var price: Double
     @Persisted var imagePath: String
     @Persisted var quantity: Int
-//    var category: String
+    @Persisted var category: String
 }
