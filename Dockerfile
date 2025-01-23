@@ -33,4 +33,4 @@ RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 EXPOSE 6004
 
 # Command to run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "6004"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
