@@ -47,7 +47,7 @@ async def order_select(user_seq : int, session : Session = Depends(db.session)):
     finally :
         session.close()
 
-# 관리자용 구매내역 조회
+# 관리자용 유저 구매내역 조회
 @router.get("/select_all")
 async def get_orders(session: Session = Depends(db.session)):
     """
