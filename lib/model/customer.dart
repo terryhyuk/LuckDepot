@@ -1,5 +1,4 @@
 class Customer {
-  final int id;
   final String name;
   final String email;
   final double totalPayment;
@@ -7,7 +6,6 @@ class Customer {
   final String lastOrderDate;
 
   Customer({
-    required this.id,
     required this.name,
     required this.email,
     required this.totalPayment,
@@ -15,27 +13,47 @@ class Customer {
     required this.lastOrderDate,
   });
 
-  // JSON 데이터를 Customer 객체로 변환
   factory Customer.fromJson(Map<String, dynamic> json) {
     return Customer(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      totalPayment: json['total_payment'].toDouble(),
-      orderCount: json['order_count'],
-      lastOrderDate: json['last_order_date'],
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      totalPayment: (json['total_payment'] ?? 0).toDouble(),
+      orderCount: json['order_count'] ?? 0,
+      lastOrderDate: json['last_order_date'] ?? '',
     );
   }
+}
 
-  // Customer 객체를 JSON으로 변환
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'email': email,
-      'total_payment': totalPayment,
-      'order_count': orderCount,
-      'last_order_date': lastOrderDate,
-    };
+/// API 응답 전체 구조를 담는 클래스
+class CustomerResponse {
+  final List<Customer> customers;
+  final double sum; // 총 결제금액
+  final double avg; // 평균
+
+  CustomerResponse({
+    required this.customers,
+    required this.sum,
+    required this.avg,
+  });
+
+factory CustomerResponse.fromJson(Map<String, dynamic> json) {
+  try {
+    final resultList = json['result'] as List<dynamic>;
+    return CustomerResponse(
+      customers: resultList
+          .map((item) => Customer.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      sum: (json['sum'] as num?)?.toDouble() ?? 0.0,
+      avg: (json['avg'] as num?)?.toDouble() ?? 0.0,
+    );
+  } catch (e) {
+    print('Error parsing JSON: $e');
+    return CustomerResponse(
+      customers: [],
+      sum: 0.0,
+      avg: 0.0,
+    );
   }
+}
+
 }

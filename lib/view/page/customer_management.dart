@@ -37,21 +37,21 @@ class CustomerManagement extends StatelessWidget {
                       StatCardWidget(
                         data: StatCard(
                           title: 'Total Customers',
-                          value: '${customer.totalCustomers.value}',
+                          value: '${customer.customerResponse.value?.customers.length ?? 0}',  // 고객 수
                         ),
                       ),
                       const SizedBox(width: 16),
                       StatCardWidget(
                         data: StatCard(
                           title: 'Total Payment',
-                          value: '\$${customer.totalPayment.value.toStringAsFixed(0)}',
+                          value: '\$${(customer.customerResponse.value?.sum ?? 0).toStringAsFixed(0)}',  // API에서 받은 sum 사용
                         ),
                       ),
                       const SizedBox(width: 16),
                       StatCardWidget(
                         data: StatCard(
                           title: 'Average Purchase',
-                          value: '\$${customer.averagePurchase.value.toStringAsFixed(0)}',
+                          value: '\$${(customer.customerResponse.value?.avg ?? 0).toStringAsFixed(0)}',  // API에서 받은 avg 사용
                         ),
                       ),
                     ],

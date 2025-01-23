@@ -4,7 +4,7 @@ class Product {
   final double price;
   final String name;
   final int quantity;
-  final String category;
+  // final String category;
   final int categoryId;
 
   Product({
@@ -13,7 +13,7 @@ class Product {
     required this.price,
     required this.name,
     required this.quantity,
-    required this.category,
+    // required this.category,
     required this.categoryId,
   });
 
@@ -24,7 +24,7 @@ class Product {
       price: (json['price'] ?? 0).toDouble(),
       name: json['name'] ?? '',
       quantity: json['quantity'] ?? 0,
-      category: json['category'] ?? '',
+      // category: json['category'] ?? '',
       categoryId: json['category_id'] ?? 0,
     );
   }

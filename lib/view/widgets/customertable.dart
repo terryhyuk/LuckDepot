@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lucky_depot/vm/coustomer_table_controller.dart';
+import 'package:lucky_depot/vm/customer_controller.dart';
 
-class CustomerTable extends GetView<CustomerTableController> {
+class CustomerTable extends GetView<CustomerController> {
   const CustomerTable({super.key});
 
   @override

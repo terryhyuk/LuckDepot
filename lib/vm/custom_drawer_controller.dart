@@ -7,7 +7,7 @@ class CustomDrawerController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // 초기 라트 설정
+    // 초기 라우트 설정
     currentRouter.value = Get.currentRoute;
 
     // 라우트 변경 감지

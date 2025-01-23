@@ -1,7 +1,5 @@
-// lib/repository/customer_repository.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../model/customer.dart';
 
 class CustomerRepository {
   final String url = 'http://192.168.50.38:8000';
@@ -11,36 +9,22 @@ class CustomerRepository {
       final response = await http.get(Uri.parse('$url/order/select_all'));
       
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        return {
-          'total_customers': 0,
-          'total_payment': 0.0,
-          'average_purchase': 0.0,
-        };
+        print('API Response: ${response.body}'); // 디버깅용
+        return jsonDecode(utf8.decode(response.bodyBytes)); // 한글 처리를 위해 utf8.decode 사용
       }
+      return {
+        'result': [],
+        'sum': 0,
+        'avg': 0,
+      };
     } catch (e) {
       print('Error fetching customer stats: $e');
       return {
-        'total_customers': 0,
-        'total_payment': 0.0,
-        'average_purchase': 0.0,
+        'result': [],
+        'sum': 0,
+        'avg': 0,
       };
     }
   }
 
-  Future<List<Customer>> getCustomers() async {
-    try {
-      final response = await http.get(Uri.parse('$url/order/select_all'));
-      
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data.map((json) => Customer.fromJson(json)).toList();
-      }
-      return [];
-    } catch (e) {
-      print('Error fetching customer list: $e');
-      return [];
-    }
-  }
 }

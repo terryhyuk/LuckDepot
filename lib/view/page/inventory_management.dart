@@ -155,7 +155,7 @@ class InventoryManagement extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Image.network(
-                                  'http://192.168.50.38:8000${product.image}',
+                                  'http://192.168.50.38:8000/${product.image}',
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                   errorBuilder: (context, error, stackTrace) {
