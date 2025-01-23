@@ -17,11 +17,12 @@ struct ContentView: View {
     @State var selectedTab: Tab = .home
     
     @State var navigationPath: NavigationPath = NavigationPath()
+    
     @StateObject private var shoppingBasketViewModel = ShoppingBasketViewModel()
     @State var userRealM : UserLoginViewModel = UserLoginViewModel()
     
-    @Environment(\.dismiss) var dismiss
-
+    @StateObject private var productViewModel = ProductViewModel()
+    
     var body: some View {
         NavigationStack(path: $navigationPath){
             ZStack{
@@ -38,9 +39,6 @@ struct ContentView: View {
                         
 //                        PersonView()
 //                            .tag(Tab.person)
-                        
-//                        CartView(selectedTab: $selectedTab, navigationPath: $navigationPath, shoppingBasketViewModel: shoppingBasketViewModel)
-//                            .tag(Tab.cart)
                         
                     })
                 })

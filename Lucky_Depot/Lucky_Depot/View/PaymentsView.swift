@@ -8,17 +8,13 @@
 import SwiftUI
 import TossPayments
 
-private enum Constants {
-    static let clientKey: String = "test_ck_DpexMgkW367ekQZ9PG4BVGbR5ozO"
-}
-
-
 struct PaymentsView: View {
 //    @State var productList: [Product] = [
 //        Product(id: "1", name: "제품", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
 //        Product(id: "2", name: "제품2", price: 2334, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
 //    ]
-    
+    static let clientKey: String = "test_ck_DpexMgkW367ekQZ9PG4BVGbR5ozO"
+
     @ObservedObject var shoppingBasketViewModel: ShoppingBasketViewModel
     @StateObject var orderViewModel: OrderViewModel = OrderViewModel()
     
@@ -34,8 +30,7 @@ struct PaymentsView: View {
     // 결제화면 상태
     @State private var showPaymentView: Bool = false
     
-    @State var orderId: String?
-    @State var paymentInfo: PaymentInfo?
+    @State var orderId: String = ""
     @State var totalPrice: Double = 0
     
     
@@ -114,15 +109,11 @@ struct PaymentsView: View {
                                 errorMessage = "주소를 입력해주세요."
                                 errorAlert = true
                             } else {
-                                let orderName = createOrderName()
-                                orderId = orderViewModel.createOrderNum()
-                                paymentInfo = DefaultPaymentInfo(
-                                    amount: totalPrice,
-                                    orderId: orderId!,
-                                    orderName: orderName,
-                                    customerName: "박토스" // 유저이름
-                               )
-                                
+                                Task{
+                                    await orderViewModel.insertOrder(user_id: "1", order_id: orderId, payment_type: "card", price: totalPrice, address: deliveryAddress)
+
+                                    await insertDetails()
+                                }
                                 showPaymentView = true
                             }
                         }, label: {
@@ -141,21 +132,16 @@ struct PaymentsView: View {
                         }
                         .popover(isPresented: $showPaymentView, content: {
                             TossPaymentsView(
-                                clientKey: Constants.clientKey,
+                                clientKey: PaymentsView.clientKey,
                                 paymentMethod: .CARD,
-                                paymentInfo: paymentInfo!,
+                                paymentInfo: createPaymentInfo(),
                                 isPresented: $showPaymentView)
                             .onSuccess { key, id, amount in
                                 //                                print(key,id,amount)
                                 navigationPath.append("SuccessView")
                                 
                                 // 주문 정보 입력
-                                Task{
-                                    await orderViewModel.insertOrder(user_id: "1", order_id: orderId!, payment_type: "card", price: totalPrice, address: deliveryAddress)
-
-                                    await insertDetails()
-                                }
-                            }
+                                                            }
                             .onFail({code, message, id in
                                 //                                print(code, message, id)
                                 errorMessage = message
@@ -168,6 +154,7 @@ struct PaymentsView: View {
         }
         .onAppear(perform: {
             totalPrice = shoppingBasketViewModel.totalPrice()
+            orderId = orderViewModel.createOrderNum()
         })
     }
     
@@ -184,12 +171,23 @@ struct PaymentsView: View {
         for i in 0..<shoppingBasketViewModel.productCounts {
             await orderViewModel.insertOrderDetail(
                 user_id: "1",
-                order_id: orderId!,
+                order_id: orderId,
                 product_id: shoppingBasketViewModel.products[i].id,
                 price: shoppingBasketViewModel.products[i].price,
                 quantity: shoppingBasketViewModel.products[i].quantity
             )
         }
+    }
+    
+    func createPaymentInfo() -> DefaultPaymentInfo {
+        let orderName = createOrderName()
+
+        return DefaultPaymentInfo(
+            amount: totalPrice,
+            orderId: orderId,
+            orderName: orderName,
+            customerName: "박토스" // 유저 이름
+        )
     }
 }
 

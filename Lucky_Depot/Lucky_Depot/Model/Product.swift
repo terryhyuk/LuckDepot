@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct Product {
+struct Product: Decodable {
     var id: String
     var name: String
     var price: Double
@@ -19,7 +19,6 @@ struct Product {
            return price * Double(quantity)
        }
 
-    
     init(id: String, name: String, price: Double, imagePath: String, quantity:Int, category: String) {
         self.id = id
         self.name = name
@@ -28,7 +27,12 @@ struct Product {
         self.quantity = quantity
         self.category = category
     }
-    
+}
+
+extension Product: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 // 테스트 용

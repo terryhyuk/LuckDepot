@@ -5,34 +5,22 @@
 //  Created by Eunji Kim on 1/21/25.
 //
 
-struct Order {
-    var id: Int
-    var userId: Int
-    var productId: Int
-    var productName: String
-    var quantity: Int
+struct Order: Decodable {
+    var id: String
+    var user_seq: Int
+    var payment_type: String
     var price: Double
-    var payment: String
     var address: String
-    var orderDate: String
-    var status: String?
-
-    init(id: Int, userId: Int, productId: Int, productName: String, quantity: Int, price: Double, payment: String, address: String, orderDate: String, status: String? = nil) {
+    var order_date: String
+    var status: String
+    
+    init(id: String, user_seq: Int, payment_type: String, price: Double, address: String, order_date: String, status: String) {
         self.id = id
-        self.userId = userId
-        self.productId = productId
-        self.productName = productName
-        self.quantity = quantity
+        self.user_seq = user_seq
+        self.payment_type = payment_type
         self.price = price
-        self.payment = payment
         self.address = address
-        self.orderDate = orderDate
+        self.order_date = order_date
         self.status = status
     }
 }
-
-var orderList: [Order] = [
-    
-    Order(id: 1, userId: 1, productId: 1, productName: "Ballpoint Pen", quantity: 2, price: 7.5, payment: "toss", address: "gangnam, Seoul", orderDate: "2024-1-15", status: "배송완료"),
-    Order(id: 2, userId: 1, productId: 2, productName: "Notebook", quantity: 2, price: 15, payment: "toss", address: "gangnam, Seoul", orderDate: "2024-1-21", status: "배송중")
-]

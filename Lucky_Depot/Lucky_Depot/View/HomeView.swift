@@ -28,27 +28,26 @@ struct HomeView: View {
                     LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
                         ForEach(productList, id: \.id, content: {
                             product in
-                            NavigationLink(destination: DetailView(product: product), label: {
-                                VStack(alignment:.leading,content: {
-                                    
-                                    Image(product.imagePath)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width:170, height: 150)
-                                    VStack(alignment: .leading){
-                                        Text(product.name)
-                                            .foregroundStyle(.black)
-                                        Spacer()
-                                        Text("$"+String(format : "%.2f", product.price))
-                                            .foregroundStyle(.black.opacity(0.7))
-                                    }
-                                    .padding(12)
-                                })
-                                .background(.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .shadow(color: .black.opacity(0.08), radius: 5, x: 2, y: 2)
-
+                            
+                            VStack(alignment:.leading,content: {
+                                
+                                Image(product.imagePath)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width:170, height: 150)
+                                VStack(alignment: .leading){
+                                    Text(product.name)
+                                        .foregroundStyle(.black)
+                                    Spacer()
+                                    Text("$"+String(format : "%.2f", product.price))
+                                        .foregroundStyle(.black.opacity(0.7))
+                                }
+                                .padding(12)
                             })
+                            .background(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .shadow(color: .black.opacity(0.08), radius: 5, x: 2, y: 2)
+                            
                         })
                     })
                 }.padding(.horizontal)
