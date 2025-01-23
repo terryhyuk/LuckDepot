@@ -97,7 +97,7 @@ async def get_orders(session: Session = Depends(db.session)):
 # 주문번호, user_seq, 결제수단, 가격, 배송지 
 # 최초 입력시 배송상태는 '배송전'으로 고정값 입력
 @router.get('/insert')
-async def insert(session : Session = Depends(db.session), id : str = None, user_seq : int = None, payment_type : str = None, price : int = None, address : str = None):
+async def insert(session : Session = Depends(db.session), id : str = None, user_seq : int = None, payment_type : str = None, price : float = None, address : str = None):
     """
     사용자용
     주문 입력함수

@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String, TIMESTAMP, Integer, VARCHAR, ForeignKey
+from sqlalchemy import Column,String, TIMESTAMP, Integer, VARCHAR, ForeignKey, Double
 from sqlalchemy.orm import relationship
 from database.model.base import Base
 class Order(Base) :
@@ -9,7 +9,7 @@ class Order(Base) :
     id = Column(VARCHAR, primary_key=True) 
     user_seq = Column(Integer, ForeignKey('luckydepot.user.seq')) # 외래키 user seq
     payment_type = Column(String)
-    price = Column(Integer)
+    price = Column(Double)
     address = Column(String)
     order_date = Column(TIMESTAMP)
     status = Column(String)

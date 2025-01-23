@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String,Integer, ForeignKey
+from sqlalchemy import Column,String,Integer, ForeignKey, Double
 from sqlalchemy.orm import relationship
 from database.model.base import Base
 class OrderDetail(Base) :
@@ -9,7 +9,7 @@ class OrderDetail(Base) :
     id = Column(String, primary_key=True) 
     user_seq = Column(Integer,ForeignKey('luckydepot.user.seq')) # 외래키 user seq
     product_id = Column(Integer, ForeignKey('luckydepot.product.id')) # 외래키 product id
-    price = Column(Integer)
+    price = Column(Double)
     quantity = Column(Integer) 
 
     user = relationship("User", back_populates="orderdetail")

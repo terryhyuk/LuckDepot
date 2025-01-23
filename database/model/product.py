@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String, Integer, ForeignKey
+from sqlalchemy import Column,String, Integer, ForeignKey, Double
 from sqlalchemy.orm import relationship
 from database.model.base import Base
 class Product(Base) :
@@ -8,7 +8,7 @@ class Product(Base) :
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
-    price = Column(Integer)
+    price = Column(Double)
     image = Column(String)
     quantity = Column(Integer)
     category_id = Column(Integer, ForeignKey('luckydepot.category.id'))  # category 테이블 참조, ForeignKey

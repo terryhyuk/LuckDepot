@@ -81,7 +81,7 @@ async def user(session : Session = Depends(db.session), user_seq : int = None):
 
 
 @router.get('/insert')
-async def insert(session : Session = Depends(db.session), id : str = None, user_seq : int = None, product_id : int = None, price : int = None, quantity : int = None):
+async def insert(session : Session = Depends(db.session), id : str = None, user_seq : int = None, product_id : int = None, price : float = None, quantity : int = None):
     """
     사용자용
     주문시 orderdetail 입력
