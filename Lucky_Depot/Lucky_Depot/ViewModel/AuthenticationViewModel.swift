@@ -30,13 +30,14 @@ class AuthenticationViewModel: ObservableObject {
   @Published var confirmPassword: String = ""
 
   @Published var flow: AuthenticationFlow = .login
-
+  
   @Published var isValid: Bool  = false
   @Published var authenticationState: AuthenticationState = .unauthenticated
   @Published var errorMessage: String = ""
   @Published var user: User?
   @Published var displayName: String = ""
   @State var manager = LoginManager()
+    @State var userRealM : UserLoginViewModel = UserLoginViewModel()
 
   init() {
     registerAuthStateHandler()
@@ -97,17 +98,6 @@ extension AuthenticationViewModel {
       errorMessage = error.localizedDescription
     }
   }
-
-//  func deleteAccount() async -> Bool {
-//    do {
-//      try await user?.delete()
-//      return true
-//    }
-//    catch {
-//      errorMessage = error.localizedDescription
-//      return false
-//    }
-//  }
 }
 
 enum AuthenticationError: Error {
@@ -142,6 +132,8 @@ extension AuthenticationViewModel {
         let result = try await Auth.auth().signIn(with: credential)
         let firebaseUser = result.user
         print("User \(firebaseUser.uid) signed in with email \(firebaseUser.email ?? "unknown")")
+        userRealM.addUser(user: LoginUser(email: firebaseUser.email!, name: firebaseUser.displayName!))
+          print(userRealM.fetchUser())
         return true
       }
       catch {
@@ -162,13 +154,13 @@ extension AuthenticationViewModel {
                     return
                 }
                 let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
-                Auth.auth().signIn(with: credential) { result, error in
+            Auth.auth().signIn(with: credential) { [self] result, error in
                     if let error = error {
                         print("Firebase Auth Error: \(error.localizedDescription)")
                         return
                     }
                     
-                    
+                    userRealM.addUser(user: LoginUser(email: (result?.user.email)!, name: (result?.user.displayName)!))
                     print("User signed in with Facebook: \(result?.user.uid ?? "")")
                     print("User signed in with Facebook: \(result?.user.email ?? "")")
                     print("User signed in with Facebook: \(result?.user.displayName ?? "")")

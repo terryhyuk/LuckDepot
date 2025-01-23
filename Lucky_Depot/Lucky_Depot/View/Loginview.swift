@@ -13,35 +13,81 @@ import FBSDKLoginKit
 struct Loginview: View {
 
     @EnvironmentObject var viewModel: AuthenticationViewModel
-
     @Environment(\.dismiss) var dismiss
-    @State var manager = LoginManager()
+    @Binding var navigationPath: NavigationPath
+    @ObservedObject var userRealM: UserLoginViewModel
 
     var body: some View {
-        NavigationStack {
-            
-            GoogleSignInButton(viewModel: GoogleSignInButtonViewModel(scheme:  .light, style: .wide, state: .normal), action: {})
-            
-            Button(action:{
-                signInWithGoogle()
-            }){
-                Text("Sign in with Google")
-                    .frame(maxWidth: .infinity)
-                    .background(alignment: .leading){
-                        //Image("Google")
-                    }
-            }
-            Button(action:{
-                viewModel.signInWithFacebook()
-            }){
-                Text("Sign in with Facebook")
-                    .frame(maxWidth: .infinity)
-                    .background(alignment: .leading){
-                    }
-            }
-        }
+            VStack(content:{
+                
+                Image(systemName: "applepencil.and.scribble")
+                    .resizable()
+                    .frame(width: 80, height: 80)
+                    .foregroundStyle(.blue, .green)
+                
+                Text("Lucky Depot")
+                    .font(.title)
+                    .fontWeight(.heavy)
+                
+                Text("Please login to continue shopping")
+                    .padding(.bottom, 30)
+                
+                Button(action:{
+                    signInWithGoogle()
+                }){
+                    Text("Continue with Google")
+                        .foregroundStyle(.black.opacity(0.7))
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .background(alignment: .leading){
+                            Image("google")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                        }
+                }
+                .padding()
+                    .background(Color.white)
+                    .cornerRadius(8.0)
+                    .shadow(radius: 4.0)
+                
+                
+                Button(action:{
+                    viewModel.signInWithFacebook()
+                
+                }){
+                    Text("Continue with Facebook")
+                        .foregroundStyle(.white)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .background(alignment: .leading){
+                            Image("facebook")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                        }
+                }.padding()
+                    .background(Color.blue)
+                    .cornerRadius(8.0)
+                    .shadow(radius: 4.0)
+            })
+            .padding()
+            .navigationTitle("Login")
+            .navigationBarBackButtonHidden(true)
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarLeading, content: {
+                    Button(action: {
+                        navigationPathInit()
+                    }, label: {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    })
+                })
+            })
+        
     }
     
+    func navigationPathInit(){
+        navigationPath = NavigationPath()
+    }
    
     
     private func signInWithGoogle() {
@@ -55,6 +101,15 @@ struct Loginview: View {
    
 }
 
-#Preview {
-    Loginview()
+
+
+struct LoginView_Previews: PreviewProvider {
+    @State static var navigationPath = NavigationPath()
+    @StateObject static var shoppingBasketViewModel = ShoppingBasketViewModel()
+
+    static var previews: some View {
+        Loginview(
+            navigationPath: $navigationPath, userRealM: UserLoginViewModel()
+        )
+    }
 }

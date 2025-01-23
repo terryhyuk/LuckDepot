@@ -90,24 +90,24 @@ struct CartView: View {
     }
 }
 
-#Preview {
-//    CartView(selectedTab: .constant(.home), navigationPath: <#Binding<NavigationPath>#>)
+//#Preview {
+////    CartView(selectedTab: .constant(.home), navigationPath: <#Binding<NavigationPath>#>)
+//}
+
+struct CartView_Previews: PreviewProvider {
+    static var previews: some View {
+        CartViewWrapper()
+    }
 }
 
-//struct CartView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CartViewWrapper()
-//    }
-//}
+struct CartViewWrapper: View {
+    @State private var selectedTab: Tab = .home
+    @State private var navigationPath = NavigationPath()
 
-//struct CartViewWrapper: View {
-//    @State private var selectedTab: Tab = .home
-//    @State private var navigationPath = NavigationPath()
-//
-//    var body: some View {
-//        NavigationStack(path: $navigationPath) {
-//            CartView(selectedTab: $selectedTab, navigationPath: $navigationPath)
-//        }
-//    }
-//}
+    var body: some View {
+        NavigationStack(path: $navigationPath) {
+            CartView(selectedTab: $selectedTab, navigationPath: $navigationPath, shoppingBasketViewModel: ShoppingBasketViewModel())
+        }
+    }
+}
 

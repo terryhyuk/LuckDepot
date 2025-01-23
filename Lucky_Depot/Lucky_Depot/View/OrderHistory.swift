@@ -12,7 +12,6 @@ struct OrderHistory: View {
     @State var selectedType: String = "All"
 
     var body: some View {
-        NavigationStack {
             ZStack {
                 backgroundColor
                   .ignoresSafeArea()
@@ -114,7 +113,7 @@ struct OrderHistory: View {
                 
             }
             
-        }
+      
       
       
         

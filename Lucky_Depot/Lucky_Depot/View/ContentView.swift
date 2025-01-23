@@ -18,7 +18,10 @@ struct ContentView: View {
     
     @State var navigationPath: NavigationPath = NavigationPath()
     @StateObject private var shoppingBasketViewModel = ShoppingBasketViewModel()
+    @State var userRealM : UserLoginViewModel = UserLoginViewModel()
     
+    @Environment(\.dismiss) var dismiss
+
     var body: some View {
         NavigationStack(path: $navigationPath){
             ZStack{
@@ -33,15 +36,15 @@ struct ContentView: View {
                             .tag(Tab.category)
                         
                         
-                        PersonView()
-                            .tag(Tab.person)
+//                        PersonView()
+//                            .tag(Tab.person)
                         
 //                        CartView(selectedTab: $selectedTab, navigationPath: $navigationPath, shoppingBasketViewModel: shoppingBasketViewModel)
 //                            .tag(Tab.cart)
                         
                     })
                 })
-                
+
                 VStack{
                     Spacer()
                     TabBarView(selectedTab: $selectedTab, navigationPath: $navigationPath)
@@ -58,6 +61,12 @@ struct ContentView: View {
                     PaymentsView(shoppingBasketViewModel: shoppingBasketViewModel, navigationPath: $navigationPath)
                 } else if destination == "SuccessView" {
                     SuccessView(shoppingBasketViewModel: shoppingBasketViewModel, navigationPath: $navigationPath)
+                } else if destination == "LoginView" {
+                    Loginview(navigationPath: $navigationPath, userRealM: userRealM)
+                } else if destination == "PersonView" {
+                    PersonView(selectedTab: $selectedTab, navigationPath: $navigationPath, userRealM: userRealM)
+                }else if destination == "OrderHistoryView" {
+                    OrderHistory()
                 }
             }
             

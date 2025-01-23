@@ -49,16 +49,29 @@ private struct TabsLayoutView: View {
         @Binding var selectedTab: Tab
         var namespace: Namespace.ID
         @Binding var navigationPath: NavigationPath
-        
+        @EnvironmentObject var viewModel: AuthenticationViewModel
+
         var body: some View {
             Button {
                 print(tab)
                 withAnimation {
 //                    selectedTab = tab
-                    if tab != .cart { // cart가 아닐 때만 selectedTab을 업데이트
+//                    if tab != .cart { // cart가 아닐 때만 selectedTab을 업데이트
+//                        selectedTab = tab
+//                    } else {
+//                        navigationPath.append("CartView")
+//                    }
+                    
+                    if tab != .cart && tab != .person { // cart가 아닐 때만 selectedTab을 업데이트
                         selectedTab = tab
-                    } else {
+                    } else if tab == .cart {
                         navigationPath.append("CartView")
+                    } else if tab == .person {
+                        if viewModel.authenticationState == .unauthenticated {
+                            navigationPath.append("LoginView")
+                        } else {
+                            navigationPath.append("PersonView")
+                        }
                     }
                 }
             } label: {

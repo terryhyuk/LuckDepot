@@ -34,7 +34,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
       
       // Google 로그인 초기화
-              GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+    GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
                   // 이전 로그인 상태 복원 (옵션)
               }
     return true
@@ -48,9 +48,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
                 annotation: options[UIApplication.OpenURLOptionsKey.annotation]
             )
-            // Google 로그인 처리
             return  handled
-            //GIDSignIn.sharedInstance.handle(url) ||
            
         }
     

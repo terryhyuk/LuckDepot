@@ -9,14 +9,16 @@ import SwiftUI
 
 struct PersonView: View {
     @EnvironmentObject var viewModel: AuthenticationViewModel
+    @Binding var selectedTab: Tab
+    @Binding var navigationPath: NavigationPath
+    @ObservedObject var userRealM: UserLoginViewModel
+    
+    @State var userName: String = ""
+    @State var userEmail: String = ""
 
     var body: some View {
-        
-        if viewModel.authenticationState == .unauthenticated {
-            Loginview()
 
-        } else {
-            NavigationStack {
+        
                ZStack {
                    backgroundColor
                      .ignoresSafeArea()
@@ -24,10 +26,11 @@ struct PersonView: View {
                        // 유저 정보
                        VStack(alignment: .leading, spacing: 5, content: {
                        
-                           Text(viewModel.user?.displayName ?? "")
+                           
+                           Text(userName)
                                .bold()
                                .font(.title2)
-                           Text(viewModel.user?.email ?? "")
+                           Text(userEmail)
                            
                        })
                        .padding(30)
@@ -79,16 +82,19 @@ struct PersonView: View {
                        
                        VStack(alignment: .leading, spacing: 15, content: {
                            
-                           NavigationLink(destination: {
-                               OrderHistory()
-                           }){
+                           Button(action:{
+                               navigationPath.append("OrderHistoryView")
+                               
+                           }) {
                                Label("Order History", systemImage: "list.bullet")
-                           }
-                           
+                               }
                            Divider()
                            
                            Button(action:{
                                viewModel.signOut()
+                               userRealM.deleteUser(user: userRealM.realMUser[0])
+//                               userRealM.deleteAll()
+                               navigationPathInit()
                                
                            }) {
                                    Label("Logout", systemImage: "arrow.right.circle")
@@ -109,16 +115,31 @@ struct PersonView: View {
                        
                    })
                    .padding(20)
+                   .navigationTitle("My")
+                   .navigationBarBackButtonHidden(true)
+                   .toolbar(content: {
+                       ToolbarItem(placement: .topBarLeading, content: {
+                           Button(action: {
+                               navigationPathInit()
+                           }, label: {
+                               Image(systemName: "chevron.left")
+                               Text("Back")
+                           })
+                       })
+                   })
                    
-                   
-               }
+               }.onAppear(perform: {
+                   userRealM.fetchUser()
+                   userName = userRealM.realMUser[0].name
+                   userEmail = userRealM.realMUser[0].email
+               })
                
-           }
         }
-         
+    func navigationPathInit(){
+        navigationPath = NavigationPath()
     }
 }
-
-#Preview {
-    PersonView()
-}
+//
+//#Preview {
+//    PersonView()
+//}
