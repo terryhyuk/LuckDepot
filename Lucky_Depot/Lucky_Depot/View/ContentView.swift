@@ -15,38 +15,54 @@ struct ContentView: View {
     @State private var showLoginView = false
 
     @State var selectedTab: Tab = .home
+    
+    @State var navigationPath: NavigationPath = NavigationPath()
+    @StateObject private var shoppingBasketViewModel = ShoppingBasketViewModel()
+    
     var body: some View {
-        ZStack{
-           backgroundColor
-             .ignoresSafeArea()
-            VStack(content: {
-                TabView(selection: $selectedTab, content: {
-                    CategoryView()
-                        .tag(Tab.category)
-                    
-                    HomeView()
-                        .tag(Tab.home)
-                    
-              
-                    PersonView()
+        NavigationStack(path: $navigationPath){
+            ZStack{
+                backgroundColor
+                    .ignoresSafeArea()
+                VStack(content: {
+                    TabView(selection: $selectedTab, content: {
+                        HomeView()
+                            .tag(Tab.home)
+                        
+                        CategoryView()
+                            .tag(Tab.category)
+                        
+                        
+                        PersonView()
                             .tag(Tab.person)
-                         
-                    
-                    CartView(selectedTab: $selectedTab)
-                        .tag(Tab.cart)
-
-                }).sheet(isPresented: $showLoginView) {
-                    Loginview()
+                        
+//                        CartView(selectedTab: $selectedTab, navigationPath: $navigationPath, shoppingBasketViewModel: shoppingBasketViewModel)
+//                            .tag(Tab.cart)
+                        
+                    })
+                })
+                
+                VStack{
+                    Spacer()
+                    TabBarView(selectedTab: $selectedTab, navigationPath: $navigationPath)
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal)
                 }
-            })
-           
-            VStack{
-                Spacer()
-                TabBarView(selectedTab: $selectedTab)
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal)
             }
+            .navigationTitle("Lucky Depot")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: String.self) { destination in
+                if destination == "CartView" {
+                    CartView(selectedTab: $selectedTab, navigationPath: $navigationPath, shoppingBasketViewModel: shoppingBasketViewModel) // 이동할 CartView
+                } else if destination == "PaymentsView" {
+                    PaymentsView(shoppingBasketViewModel: shoppingBasketViewModel, navigationPath: $navigationPath)
+                } else if destination == "SuccessView" {
+                    SuccessView(shoppingBasketViewModel: shoppingBasketViewModel, navigationPath: $navigationPath)
+                }
+            }
+            
         }
+        
     }
 }
 
@@ -58,16 +74,16 @@ enum Tab: Int, Identifiable, CaseIterable, Comparable {
         lhs.rawValue < rhs.rawValue
     }
     
-    case category, home, person, cart
+    case  home, category, person, cart
     
     internal var id: Int { rawValue }
     
     var icon: String {
         switch self {
-        case .category:
-            return "text.page.badge.magnifyingglass"
         case .home:
             return "house.fill"
+        case .category:
+            return "text.page.badge.magnifyingglass"
         case .person:
             return "person.fill"
         case .cart:
@@ -78,10 +94,10 @@ enum Tab: Int, Identifiable, CaseIterable, Comparable {
     
     var title: String {
         switch self {
-        case .category:
-            return "Category"
         case .home:
             return "Home"
+        case .category:
+            return "Category"
         case .person:
             return "Person"
         case .cart:

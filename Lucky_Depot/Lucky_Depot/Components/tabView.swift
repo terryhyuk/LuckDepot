@@ -9,14 +9,15 @@ import SwiftUI
 
 struct TabBarView: View {
     @Binding var selectedTab: Tab // TabView와 연결된 selectedTab
-
+    @Binding var navigationPath: NavigationPath
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(.white)
                 .shadow(color: .gray.opacity(0.4), radius: 20, x: 0, y: 20)
             
-            TabsLayoutView(selectedTab: $selectedTab)
+            TabsLayoutView(selectedTab: $selectedTab, navigationPath: $navigationPath)
         }
         .frame(height: 70, alignment: .center)
     }
@@ -26,13 +27,14 @@ struct TabBarView: View {
 private struct TabsLayoutView: View {
     @Binding var selectedTab: Tab // TabView와 연결된 selectedTab
     @Namespace var namespace
+    @Binding var navigationPath: NavigationPath
     
     var body: some View {
         HStack {
             Spacer(minLength: 0)
             
             ForEach(Tab.allCases) { tab in
-                TabButton(tab: tab, selectedTab: $selectedTab, namespace: namespace)
+                TabButton(tab: tab, selectedTab: $selectedTab, namespace: namespace, navigationPath: $navigationPath)
                     .frame(width: 65, height: 65, alignment: .center)
                 
                 Spacer(minLength: 0)
@@ -46,11 +48,18 @@ private struct TabsLayoutView: View {
         let tab: Tab
         @Binding var selectedTab: Tab
         var namespace: Namespace.ID
+        @Binding var navigationPath: NavigationPath
         
         var body: some View {
             Button {
+                print(tab)
                 withAnimation {
-                    selectedTab = tab
+//                    selectedTab = tab
+                    if tab != .cart { // cart가 아닐 때만 selectedTab을 업데이트
+                        selectedTab = tab
+                    } else {
+                        navigationPath.append("CartView")
+                    }
                 }
             } label: {
                 ZStack {
@@ -86,10 +95,10 @@ private struct TabsLayoutView: View {
 }
 
 
-struct TabBarView1_Previews: PreviewProvider {
-    @State static var selectedTab: Tab = .home
-    static var previews: some View {
-        TabBarView(selectedTab: $selectedTab)
-            .padding(.horizontal)
-    }
-}
+//struct TabBarView1_Previews: PreviewProvider {
+//    @State static var selectedTab: Tab = .home
+//    static var previews: some View {
+//        TabBarView(selectedTab: $selectedTab)
+//            .padding(.horizontal)
+//    }
+//}

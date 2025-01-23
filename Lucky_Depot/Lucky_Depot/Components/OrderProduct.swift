@@ -22,11 +22,26 @@ struct OrderProduct: View {
             
             VStack(alignment: .leading, content: {
                 Text(product.name)
+                  
+                HStack(content: {
+                    Text("수량: \(product.quantity)")
                     
-                Text("수량: \(product.quantity)")
+                    Spacer()
+                    
+                    Text("$"+String(format : "%.2f", product.price))
+                        .bold()
+                })
                 
-                Text("\(product.price)원")
-                    .bold()
+                HStack(content: {
+                    Text("Total")
+                        .bold()
+                        .foregroundStyle(.blue)
+                    Spacer()
+                    Text("$"+String(format : "%.2f", product.price * Double(product.quantity)))
+                        .bold()
+                        .foregroundStyle(.blue)
+                })
+                
                 
                 HStack(content: {
                     Image(systemName: "clock.arrow.circlepath")
@@ -42,5 +57,5 @@ struct OrderProduct: View {
 }
 
 #Preview {
-//    OrderProduct(product: Product(id: "11", name: "123", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"))
+    OrderProduct(product: RealMProduct())
 }

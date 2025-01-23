@@ -12,7 +12,7 @@ struct SuccessView: View {
 //        Product(id: "1", name: "제품", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
 //        Product(id: "2", name: "제품2", price: 2334, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
 //    ]
-    @StateObject private var shoppingBasketViewModel = ShoppingBasketViewModel()
+    @ObservedObject var shoppingBasketViewModel: ShoppingBasketViewModel
     
     @Binding var navigationPath: NavigationPath
     
