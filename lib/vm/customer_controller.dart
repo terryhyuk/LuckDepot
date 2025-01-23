@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import 'package:lucky_depot/vm/custom_json.dart';
+import 'package:lucky_depot/repository/customer_repository.dart';
 
 class CustomerController extends GetxController {
-  final customerRepository = CustomJson();
+  final customerRepository = CustomerRepository();
   
   final RxInt totalCustomers = 0.obs;
   final RxDouble totalPayment = 0.0.obs;

@@ -47,7 +47,7 @@ filterProducts() {
         product.name.toLowerCase().contains(searchController.text.toLowerCase());
       final matchesCategory = selectedCategory.value == 'All' || 
         selectedCategory.value.isEmpty || 
-        product.category == selectedCategory.value;
+        product.categoryName == selectedCategory.value;
       return matchesSearch && matchesCategory;
     }).toList();
   }

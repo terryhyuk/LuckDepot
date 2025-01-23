@@ -1,41 +1,46 @@
 class Product {
   final int id;
-  final String name;
-  final String category;
-  final String description;
+  final String image;
   final double price;
+  final String name;
   final int quantity;
+  final String category;
+  final int categoryId;
 
   Product({
     required this.id,
-    required this.name,
-    required this.category,
-    required this.description,
+    required this.image,
     required this.price,
+    required this.name,
     required this.quantity,
+    required this.category,
+    required this.categoryId,
   });
 
-  // JSON 변환을 위한 팩토리 메서드
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id'],
-      name: json['name'],
-      category: json['category'],
-      description: json['description'],
-      price: json['price'].toDouble(),
-      quantity: json['quantity'],
+      id: json['id'] ?? 0,
+      image: json['image'] ?? '',
+      price: (json['price'] ?? 0).toDouble(),
+      name: json['name'] ?? '',
+      quantity: json['quantity'] ?? 0,
+      category: json['category'] ?? '',
+      categoryId: json['category_id'] ?? 0,
     );
   }
 
-  // JSON으로 변환하는 메서드
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'category': category,
-      'description': description,
-      'price': price,
-      'quantity': quantity,
-    };
+  String get categoryName{
+    switch(categoryId){
+      case 1: return 'Tables';
+      case 2: return 'Chairs';
+      case 3: return 'Bookcases';
+      case 4: return 'Storage';
+      case 5: return 'Paper';
+      case 6: return 'Binders';
+      case 7: return 'Copiers';
+      case 8: return 'Envelopes';
+      case 9: return 'Fasteners';
+      default: return '';
+    }
   }
 }
