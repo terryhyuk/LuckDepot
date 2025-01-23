@@ -17,16 +17,11 @@ struct CartProductCell: View {
             VStack(content: {
                 ForEach(shoppingBasketViewModel.products, id: \.id) { product in
                     HStack(content: {
-//                         제품 사진 및 네비게이션
-                        NavigationLink(destination: DetailView(product: Product(id: product.id, name: product.name, price: product.price, imagePath: product.imagePath, quantity: product.quantity, category: product.category))) {
-//                            Image(product.imagePath)
-                            WebImage(url: URL(string: product.imagePath))
-                                .resizable()
-                                .frame(width: 100, height: 100)
-                                .scaledToFit()
-                                .cornerRadius(8)
-                        }
-                        
+                        WebImage(url: URL(string: product.imagePath))
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .scaledToFit()
+                            .cornerRadius(8)
 
                         VStack(alignment: .leading, spacing: 10, content: {
                             // 제품명 및 삭제 버튼
