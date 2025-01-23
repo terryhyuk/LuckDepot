@@ -4,8 +4,6 @@ FROM python:3.12-slim
 WORKDIR /LUCKYDEPOT
 
 # Copy the application folder
-# COPY ./fastapi ./fastapi
-# COPY requirements.txt .
 COPY . .
 
 # Set the working directory for the app
@@ -20,8 +18,6 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
-# COPY ./fastapi/requirements.txt ./requirements.txt
-# RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 # ENV DATESPOT_DB=""
