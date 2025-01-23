@@ -8,24 +8,24 @@
 import Foundation
 import SwiftUI
 
-struct Product: Decodable {
-    var id: String
+struct Product: Identifiable, Decodable {
+    var id: Int
+    var image: String
+    var category_id: Int
     var name: String
     var price: Double
-    var imagePath: String
-    var category:String
     var quantity: Int
-    var totalPrice: Double {  // 전체 금액 (단가 * 수량)
+    var totalPrice: Double{  // 전체 금액 (단가 * 수량)
            return price * Double(quantity)
        }
 
-    init(id: String, name: String, price: Double, imagePath: String, quantity:Int, category: String) {
+    init(id: Int, image: String, category_id: Int, name: String, price: Double, quantity: Int) {
         self.id = id
+        self.image = image
+        self.category_id = category_id
         self.name = name
         self.price = price
-        self.imagePath = imagePath
         self.quantity = quantity
-        self.category = category
     }
 }
 
@@ -35,10 +35,10 @@ extension Product: Hashable {
     }
 }
 
-// 테스트 용
+ //테스트 용
 var productList: [Product] = [
-    Product(id: "1", name: "copper", price: 12.5, imagePath: "namsan", quantity: 1,category: "Food"),
-    Product(id: "2", name: "aluminium", price: 130.3, imagePath: "hyeondai", quantity:2, category: "Food"),
-    Product(id: "3", name: "lithium", price: 15.4, imagePath: "lithium", quantity:13, category: "Music"),
-    Product(id: "4", name: "nickel", price: 14.5, imagePath: "nickel",  quantity:1, category: "Sports")
+   // Product(id: 1, name: "copper", price: 12.5, image: "namsan", quantity: 1,category_id: "Food"),
+ //   Product(id: 2, name: "aluminium", price: 130.3, image: "hyeondai", quantity:2, category_id: "Food"),
+  //  Product(id: 3, name: "lithium", price: 15.4, imag: "lithium", quantity:13, category_id: "Music"),
+    Product(id: 1, image: "nickel", category_id: 1, name: "mdm", price: 12, quantity: 1)
 ]

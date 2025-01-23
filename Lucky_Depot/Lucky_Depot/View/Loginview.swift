@@ -52,8 +52,7 @@ struct Loginview: View {
                 
                 
                 Button(action:{
-                    viewModel.signInWithFacebook()
-                
+                    signInWithFacebook()
                 }){
                     Text("Continue with Facebook")
                         .foregroundStyle(.white)
@@ -93,11 +92,17 @@ struct Loginview: View {
     private func signInWithGoogle() {
         Task {
           if await viewModel.signInWithGoogle() == true {
-            dismiss()
+              navigationPath.append("PersonView")
           }
         }
       }
-    
+    private func signInWithFacebook() {
+        Task {
+          if await viewModel.signInWithFacebook3() == true {
+              navigationPath.append("PersonView")
+          }
+        }
+      }
    
 }
 

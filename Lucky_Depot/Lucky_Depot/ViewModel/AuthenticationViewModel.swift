@@ -25,21 +25,21 @@ enum AuthenticationFlow {
 
 @MainActor
 class AuthenticationViewModel: ObservableObject {
-  @Published var email: String = ""
-  @Published var password: String = ""
-  @Published var confirmPassword: String = ""
+    @Published var email: String = ""
+    @Published var password: String = ""
+    @Published var confirmPassword: String = ""
 
-  @Published var flow: AuthenticationFlow = .login
+    @Published var flow: AuthenticationFlow = .login
   
-  @Published var isValid: Bool  = false
-  @Published var authenticationState: AuthenticationState = .unauthenticated
-  @Published var errorMessage: String = ""
-  @Published var user: User?
-  @Published var displayName: String = ""
-  @State var manager = LoginManager()
+    @Published var isValid: Bool  = false
+    @Published var authenticationState: AuthenticationState = .unauthenticated
+    @Published var errorMessage: String = ""
+    @Published var user: User?
+    @Published var displayName: String = ""
+    @State var manager = LoginManager()
     @State var userRealM : UserLoginViewModel = UserLoginViewModel()
 
-  init() {
+    init() {
     registerAuthStateHandler()
 
     $flow
@@ -130,10 +130,24 @@ extension AuthenticationViewModel {
                                                        accessToken: accessToken.tokenString)
 
         let result = try await Auth.auth().signIn(with: credential)
+          
         let firebaseUser = result.user
+//          print(firebaseUser.email)
+//          print(firebaseUser.uid)
+//          print(firebaseUser.displayName)
+//          print(firebaseUser.isAnonymous)
+//          print(firebaseUser.providerData)
+//          print(firebaseUser.photoURL)
+//          print(firebaseUser.metadata)
+//          print(firebaseUser.providerID)
+//          print(firebaseUser.tenantID)
+//          print(firebaseUser.isEmailVerified)
+//          print(firebaseUser.refreshToken)
+//          print(firebaseUser.multiFactor)
+//          print(firebaseUser.phoneNumber)
         print("User \(firebaseUser.uid) signed in with email \(firebaseUser.email ?? "unknown")")
         userRealM.addUser(user: LoginUser(email: firebaseUser.email!, name: firebaseUser.displayName!))
-          print(userRealM.fetchUser())
+        
         return true
       }
       catch {
@@ -142,21 +156,29 @@ extension AuthenticationViewModel {
         return false
       }
   }
+
+
     
-   func signInWithFacebook() {
-        manager.logIn(permissions: ["public_profile", "email"], from: getRootViewController()) { result, error in
+    func signInWithFacebook3() async -> Bool {
+        //withCheckedContinuation 비동기 클로저를 동기식으로 기다릴 수 있게 해주는 Swift의 비동기 API
+        // 클로저는 비동기 작업을 마친 후 continuation.resume(returning:)으로 결과를 반환
+        return await withCheckedContinuation { continuation in
+            manager.logIn(permissions: ["public_profile", "email"], from: getRootViewController()) { result, error in
                 if let error = error {
                     print("Facebook Login Error: \(error.localizedDescription)")
+                    continuation.resume(returning: false)
                     return
                 }
                 guard let result = result, !result.isCancelled else {
                     print("Facebook login cancelled.")
+                    continuation.resume(returning: false)
                     return
                 }
                 let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
-            Auth.auth().signIn(with: credential) { [self] result, error in
+                Auth.auth().signIn(with: credential) { [self] result, error in
                     if let error = error {
                         print("Firebase Auth Error: \(error.localizedDescription)")
+                        continuation.resume(returning: false)
                         return
                     }
                     
@@ -164,9 +186,12 @@ extension AuthenticationViewModel {
                     print("User signed in with Facebook: \(result?.user.uid ?? "")")
                     print("User signed in with Facebook: \(result?.user.email ?? "")")
                     print("User signed in with Facebook: \(result?.user.displayName ?? "")")
+                    continuation.resume(returning: true)
                 }
             }
         }
+    }
+
         
     func getRootViewController() -> UIViewController? {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene ,

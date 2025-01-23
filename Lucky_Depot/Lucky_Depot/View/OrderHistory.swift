@@ -9,14 +9,13 @@ import SwiftUI
 
 struct OrderHistory: View {
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    @State var selectedType: String = "All"
-
+    
     var body: some View {
             ZStack {
                 backgroundColor
                   .ignoresSafeArea()
                 VStack(alignment: .leading, content: {
-                    
+                
                  Text("Recent Orders")
                         .font(.system(size:20))
                         .padding(.vertical, 10)
@@ -34,14 +33,8 @@ struct OrderHistory: View {
                             }
                            
                             Spacer()
-                            Text("Shipping")
-                                .font(.system(size: 14))
-                                .padding(10)
-                                .background(.blue.opacity(0.3))
-                                .foregroundStyle(.blue)
-                                .clipShape(.rect(cornerRadius: 10))
+
                         })
-                        
                         
                         Divider()
                         HStack( spacing: 20,content: {
@@ -71,7 +64,7 @@ struct OrderHistory: View {
                         .padding(.vertical, 5)
                         
                         VStack(alignment: .center, content: {
-                            Button("View Shipping Status", action: {})
+                            Button("View Order Details", action: {})
                                 .padding()
                                 .frame(minWidth: 0, maxWidth: .infinity)
                                 .foregroundStyle(.button2)

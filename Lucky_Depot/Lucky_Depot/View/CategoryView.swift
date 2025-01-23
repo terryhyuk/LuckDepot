@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CategoryView: View {
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    @State var selectedType: String = "All"
+    @State var selectedType: Int = 0
 
     var body: some View {
         
@@ -29,11 +29,11 @@ struct CategoryView: View {
                             ForEach(productList, id: \.id, content: {
                                 product in
                                 
-                                if selectedType == product.category {
+                                if selectedType == product.category_id {
                                     
                                     ProductView(product:product)
                                     
-                                } else if selectedType == "All" {
+                                } else if selectedType == 1 {
                                     
                                     ProductView(product:product)
                                 }
@@ -62,13 +62,13 @@ struct CategoryView: View {
 }
 
 struct Category: View {
-    let categories: [String] = ["All", "Music", "Sports", "Food", "Travel"]
-    @Binding var selectedType: String
+    let categories: [Int] = [0 ,1 , 2, 3, 4]
+    @Binding var selectedType: Int
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing:15){
                 ForEach(categories, id: \.self){ title in
-                    Button(title, action: {
+                    Button(String(title), action: {
                         self.selectedType = title
 //                        switch title {
 //                                case "Art": type = "76"
@@ -104,7 +104,7 @@ struct ProductView: View {
     var body: some View {
         VStack(alignment:.leading,content: {
             
-            Image(product.imagePath)
+            Image(product.image)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width:170, height: 150)

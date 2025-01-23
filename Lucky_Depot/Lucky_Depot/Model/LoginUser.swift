@@ -8,9 +8,11 @@
 import Foundation
 import SwiftUI
 
-struct LoginUser {
+struct LoginUser :Decodable{
     var email: String
     var name: String
+    var type: String?
+
 
     
     init(email: String, name: String) {

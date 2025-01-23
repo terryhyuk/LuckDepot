@@ -25,7 +25,7 @@ struct DetailView: View {
                 ScrollView {
                     VStack(spacing: 20) {
                         // Product Image
-                        WebImage(url: URL(string: product!.imagePath))
+                        WebImage(url: URL(string: product!.image))
                             .resizable()
                             .scaledToFit()
                             .frame(width: .infinity, height: 300)

@@ -15,18 +15,14 @@ struct PersonView: View {
     
     @State var userName: String = ""
     @State var userEmail: String = ""
-
+    @State var showAlert: Bool = false
     var body: some View {
-
-        
                ZStack {
                    backgroundColor
                      .ignoresSafeArea()
                    VStack(spacing:20, content:{
                        // 유저 정보
                        VStack(alignment: .leading, spacing: 5, content: {
-                       
-                           
                            Text(userName)
                                .bold()
                                .font(.title2)
@@ -79,7 +75,7 @@ struct PersonView: View {
                        })
                        
                        
-                       
+                       // 주문내역 및 로그아웃
                        VStack(alignment: .leading, spacing: 15, content: {
                            
                            Button(action:{
@@ -88,6 +84,7 @@ struct PersonView: View {
                            }) {
                                Label("Order History", systemImage: "list.bullet")
                                }
+                         
                            Divider()
                            
                            Button(action:{
@@ -95,6 +92,7 @@ struct PersonView: View {
                                userRealM.deleteUser(user: userRealM.realMUser[0])
 //                               userRealM.deleteAll()
                                navigationPathInit()
+                               showAlert = true
                                
                            }) {
                                    Label("Logout", systemImage: "arrow.right.circle")
@@ -105,8 +103,9 @@ struct PersonView: View {
                            .frame(maxWidth:.infinity)
                            .background(.white)
                            .clipShape(.rect(cornerRadius: 10))
-
-               
+//                           .alert("",isPresented: $showAlert){
+//                               Button("OK", role: .cancel) { }
+//                           }
                        
                        
                        
