@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct CartView: View {
-    
+    @EnvironmentObject var viewModel: AuthenticationViewModel
+
     @State var cartList: [Product] = [
         Product(code: "1", name: "copper", price: 12.5, imagePath: "namsan", quantity: 1,category: "Art"),
         Product(code: "2", name: "aluminium", price: 130.3, imagePath: "hyeondai", quantity:1, category: "Art"),
@@ -18,7 +19,6 @@ struct CartView: View {
 
     @Binding var selectedTab: Tab
     var body: some View {
-        
         NavigationStack {
             ZStack {
                 backgroundColor

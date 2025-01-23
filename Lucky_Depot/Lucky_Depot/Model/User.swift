@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-struct User {
+struct UserProfile{
     var id: String
     var name: String
     
@@ -20,6 +20,6 @@ struct User {
 
 }
 
-var userList: [User] = [
-    User(id: "user@naver.com", name: "user")
+var userList: [UserProfile] = [
+    UserProfile(id: "user@naver.com", name: "user")
 ]

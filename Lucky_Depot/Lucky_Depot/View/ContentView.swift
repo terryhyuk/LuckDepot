@@ -10,6 +10,10 @@ import SwiftUI
 let backgroundColor = Color.init(white: 0.95)
 
 struct ContentView: View {
+    @EnvironmentObject var viewModel: AuthenticationViewModel
+    @State private var showAlert = false // Alert을 표시할지 여부
+    @State private var showLoginView = false
+
     @State var selectedTab: Tab = .home
     var body: some View {
         ZStack{
@@ -23,13 +27,17 @@ struct ContentView: View {
                     HomeView()
                         .tag(Tab.home)
                     
+              
                     PersonView()
-                        .tag(Tab.person)
+                            .tag(Tab.person)
+                         
                     
                     CartView(selectedTab: $selectedTab)
                         .tag(Tab.cart)
 
-                })
+                }).sheet(isPresented: $showLoginView) {
+                    Loginview()
+                }
             })
            
             VStack{

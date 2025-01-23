@@ -11,6 +11,13 @@
 		A25A2C992D3F33E600959C46 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = A25A2C982D3F33E600959C46 /* SDWebImageSwiftUI */; };
 		A25A2D5C2D3F910F00959C46 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A25A2D5B2D3F910F00959C46 /* RealmSwift */; };
 		A25A2D5D2D3F912300959C46 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = A25A2D5B2D3F910F00959C46 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		C0347F262D40C563009025AF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F252D40C563009025AF /* FirebaseAuth */; };
+		C0347F282D40C563009025AF /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F272D40C563009025AF /* FirebaseAuthCombine-Community */; };
+		C0347F2A2D40C563009025AF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F292D40C563009025AF /* FirebaseCore */; };
+		C0347F2D2D40C5A1009025AF /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F2C2D40C5A1009025AF /* GoogleSignIn */; };
+		C0347F2F2D40C5A1009025AF /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F2E2D40C5A1009025AF /* GoogleSignInSwift */; };
+		C0347F572D40E693009025AF /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F562D40E693009025AF /* FacebookCore */; };
+		C0347F592D40E693009025AF /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F582D40E693009025AF /* FacebookLogin */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,9 +51,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0347F592D40E693009025AF /* FacebookLogin in Frameworks */,
 				A25A2D5C2D3F910F00959C46 /* RealmSwift in Frameworks */,
 				A25A2C992D3F33E600959C46 /* SDWebImageSwiftUI in Frameworks */,
 				A25A2C962D3F33DC00959C46 /* TossPayments in Frameworks */,
+				C0347F2F2D40C5A1009025AF /* GoogleSignInSwift in Frameworks */,
+				C0347F262D40C563009025AF /* FirebaseAuth in Frameworks */,
+				C0347F2A2D40C563009025AF /* FirebaseCore in Frameworks */,
+				C0347F282D40C563009025AF /* FirebaseAuthCombine-Community in Frameworks */,
+				C0347F572D40E693009025AF /* FacebookCore in Frameworks */,
+				C0347F2D2D40C5A1009025AF /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,6 +107,13 @@
 				A25A2C952D3F33DC00959C46 /* TossPayments */,
 				A25A2C982D3F33E600959C46 /* SDWebImageSwiftUI */,
 				A25A2D5B2D3F910F00959C46 /* RealmSwift */,
+				C0347F252D40C563009025AF /* FirebaseAuth */,
+				C0347F272D40C563009025AF /* FirebaseAuthCombine-Community */,
+				C0347F292D40C563009025AF /* FirebaseCore */,
+				C0347F2C2D40C5A1009025AF /* GoogleSignIn */,
+				C0347F2E2D40C5A1009025AF /* GoogleSignInSwift */,
+				C0347F562D40E693009025AF /* FacebookCore */,
+				C0347F582D40E693009025AF /* FacebookLogin */,
 			);
 			productName = Lucky_Depot;
 			productReference = A25A2C832D3F33CD00959C46 /* Lucky_Depot.app */;
@@ -126,6 +147,9 @@
 				A25A2C942D3F33DC00959C46 /* XCRemoteSwiftPackageReference "payment-sdk-ios" */,
 				A25A2C972D3F33E600959C46 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				A25A2D5A2D3F910F00959C46 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				C0347F242D40C563009025AF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				C0347F2B2D40C5A1009025AF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				C0347F552D40E693009025AF /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A25A2C842D3F33CD00959C46 /* Products */;
@@ -285,14 +309,17 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Lucky_Depot/Preview Content\"";
-				DEVELOPMENT_TEAM = ZQQU3QG4RW;
+				DEVELOPMENT_TEAM = 4824SX3JW5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Lucky-Depot-Info.plist";
+				INFOPLIST_KEY_NSSupportsLiveActivities = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -314,14 +341,17 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Lucky_Depot/Preview Content\"";
-				DEVELOPMENT_TEAM = ZQQU3QG4RW;
+				DEVELOPMENT_TEAM = 4824SX3JW5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Lucky-Depot-Info.plist";
+				INFOPLIST_KEY_NSSupportsLiveActivities = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -383,6 +413,30 @@
 				kind = branch;
 			};
 		};
+		C0347F242D40C563009025AF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.7.0;
+			};
+		};
+		C0347F2B2D40C5A1009025AF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		C0347F552D40E693009025AF /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 14.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -400,6 +454,41 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A25A2D5A2D3F910F00959C46 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
+		};
+		C0347F252D40C563009025AF /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0347F242D40C563009025AF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		C0347F272D40C563009025AF /* FirebaseAuthCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0347F242D40C563009025AF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseAuthCombine-Community";
+		};
+		C0347F292D40C563009025AF /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0347F242D40C563009025AF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		C0347F2C2D40C5A1009025AF /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0347F2B2D40C5A1009025AF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		C0347F2E2D40C5A1009025AF /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0347F2B2D40C5A1009025AF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		C0347F562D40E693009025AF /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0347F552D40E693009025AF /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		C0347F582D40E693009025AF /* FacebookLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0347F552D40E693009025AF /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookLogin;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
