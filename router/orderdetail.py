@@ -1,6 +1,6 @@
 from database.model.orderdetail import OrderDetail
 from database.model.product import Product
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func, cast, String, Integer
 from database.conn.connection import db
@@ -221,4 +221,45 @@ async def delete(session : Session = Depends(db.session), orderdetail_id : str =
     finally :
         session.close()
 
+
+@router.get('/{user_seq}/orderlist')
+async def select_orderlist(session : Session = Depends(db.session), user_seq : int = None,status_code=200):
+    """
+    주문내역 불러오기
+    """
+    try:
+        lists = session.query(
+            OrderDetail.id,
+            func.min(Product.image).label('image'),
+            func.min(Product.name).label('name'),
+            func.count(OrderDetail.name).label('count'),
+            func.sum(OrderDetail.quantity).label('quantity'),
+            func.sum(OrderDetail.price).label('price')
+            ).join(
+                Product,
+                Product.id == OrderDetail.product_id,
+            ).filter(
+                OrderDetail.user_seq  == user_seq,
+            ).group_by(
+                OrderDetail.id,
+                OrderDetail.user_seq
+            )
+        if not lists :
+            raise HTTPException(status_code=400, detail="orderlist not found")
+        return {'result' : [
+            {
+                "id" : list[0],
+                "image" : list[1],
+                "name" : list[2] if list[3] == 1 else f"{list[2]} and {list[3]-1} item ",
+                "quantity" : list[4],
+                "price" : list[5]
+            }
+            for list in lists 
+                ]
+        }
+    except Exception as e:
+        print(e)
+        return {'result' : e}
+    finally :
+        session.close()
 
