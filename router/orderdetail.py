@@ -18,7 +18,7 @@ async def select(session : Session = Depends(db.session)):
     """
     try :
         # 현재 시간 기준 년도
-        current_year = datetime.now().year
+        current_year = datetime.now().strftime('%y')
         orders = session.query(
             Product.name, # 상품 이름
             func.sum(OrderDetail.quantity).label('order_count'), # 판매 수량
@@ -27,7 +27,7 @@ async def select(session : Session = Depends(db.session)):
             Product, 
             Product.id == OrderDetail.product_id
         ).filter(
-            cast(func.substring(OrderDetail.id, 1, 4), Integer) == current_year
+            cast(func.substring(OrderDetail.id, 1, 2), String) == current_year
         ).group_by(
         Product.name
         ).order_by(desc('order_count'))
@@ -70,9 +70,9 @@ async def select(session : Session = Depends(db.session)):
             Product, 
             Product.id == OrderDetail.product_id
         ).filter(
-            cast(func.substring(OrderDetail.id, 1, 8), String).between(
-                start_of_week.strftime('%Y%m%d'),
-                end_of_week.strftime('%Y%m%d')
+            cast(func.substring(OrderDetail.id, 1, 6), String).between(
+                start_of_week.strftime('%y%m%d'),
+                end_of_week.strftime('%y%m%d')
             )
         ).group_by(
         Product.name
@@ -96,6 +96,7 @@ async def select(session : Session = Depends(db.session)):
         session.close()
 
 
+# 관리자용 매출 관리 주별 조회
 @router.get('/month')
 async def select(session : Session = Depends(db.session)):
     """
@@ -113,7 +114,7 @@ async def select(session : Session = Depends(db.session)):
             Product, 
             Product.id == OrderDetail.product_id
         ).filter(
-            cast(func.substring(OrderDetail.id, 5, 2), String) == current_month
+            cast(func.substring(OrderDetail.id, 3, 2), String) == current_month
         ).group_by(
         Product.name
         ).order_by(desc('order_count'))
@@ -175,7 +176,7 @@ async def user(session : Session = Depends(db.session), user_seq : int = None):
 
 
 @router.get('/insert')
-async def insert(session : Session = Depends(db.session), id : str = None, user_seq : int = None, product_id : int = None, price : float = None, quantity : int = None):
+async def insert(session : Session = Depends(db.session), id : str = None, user_seq : int = None, product_id : int = None, price : float = None, quantity : int = None, name : str = None):
     """
     사용자용
     주문시 orderdetail 입력
@@ -186,7 +187,8 @@ async def insert(session : Session = Depends(db.session), id : str = None, user_
             user_seq = user_seq,
             product_id = product_id,
             price = price,
-            quantity = quantity
+            quantity = quantity,
+            name = name
         )
         session.add(new_order)
         session.commit()
