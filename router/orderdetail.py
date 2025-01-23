@@ -104,7 +104,7 @@ async def select(session : Session = Depends(db.session)):
     """
     try :
         # 현재 시간 기준 월
-        current_month = datetime.now().month
+        current_month = datetime.now().strftime('%m')
         orders = session.query(
             Product.name, # 상품 이름
             func.sum(OrderDetail.quantity).label('order_count'), # 판매 수량
@@ -113,7 +113,7 @@ async def select(session : Session = Depends(db.session)):
             Product, 
             Product.id == OrderDetail.product_id
         ).filter(
-            cast(func.substring(OrderDetail.id, 5, 2), Integer) == current_month
+            cast(func.substring(OrderDetail.id, 5, 2), String) == current_month
         ).group_by(
         Product.name
         ).order_by(desc('order_count'))
