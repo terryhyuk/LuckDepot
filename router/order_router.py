@@ -59,28 +59,27 @@ async def get_orders(session: Session = Depends(db.session)):
         orders = session.query(
             User.name, 
             User.id, 
-            func.sum(Order.price).label('total_price'), 
+            func.sum(Order.price).label('total_payment'), 
             func.count(Order.user_seq).label('order_count'), 
-            func.max(Order.order_date).label('recent_order_date') , 
-            func.sum(func.sum(Order.price)).over().label('total_sum'), 
-            func.avg(func.sum(Order.price)).over().label('total_avg'), 
+            func.max(Order.order_date).label('last_order_date') , 
+            func.sum(func.sum(Order.price)).over().label('sum'), 
+            func.avg(func.sum(Order.price)).over().label('avg'), 
         ).join(
             User,
             Order.user_seq == User.seq
         ).group_by(
-            Order.user_seq,
-            User.seq
+            User.seq,  # User.seq 추가
         ).order_by(
-            desc('total_price')
+            desc('total_payment')
         ).all()
         return { "result": 
                 [
                     {
-                    "user_seq": order[0], # 유저이름
-                    "user_name": order[1], # 유저 아이디
-                    "total_price": order[2], # 유저별 총 구매 금액
+                    "name": order[0], # 유저이름
+                    "email": order[1], # 유저 아이디
+                    "total_payment": order[2], # 유저별 총 구매 금액
                     'order_count' : order[3], # 유저별 총 주문 횟수
-                    'recent_order_date' : order[4].strftime('%Y-%m-%d') # 유저별 최근 주문 일자
+                    'last_order_date' : order[4].strftime('%Y-%m-%d') # 유저별 최근 주문 일자
                     }
                 for order in orders
                 ],
