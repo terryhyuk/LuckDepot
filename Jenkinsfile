@@ -25,6 +25,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                // 실행
                 sh '''
                     echo "Deploying application with Docker Compose"
                     DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG} \

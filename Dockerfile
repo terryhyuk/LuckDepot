@@ -5,7 +5,7 @@ WORKDIR /LUCKYDEPOT
 
 # Copy the application folder
 # COPY ./fastapi ./fastapi
-COPY requirements.txt .
+# COPY requirements.txt .
 COPY . .
 
 # Set the working directory for the app
