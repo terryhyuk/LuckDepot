@@ -9,7 +9,7 @@ class ProductRepository {
   Future<List<Product>> getProducts() async {
     try {
       final response = await http.get(Uri.parse('$url/product/'));
-      
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (responseData['result'] != null && responseData['result'] is List) {
@@ -36,8 +36,9 @@ class ProductRepository {
     }
   }
 
-   // 새 상품 추가
-  addProduct(String name, double price, String image, int quantity, int categoryId) async {
+  // 새 상품 추가
+  addProduct(String name, double price, String image, int quantity,
+      int categoryId) async {
     try {
       final response = await http.post(
         Uri.parse('$url/product/'),
@@ -59,24 +60,40 @@ class ProductRepository {
 
   // 수량 업데이트
   updateQuantity(int productId, int quantity) async {
-    try {
-      final response = await http.put(
-        Uri.parse('$url/product/$productId/quantity'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'detail': [
-            {
-              'loc': ['quantity', 0],
-              'msg': 'Update quantity',
-              'type': 'update'
-            }
-          ]
-        }),
-      );
-      return response.statusCode == 200;
-    } catch (e) {
-      print('Error updating quantity: $e');
-      return false;
-    }
+  try {
+    final response = await http.put(
+      Uri.parse('$url/product/$productId/?quantity=$quantity'),
+      headers: {'Content-Type': 'application/json'},
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${utf8.decode(response.bodyBytes)}');  // utf8.decode 사용
+    return response.statusCode == 200;
+  } catch (e) {
+    print('Error updating quantity: $e');
+    return false;
   }
+}
+
+// 카테고리 추가
+addCategory(String name, double price, String image, int quantity, int categoryId) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$url/product/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'name': name,
+        'price': price,
+        'image': image,
+        'quantity': quantity,
+        'category_id': categoryId,
+      }),
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${utf8.decode(response.bodyBytes)}');
+    return response.statusCode == 200;
+  } catch (e) {
+    print('Error adding product: $e');
+    return false;
+  }
+}
 }

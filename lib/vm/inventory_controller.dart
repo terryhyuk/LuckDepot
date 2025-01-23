@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucky_depot/view/widgets/dialog.dart';
 import '../repository/product_repository.dart';
 import '../model/product.dart';
 
 class InventoryController extends GetxController {
   final productRepository = ProductRepository();
   final searchController = TextEditingController();
-  
+
   final RxList<Product> products = <Product>[].obs;
   final RxList<Product> filteredProducts = <Product>[].obs;
   final RxString selectedCategory = ''.obs;
   final RxList<String> categories = <String>[
     'All',
-    'Tables', 'Chairs', 'Bookcases', 'Storage',
-    'Paper', 'Binders', 'Copiers', 'Envelopes', 'Fasteners'
+    'Tables',
+    'Chairs',
+    'Bookcases',
+    'Storage',
+    'Paper',
+    'Binders',
+    'Copiers',
+    'Envelopes',
+    'Fasteners'
   ].obs;
 
   @override
@@ -38,22 +46,23 @@ class InventoryController extends GetxController {
     }
   }
 
-filterProducts() {
-  if (searchController.text.isEmpty && (selectedCategory.value.isEmpty || selectedCategory.value == 'All')) {
-    filteredProducts.assignAll(products);
-  } else {
-    filteredProducts.value = products.where((product) {
-      final matchesSearch = searchController.text.isEmpty || 
-        product.name.toLowerCase().contains(searchController.text.toLowerCase());
-      final matchesCategory = selectedCategory.value == 'All' || 
-        selectedCategory.value.isEmpty || 
-        product.categoryName == selectedCategory.value;
-      return matchesSearch && matchesCategory;
-    }).toList();
+  filterProducts() {
+    if (searchController.text.isEmpty &&
+        (selectedCategory.value.isEmpty || selectedCategory.value == 'All')) {
+      filteredProducts.assignAll(products);
+    } else {
+      filteredProducts.value = products.where((product) {
+        final matchesSearch = searchController.text.isEmpty ||
+            product.name
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase());
+        final matchesCategory = selectedCategory.value == 'All' ||
+            selectedCategory.value.isEmpty ||
+            product.category == selectedCategory.value;
+        return matchesSearch && matchesCategory;
+      }).toList();
+    }
   }
-}
-
-
 
   searchProducts(String query) => filterProducts();
 
@@ -62,35 +71,19 @@ filterProducts() {
     filterProducts();
   }
 
-  increaseQuantity(int productId) async {
-    await _updateQuantity(productId, 1, 'increased');
-  }
-
-  decreaseQuantity(int productId) async {
-    await _updateQuantity(productId, -1, 'decreased');
-  }
-
-  _updateQuantity(int productId, int change, String action) async {
+  updateQuantity(int productId, int quantity) async {
     try {
-      final success = await productRepository.updateQuantity(productId, change);
+      final success =
+          await productRepository.updateQuantity(productId, quantity);
       if (success) {
         loadProducts();
-        Get.snackbar(
-          'Success',
-          'Quantity $action',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
       }
     } catch (e) {
-      print('Error ${action} quantity: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to $action quantity',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      print('Error updating quantity: $e');
+      CustomDialog.show(
+        Get.context!,
+        DialogType.error,
+        customContent: 'Failed to update quantity',
       );
     }
   }
@@ -100,23 +93,79 @@ filterProducts() {
       final success = await productRepository.deleteProduct(productId);
       if (success) {
         loadProducts();
-        Get.snackbar(
-          'Success',
-          'Product deleted',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
+        CustomDialog.show(
+          Get.context!,
+          DialogType.deleteSuccess,
+          customContent: 'Product has been deleted successfully',
         );
       }
     } catch (e) {
       print('Error deleting product: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to delete product',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      CustomDialog.show(
+        Get.context!,
+        DialogType.error,
+        customContent: 'Failed to delete product',
       );
+    }
+  }
+
+  addCategory(String name, double price, String image, int quantity,
+      int categoryId) async {
+    try {
+      final success = await productRepository.addCategory(
+        name,
+        price,
+        image,
+        quantity,
+        categoryId,
+      );
+      if (success) {
+        // 새 카테고리 추가 (아직 리스트에 없는 경우에만)
+        final categoryName =
+            getCategoryName(categoryId); // categoryId에 해당하는 카테고리명 가져오기
+        if (!categories.contains(categoryName)) {
+          categories.add(categoryName);
+        }
+        loadProducts();
+        CustomDialog.show(
+          Get.context!,
+          DialogType.success,
+          customContent: 'Product added successfully',
+        );
+      }
+    } catch (e) {
+      print('Error adding product: $e');
+      CustomDialog.show(
+        Get.context!,
+        DialogType.error,
+        customContent: 'Failed to add product',
+      );
+    }
+  }
+
+// categoryId로 카테고리명 가져오는 메서드
+  String getCategoryName(int categoryId) {
+    switch (categoryId) {
+      case 1:
+        return 'Tables';
+      case 2:
+        return 'Chairs';
+      case 3:
+        return 'Bookcases';
+      case 4:
+        return 'Storage';
+      case 5:
+        return 'Paper';
+      case 6:
+        return 'Binders';
+      case 7:
+        return 'Copiers';
+      case 8:
+        return 'Envelopes';
+      case 9:
+        return 'Fasteners';
+      default:
+        return '';
     }
   }
 }

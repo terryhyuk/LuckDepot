@@ -37,9 +37,9 @@ class CustomerController extends GetxController {
   // 통계 데이터 로드
   fetchCustomerStats() async {
     final stats = await customerRepository.getCustomerStats();
-    totalCustomers.value = stats['total_customers'];
-    totalPayment.value = stats['total_payment'];
-    averagePurchase.value = stats['average_purchase'];
+    print(stats);
+    totalCustomers.value = stats['sum'];
+    averagePurchase.value = stats['avg'];
   }
 
   // 고객 데이터 로드

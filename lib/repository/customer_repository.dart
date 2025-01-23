@@ -9,8 +9,7 @@ class CustomerRepository {
       final response = await http.get(Uri.parse('$url/order/select_all'));
       
       if (response.statusCode == 200) {
-        print('API Response: ${response.body}'); // 디버깅용
-        return jsonDecode(utf8.decode(response.bodyBytes)); // 한글 처리를 위해 utf8.decode 사용
+        return jsonDecode(utf8.decode(response.bodyBytes));
       }
       return {
         'result': [],
