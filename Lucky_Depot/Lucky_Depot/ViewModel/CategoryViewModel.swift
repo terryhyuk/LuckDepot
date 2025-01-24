@@ -11,12 +11,24 @@ class CategoryViewModel: ObservableObject {
     let baseURL = "http://192.168.50.38:8000/"
     var jsonViewModel: JSONViewModel = JSONViewModel()
     
-    func fetchCategory(category_id: Int) async throws -> [Product]{
+    func fetchCategoryProduct(category_id: Int) async throws -> [Product]{
         do {
 
             let result: JsonResult<[Product]> = try await jsonViewModel.fetchJSON(path: "/product/category/\(category_id)")
             let products = result.result
             return products
+        } catch {
+            print("Error: \(error)")
+            throw error
+        }
+    }
+    
+    func fetchCategory() async throws -> [Categories]{
+        do {
+
+            let result: JsonResult<[Categories]> = try await jsonViewModel.fetchJSON(path: "/product/category")
+            let cateogoies = result.result
+            return cateogoies
         } catch {
             print("Error: \(error)")
             throw error

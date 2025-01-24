@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-let backgroundColor = Color.init(white: 0.95)
+let backgroundColor = Color.background
 
 struct ContentView: View {
     @EnvironmentObject var viewModel: AuthenticationViewModel
@@ -22,7 +22,6 @@ struct ContentView: View {
     @State var userRealM : UserLoginViewModel = UserLoginViewModel()
     
     @StateObject private var productViewModel = ProductViewModel()
-    
     var body: some View {
         NavigationStack(path: $navigationPath){
             ZStack{
@@ -64,10 +63,14 @@ struct ContentView: View {
                 } else if destination == "PersonView" {
                     PersonView(selectedTab: $selectedTab, navigationPath: $navigationPath, userRealM: userRealM)
                 } else if destination == "OrderHistoryView" {
-                    OrderHistory()
+                    OrderHistory(navigationPath: $navigationPath)
                 } else if destination == "DetailView" {
                     DetailView(productViewModel: productViewModel, navigationPath: $navigationPath)
-                }
+                } else if destination == "ShippingStatusView"{
+                    ShippingStatusView()
+                } else if destination == "OrderDetailsView" {
+                    OrderDetailsView()
+                } 
             }
             
         }

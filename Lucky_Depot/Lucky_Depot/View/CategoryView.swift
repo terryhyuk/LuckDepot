@@ -11,8 +11,9 @@ import SDWebImageSwiftUI
 struct CategoryView: View {
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    @State var selectedType: Categories?
+    @State var selectedType: Categoriess? = Categoriess.allCases.first
     @ObservedObject var categoryViewModel: CategoryViewModel = CategoryViewModel()
+    @ObservedObject var productViewModel: ProductViewModel = ProductViewModel()
     @State var productList: [Product] = []
     
     var body: some View {
@@ -32,16 +33,16 @@ struct CategoryView: View {
                             ForEach(productList, id: \.id, content: {
                                 product in
                                 
-//                                if selectedType == product.category_id {
-//                                    
-//                                    ProductView(product:product)
-//                                    
-//                                } else if selectedType == 1 {
-//                                    
-//                                    ProductView(product:product)
-//                                } else {
-                                ProductView(product:product)
-                               
+                                if selectedType?.rawValue == product.category_id {
+                                    
+                                    ProductView(product:product)
+                                    
+                                } else if selectedType?.rawValue == 0 {
+                                    
+                                    ProductView(product:product)
+                                }
+                                //ProductView(product:product)
+
                             })
                         })
                     }.padding(.horizontal)
@@ -52,8 +53,17 @@ struct CategoryView: View {
             })
             .onAppear(perform: {
                 Task{
-                    productList = try await categoryViewModel.fetchCategory(category_id: 1)
-                    print(productList)
+                    productList = try await productViewModel.fetchProduct()
+                }
+                
+            })
+            .onChange(of: selectedType?.rawValue, {
+                Task{
+                    if selectedType?.rawValue == 0 {
+                        productList = try await productViewModel.fetchProduct()
+                    } else{
+                        productList = try await categoryViewModel.fetchCategoryProduct(category_id:  selectedType!.rawValue)
+                    }
                 }
             })
             .navigationTitle("Categories")
@@ -67,22 +77,14 @@ struct CategoryView: View {
 }
 
 struct Category: View {
-    @Binding var selectedType: Categories?
+    @Binding var selectedType: Categoriess?
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing:15){
-                ForEach(Categories.allCases, id: \.self){ category in
+            HStack(spacing:10){
+                ForEach(Categoriess.allCases, id: \.self){ category in
                     Button(category.name, action: {
                         self.selectedType = category
-//                        switch title {
-//                                case "Art": type = "76"
-//                                case "Cultural": type = "78"
-//                                case "Shopping": type = "79"
-//                                case "perfomance": type = "85"
-//                                case "Accommodation": type = "80"
-//                                default:
-//                                    type = "76"
-//                                                                }
+
                     })
                     .tint(selectedType == category ? .green : .white)
                     .foregroundStyle(.black)
@@ -129,7 +131,7 @@ struct ProductView: View {
 }
 
 
-enum Categories: Int, CaseIterable {
+enum Categoriess: Int, CaseIterable {
     case category0 = 0
     case category1 = 1
     case category2 = 2

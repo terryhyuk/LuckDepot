@@ -41,7 +41,8 @@ class AuthenticationViewModel: ObservableObject {
     
     @Published var idToken: String?
     @State var userModel: UserViewModel?
-    
+    @Published var islogging: Bool = false
+
     init() {
     registerAuthStateHandler()
 
@@ -58,13 +59,18 @@ class AuthenticationViewModel: ObservableObject {
   private var authStateHandler: AuthStateDidChangeListenerHandle?
 
   func registerAuthStateHandler() {
-    if authStateHandler == nil {
-      authStateHandler = Auth.auth().addStateDidChangeListener { auth, user in
-        self.user = user
-        self.authenticationState = user == nil ? .unauthenticated : .authenticated
-        self.displayName = user?.email ?? ""
+      if !userRealM.realMUser.isEmpty{
+          if authStateHandler == nil {
+            authStateHandler = Auth.auth().addStateDidChangeListener { auth, user in
+              self.user = user
+              self.authenticationState = user == nil ? .unauthenticated : .authenticated
+              self.displayName = user?.email ?? ""
+            }
+          }
+      } else {
+          self.authenticationState = .unauthenticated
+
       }
-    }
   }
 
   func switchFlow() {
@@ -109,8 +115,11 @@ enum AuthenticationError: Error {
 
 extension AuthenticationViewModel {
   func signInWithGoogle() async -> Bool {
+      islogging = true
     guard let clientID = FirebaseApp.app()?.options.clientID else {
+        
       fatalError("No client ID found in Firebase configuration")
+
     }
     let config = GIDConfiguration(clientID: clientID)
     GIDSignIn.sharedInstance.configuration = config
@@ -119,10 +128,12 @@ extension AuthenticationViewModel {
           let window = windowScene.windows.first,
           let rootViewController = window.rootViewController else {
       print("There is no root view controller!")
+    
       return false
     }
 
       do {
+          
         let userAuthentication = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
 
         let user = userAuthentication.user
@@ -141,7 +152,7 @@ extension AuthenticationViewModel {
                   }
                   
                   if let idToken = idToken {
-                      print("ID Token:\(idToken)")
+                      //print("ID Token:\(idToken)")
                       self.idToken = idToken
                       
                   }
@@ -167,10 +178,12 @@ extension AuthenticationViewModel {
 //          print(firebaseUser.phoneNumber)
         print("User \(firebaseUser.uid) signed in with email \(firebaseUser.email ?? "unknown")")
         userRealM.addUser(user: LoginUser(email: firebaseUser.email!, name: firebaseUser.displayName!))
-        
+          islogging = false
         return true
       }
       catch {
+       self.islogging = false
+
         print(error.localizedDescription)
         self.errorMessage = error.localizedDescription
         return false
@@ -180,17 +193,21 @@ extension AuthenticationViewModel {
 
     
     func signInWithFacebook() async -> Bool {
+        islogging = true
         //withCheckedContinuation 비동기 클로저를 동기식으로 기다릴 수 있게 해주는 Swift의 비동기 API
         // 클로저는 비동기 작업을 마친 후 continuation.resume(returning:)으로 결과를 반환
         return await withCheckedContinuation { continuation in
             manager.logIn(permissions: ["public_profile", "email"], from: getRootViewController()) { result, error in
                 if let error = error {
                     print("Facebook Login Error: \(error.localizedDescription)")
+                    self.islogging = false
+
                     continuation.resume(returning: false)
                     return
                 }
                 guard let result = result, !result.isCancelled else {
                     print("Facebook login cancelled.")
+                    self.islogging = false
                     continuation.resume(returning: false)
                     return
                 }
@@ -199,7 +216,7 @@ extension AuthenticationViewModel {
                 Auth.auth().signIn(with: credential) { [self] result, error in
                     if let error = error {
                         print("Firebase Auth Error: \(error.localizedDescription)")
-
+                        self.islogging = false
                         continuation.resume(returning: false)
                         return
                     }
@@ -215,7 +232,7 @@ extension AuthenticationViewModel {
                         return
                         }
                         if let idToken = idToken {
-                        print("ID Token: \(idToken)")
+                        //print("ID Token: \(idToken)")
                         self.idToken = idToken
                         }
                     }
@@ -233,7 +250,7 @@ extension AuthenticationViewModel {
                     print("User signed in with Facebook: \(result?.user.uid ?? "")")
                     print("User signed in with Facebook: \(result?.user.email ?? "")")
                     print("User signed in with Facebook: \(result?.user.displayName ?? "")")
-                    
+                    islogging = false
                     continuation.resume(returning: true)
                 }
                 

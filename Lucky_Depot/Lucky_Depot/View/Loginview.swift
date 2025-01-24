@@ -18,6 +18,15 @@ struct Loginview: View {
     @ObservedObject var userRealM: UserLoginViewModel
 
     var body: some View {
+        if viewModel.islogging == true {
+            VStack{
+                Image(systemName: "progress.indicator")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                    .symbolEffect(.variableColor.iterative.hideInactiveLayers.nonReversing, options: .repeat(.continuous))
+                    .foregroundStyle(.button2)
+            }
+        } else {
             VStack(content:{
                 
                 Image(systemName: "applepencil.and.scribble")
@@ -81,6 +90,8 @@ struct Loginview: View {
                     })
                 })
             })
+        }
+           
         
     }
     
