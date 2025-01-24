@@ -32,10 +32,11 @@ struct DetailView: View {
                             WebImage(url: URL(string: product!.imagePath))
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: .infinity, height: 300)
+                                
                                 .cornerRadius(8)
                             Spacer()
                         }
+                        .frame(width: .infinity, height: 300)
                         
                         // Title and Price
                         VStack(alignment: .leading, spacing: 5) {
@@ -74,6 +75,7 @@ struct DetailView: View {
                                 // 알러트 후
                                 // 장바구니 이동
                                 // 뒤로가기
+                                shoppingBasketViewModel.addProduct(product: product!, quantity: quantity)
                             }) {
                                 Text("장바구니 담기")
                                     .font(.headline)

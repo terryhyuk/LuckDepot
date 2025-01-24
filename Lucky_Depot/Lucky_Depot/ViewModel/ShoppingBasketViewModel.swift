@@ -26,13 +26,13 @@ class ShoppingBasketViewModel: ObservableObject {
     }
     
     // 상품 추가 함수
-    func addProduct(product: Product) {
+    func addProduct(product: Product, quantity: Int) {
         let newProduct = RealMProduct()
         newProduct.id = String(product.id)
         newProduct.name = product.name
         newProduct.price = product.price
         newProduct.imagePath = product.imagePath
-        newProduct.quantity = product.quantity
+        newProduct.quantity = quantity
         newProduct.category = String(product.category_id)
         
         try! realm.write {
