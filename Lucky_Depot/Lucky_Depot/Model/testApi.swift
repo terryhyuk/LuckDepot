@@ -37,7 +37,7 @@ class TestApi: ObservableObject {
 
                     if let jsonData = data {
                         if let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers) {
-                            print(jsonObject)
+//                            print(jsonObject)
                         }
                     }
                     guard let data = data else {
@@ -53,7 +53,7 @@ class TestApi: ObservableObject {
                                             let decodedResponse = try decoder.decode([String: [Product]].self, from: data)
                                             if let products = decodedResponse["result"] {
                                                 self.products = products
-                                                print(self.products)
+//                                                print(self.products)
                                             } else {
                                                 self.errorMessage = "No products found in response"
                                             }

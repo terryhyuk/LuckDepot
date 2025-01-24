@@ -9,12 +9,18 @@ import Foundation
 
 class ProductViewModel: ObservableObject {
     let baseURL = "http://192.168.50.38:8000/"
-    @Published var productId: String = ""
+    @Published var productId: Int = 0
+    var jsonViewModel: JSONViewModel = JSONViewModel()
     
     func fetchProduct() async throws -> [Product]{
-        let url = URL(string: baseURL+"/productList")!
-        let (data, _) = try await URLSession.shared.data(from: url)
-        return try JSONDecoder().decode([Product].self, from: data)
+        do {
+            let result: JsonResult<[Product]> = try await jsonViewModel.fetchJSON(path: "/product")
+            let products = result.result
+            return products
+        } catch {
+            print("Error: \(error)")
+            throw error
+        }
     }
     
     func fetchDetail() async throws -> Product{

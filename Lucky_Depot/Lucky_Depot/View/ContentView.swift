@@ -30,7 +30,7 @@ struct ContentView: View {
                     .ignoresSafeArea()
                 VStack(content: {
                     TabView(selection: $selectedTab, content: {
-                        HomeView()
+                        HomeView(navigationPath: $navigationPath)
                             .tag(Tab.home)
                         
                         CategoryView()
@@ -63,8 +63,10 @@ struct ContentView: View {
                     Loginview(navigationPath: $navigationPath, userRealM: userRealM)
                 } else if destination == "PersonView" {
                     PersonView(selectedTab: $selectedTab, navigationPath: $navigationPath, userRealM: userRealM)
-                }else if destination == "OrderHistoryView" {
+                } else if destination == "OrderHistoryView" {
                     OrderHistory()
+                } else if destination == "DetailView" {
+                    DetailView(productViewModel: productViewModel, navigationPath: $navigationPath)
                 }
             }
             

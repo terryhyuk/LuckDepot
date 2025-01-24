@@ -10,8 +10,9 @@ import SDWebImageSwiftUI
 
 struct DetailView: View {
     @ObservedObject var productViewModel :ProductViewModel
-    @State var product: Product?
+    @Binding var navigationPath: NavigationPath
     
+    @State var product: Product?
     @State private var quantity: Int = 1
 
     var body: some View {
@@ -133,6 +134,7 @@ struct DetailView: View {
 #Preview {
     DetailView(
 //        product: Product(id: "1", name: "제품", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1")
-        productViewModel: ProductViewModel()
+        productViewModel: ProductViewModel(),
+        navigationPath: .constant(NavigationPath())
     )
 }

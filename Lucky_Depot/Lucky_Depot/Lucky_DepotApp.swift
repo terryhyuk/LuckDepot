@@ -15,12 +15,13 @@ struct Lucky_DepotApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var authenticationViewModel = AuthenticationViewModel()
+    @StateObject var productViewModel = ProductViewModel()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(authenticationViewModel)
-           
+                .environmentObject(productViewModel)
         }
     }
 }

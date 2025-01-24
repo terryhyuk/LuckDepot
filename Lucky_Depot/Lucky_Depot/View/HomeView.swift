@@ -9,8 +9,11 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct HomeView: View {
-    @StateObject private var testApi = TestApi()
-
+    @ObservedObject var productViewModel: ProductViewModel = ProductViewModel()
+    
+    @State var productList: [Product] = []
+    @Binding var navigationPath: NavigationPath
+    
     var body: some View {
         let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
@@ -26,53 +29,57 @@ struct HomeView: View {
                     .bold()
                     .padding(.top, 15)
                     .padding(.leading)
-                if testApi.products.isEmpty {
-                    Text("empty")
+                if productList.isEmpty {
+                    ProgressView("상품 리스트 로딩 중...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .frame(height: 200)
+                        .padding()
+
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
-                            ForEach(testApi.products, id: \.id, content: {
+                            ForEach(productList, id: \.id, content: {
                                 product in
-                                
-                                VStack(alignment:.leading,content: {
-                                    
-                                    WebImage(url: URL(string: "http://192.168.50.38:8000/product/view/\(product.image)"))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width:170, height: 150)
-                                    
-                                    VStack(alignment: .leading){
-                                        Text(product.name)
-                                            .foregroundStyle(.black)
-                                        Spacer()
-                                        Text("$"+String(format : "%.2f", product.price))
-                                            .foregroundStyle(.black.opacity(0.7))
-                                    }
-                                    .padding(12)
-                                })
-                                .background(.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .shadow(color: .black.opacity(0.08), radius: 5, x: 2, y: 2)
-                                
+                                ProductHomeItem(product: product)
+                                    .onTapGesture(perform: {
+                                        productViewModel.productId = product.id
+                                        navigationPath.append("DetailView")
+                                        print("Detail")
+                                    })
                             })
                         })
                     }
                     .padding(.horizontal)
                     .navigationTitle("Lucky Depot")
                     .navigationBarTitleDisplayMode(.inline)
+                    .navigationDestination(for: String.self) {
+                        destination in
+                        
+                    }
                 }
                 
             }
             .onAppear(perform: {
-                testApi.fetchProducts()
-                print(testApi.errorMessage)
-
+//                testApi.fetchProducts()
+//                print(testApi.errorMessage)
+                Task{
+                    productList = try await productViewModel.fetchProduct()
+                }
+                
             })
         }
         
     }
 }
 
-#Preview {
-    HomeView()
+//#Preview {
+//    HomeView()
+//}
+
+struct HomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomeView(
+            navigationPath: .constant(NavigationPath())
+        )
+    }
 }

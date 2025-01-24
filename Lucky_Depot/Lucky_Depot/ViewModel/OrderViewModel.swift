@@ -17,20 +17,21 @@ class OrderViewModel: ObservableObject {
         formatter.dateFormat = "yyMMddHHmmss" // 원하는 형식 설정
         let formattedDate = formatter.string(from: currentDate)
         
+        var user_seq = "1" // 유저 시퀀스
+        
         // SHA-256 해싱
-        let hashedData = SHA256.hash(data: Data(formattedDate.utf8))
+        let hashedData = SHA256.hash(data: Data(user_seq.utf8))
 
         // 16진수 문자열로 변환
         let hexString = hashedData.compactMap { String(format: "%02x", $0) }.joined()
 
         // 12자리로 자르기
-        let result = String(hexString.prefix(11))
+        let result = String(hexString.prefix(4))
         
-        let orderNum = result + "1" // 1 은 유저 시퀀스
+        let orderNum = formattedDate + result // 1 은 유저 시퀀스
         
         return orderNum
     }
-    
 //    func orderDetailFlatten(productList: [Product]) -> String{
 //        // 아래와 같이 문자열로 리턴
 //        // 제품아이디/갯수/총가격,제품아이디/갯수/총가격,제품아이디/갯수/총가격,제품아이디/갯수/총가격
