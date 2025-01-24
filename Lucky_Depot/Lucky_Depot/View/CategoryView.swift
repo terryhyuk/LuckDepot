@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CategoryView: View {
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    @State var selectedType: Int = 0
+    @State var selectedType: Categories.category0
 
     var body: some View {
         
@@ -24,23 +24,23 @@ struct CategoryView: View {
                     Category(selectedType: $selectedType)
                         .padding(.vertical, 10)
                     
-                    ScrollView {
-                        LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
-                            ForEach(productList, id: \.id, content: {
-                                product in
-                                
-                                if selectedType == product.category_id {
-                                    
-                                    ProductView(product:product)
-                                    
-                                } else if selectedType == 1 {
-                                    
-                                    ProductView(product:product)
-                                }
-                               
-                            })
-                        })
-                    }.padding(.horizontal)
+//                    ScrollView {
+//                        LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
+//                            ForEach(productList, id: \.id, content: {
+//                                product in
+//                                
+//                                if selectedType == product.category_id {
+//                                    
+//                                    ProductView(product:product)
+//                                    
+//                                } else if selectedType == 1 {
+//                                    
+//                                    ProductView(product:product)
+//                                }
+//                               
+//                            })
+//                        })
+//                    }.padding(.horizontal)
                     Spacer()
                 })
                 
@@ -48,11 +48,6 @@ struct CategoryView: View {
             })
             .navigationTitle("Categories")
         }
-            
-        
-      
-      
-        
         
     }
 }
@@ -62,14 +57,13 @@ struct CategoryView: View {
 }
 
 struct Category: View {
-    let categories: [Int] = [0 ,1 , 2, 3, 4]
-    @Binding var selectedType: Int
+    @Binding var selectedType: Categories?
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing:15){
-                ForEach(categories, id: \.self){ title in
-                    Button(String(title), action: {
-                        self.selectedType = title
+                ForEach(Categories.allCases, id: \.self){ category in
+                    Button(category.name, action: {
+                        self.selectedType = category
 //                        switch title {
 //                                case "Art": type = "76"
 //                                case "Cultural": type = "78"
@@ -80,7 +74,7 @@ struct Category: View {
 //                                    type = "76"
 //                                                                }
                     })
-                    .tint(selectedType == title ? .green : .white)
+                    .tint(selectedType == category ? .green : .white)
                     .foregroundStyle(.black)
                     .buttonStyle(.bordered)
                     .buttonBorderShape(.capsule)
@@ -121,5 +115,34 @@ struct ProductView: View {
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .shadow(color: .black.opacity(0.08), radius: 5, x: 2, y: 2)
         
+    }
+}
+
+
+enum Categories: Int, CaseIterable {
+    case category0 = 0
+    case category1 = 1
+    case category2 = 2
+    case category3 = 3
+    case category4 = 4
+    case category5 = 5
+    case category6 = 6
+    case category7 = 7
+    case category8 = 8
+    case category9 = 9
+    
+    var name: String {
+        switch self {
+        case .category0: return "All"
+        case .category1: return "Tables"
+        case .category2: return "Chairs"
+        case .category3: return "Bookcases"
+        case .category4: return "storage"
+        case .category5: return "Paper"
+        case .category6: return "Binders"
+        case .category7: return "Copiers"
+        case .category8: return "Envelopes"
+        case .category9: return "Fasterners"
+        }
     }
 }
