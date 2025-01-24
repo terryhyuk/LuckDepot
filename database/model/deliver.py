@@ -14,6 +14,7 @@ class Deliver(Base) :
     order_id = Column(String)
     start_date = Column(TIMESTAMP)
     end_date = Column(TIMESTAMP)
+    delivery_type = Column(String)
 
     driver = relationship("Driver", back_populates="deliver")
     hub = relationship("Hub", back_populates="deliver")

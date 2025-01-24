@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 router = APIRouter()
 # 관리자용 매출 연별 조회
-@router.get('/year')
+@router.get('/year', status_code=200)
 async def select(session : Session = Depends(db.session)):
     """
     관리자용
@@ -32,7 +32,7 @@ async def select(session : Session = Depends(db.session)):
         Product.name
         ).order_by(desc('order_count'))
         if not orders :
-            return {'result': '판매 내역이 없습니다.'}
+            raise HTTPException(status_code=400, detail="detail year not found")
         return {'result' : 
                     [
                         {
@@ -44,10 +44,7 @@ async def select(session : Session = Depends(db.session)):
                     ]
                 }
     except Exception as e:
-        print('error', e)
         return {'result' : e}
-    finally :
-        session.close()
 
 # 관리자용 매출 관리 주별 조회
 @router.get('/week')
@@ -78,7 +75,7 @@ async def select(session : Session = Depends(db.session)):
         Product.name
         ).order_by(desc('order_count'))
         if not orders :
-            return {'result': '판매 내역이 없습니다.'}
+            raise HTTPException(status_code=400, detail="detail week not found")
         return {'result' : 
                     [
                         {
@@ -90,10 +87,7 @@ async def select(session : Session = Depends(db.session)):
                     ]
                 }
     except Exception as e:
-        print('error', e)
         return {'result' : e}
-    finally :
-        session.close()
 
 
 # 관리자용 매출 관리 주별 조회
@@ -119,7 +113,7 @@ async def select(session : Session = Depends(db.session)):
         Product.name
         ).order_by(desc('order_count'))
         if not orders :
-            return {'result': '판매 내역이 없습니다.'}
+            raise HTTPException(status_code=400, detail="detail month not found")
         return {'result' : 
                     [
                         {
@@ -131,10 +125,7 @@ async def select(session : Session = Depends(db.session)):
                     ]
                 }
     except Exception as e:
-        print('error', e)
         return {'result' : e}
-    finally :
-        session.close()
 
 
 @router.get("/select/{user_seq}")
@@ -152,7 +143,7 @@ async def user(session : Session = Depends(db.session), user_seq : int = None):
             OrderDetail.quantity
             ).filter(OrderDetail.user_seq == user_seq).all()
         if not orderdetail :
-            return {'result': '구매 내역이 없습니다.'}
+            raise HTTPException(status_code=400, detail="detail user not found")
         return { "result": 
                 [
                     {
@@ -166,11 +157,7 @@ async def user(session : Session = Depends(db.session), user_seq : int = None):
                 ],
             }
     except Exception as e:
-        print('error', e)
         return {'result' : e}
-    
-    finally : 
-        session.close()
 
 
 
@@ -194,10 +181,7 @@ async def insert(session : Session = Depends(db.session), id : str = None, user_
         session.commit()
         return {'result' : 'ok'}
     except Exception as e:
-        print('error', e)
         return {'result' : e}
-    finally:
-        session.close()
 
 
 @router.delete('/delete')
@@ -209,17 +193,11 @@ async def delete(session : Session = Depends(db.session), orderdetail_id : str =
     """
     try :
         orderdetail = session.query(OrderDetail).filter(OrderDetail.id == orderdetail_id).first()
-        if not orderdetail :
-            print('주문내역이 없습니다.')
-            return {'result' : '주문내역이 없습니다'}
         session.delete(orderdetail)
         session.commit()
         return {'result' : 'ok'}
     except Exception as e:
-        print('삭제 에러' , e)
         return {'result' : e}
-    finally :
-        session.close()
 
 
 @router.get('/list/{user_seq}')
@@ -263,8 +241,50 @@ async def select_orderlist(session : Session = Depends(db.session), user_seq : i
                 ]
         }
     except Exception as e:
+        return {'result' : e}
+
+
+@router.get('/home', status_code=200)
+async def dashboard(session : Session = Depends(db.session)): 
+    """
+    관리자 dashboard
+    count : 대표 상품 외 상품 갯수
+    price : 주문별 금액
+    quantity : 
+    """
+    try :   
+        dashs = session.query(
+            OrderDetail.id,
+            OrderDetail.name, # 유저 이름
+            func.min(Product.name).label('name'),
+            func.count(Product.name).label('count'),
+            func.sum(OrderDetail.price).label('price'),
+            func.sum(func.sum(OrderDetail.price)).over().label('total_price'),
+            func.sum(func.count("*")).over().label('total_order')
+        ).join(
+            Product,
+            Product.id == OrderDetail.product_id
+        ).group_by(
+            OrderDetail.id,
+            OrderDetail.name
+        ).all()
+        # 총합 계산
+        # total_price = sum(dash[4] for dash in dashs)
+        if not dashs : 
+            raise HTTPException(status_code=400, detail='dashs not found')
+        return {'result' :[
+            {
+                'id' : dash[0],
+                'user_name' : dash[1],
+                'product_name' : dash[2],
+                'count' : dash[3]-1,
+                'price' : dash[4],
+            }
+            for dash in dashs
+        ],
+        'total_price' : dashs[0][5],
+        'total_order' : dashs[0][6]
+        }
+    except Exception as e :
         print(e)
         return {'result' : e}
-    finally :
-        session.close()
-

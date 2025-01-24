@@ -17,6 +17,8 @@ from router.product import router as product_router
 from router.orderdetail import router as od_router
 from router.order_router import router as order_router
 from router.deliver import router as deliver_router
+from router.hub import router as hub_router
+from router.driver import router as driver_router
 
 static_dir = "../crawiling_img"
 API_KEY_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
@@ -54,6 +56,8 @@ app.include_router(product_router, tags=["Product"],prefix="/product", dependenc
 app.include_router(od_router, tags=["Detail"], prefix="/detail")
 app.include_router(order_router, tags=["Order"], prefix="/order")
 app.include_router(deliver_router, tags=["Deliver"], prefix="/deliver")
+app.include_router(hub_router, tags=["Hub"], prefix="/hub")
+app.include_router(driver_router, tags=["Driver"], prefix="/driver")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

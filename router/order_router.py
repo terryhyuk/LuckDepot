@@ -1,6 +1,6 @@
 from database.model.user import User
 from database.model.order import Order
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func
 from database.conn.connection import db
@@ -27,6 +27,8 @@ async def order_select(user_seq : int, session : Session = Depends(db.session)):
             ).filter(
             Order.user_seq == user_seq
             ).all()
+        if not orders:
+            raise HTTPException(status_code=400, detail="user order not found")
         return {'result' : 
                 [
                     {
@@ -42,10 +44,7 @@ async def order_select(user_seq : int, session : Session = Depends(db.session)):
                 ]
                 } #
     except Exception as e: 
-        print('orders error',e)
         return {'results' : e}
-    finally :
-        session.close()
 
 # 관리자용 유저 구매내역 조회
 @router.get("/select_all")
@@ -63,6 +62,8 @@ async def get_orders(session: Session = Depends(db.session)):
             func.count(Order.user_seq).label('order_count'), 
             func.max(Order.order_date).label('last_order_date') , 
             func.sum(func.sum(Order.price)).over().label('sum'), 
+            func.sum(func.sum(Order.price)).over().label('sum'), 
+            func.avg(func.sum(Order.price)).over().label('avg'), 
             func.avg(func.sum(Order.price)).over().label('avg'), 
         ).join(
             User,
@@ -72,6 +73,8 @@ async def get_orders(session: Session = Depends(db.session)):
         ).order_by(
             desc('total_payment')
         ).all()
+        if not orders:
+            raise HTTPException(status_code=400, detail="admin order list not found")
         return { "result": 
                 [
                     {
@@ -87,10 +90,7 @@ async def get_orders(session: Session = Depends(db.session)):
                 'avg' : round(orders[0][6]) # 평균 매출
             }
     except Exception as e:
-        print(e)
         return {'result' : e}
-    finally :
-        session.close()
 
 
 # 주문입력
@@ -116,27 +116,18 @@ async def insert(session : Session = Depends(db.session), id : str = None, user_
         session.commit()
         return {'result' : 'ok'}
     except Exception as e:
-        print(e)
         return {'result' : e}
-    finally :
-        session.close()
 
 
 @router.delete('/delete')
 async def delete(session : Session = Depends(db.session), order_id : str = None):
     try :
         order = session.query(Order).filter(Order.id == order_id).first()
-        if not order :
-            print('주문내역이 없습니다.')
-            return {'result' : '주문내역이 없습니다'}
         session.delete(order)
         session.commit()
         return {'result' : 'ok'}
     except Exception as e:
-        print('주문 삭제 에러' , e)
         return {'result' : e}
-    finally : 
-        session.close()
 
 
 
@@ -151,11 +142,8 @@ async def update(session : Session = Depends(db.session), order_id : str = None,
         order = session.query(Order).filter(Order.id == order_id, Order.status != "배송완료").first()
         if not order :    
             return {'result' : '배송중인 상품이 없습니다.'}
-        setattr(order, 'status', status)
+        setattr(order, 'status', status) # 수정 함수 order에서 'status' 컬럼값을 status로 수정
         session.commit()
         return {'result' : 'ok'}
     except Exception as e:
-        print(e)
         return {'result' : e}   
-    finally : 
-        session.close()

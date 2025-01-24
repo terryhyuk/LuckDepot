@@ -11,6 +11,11 @@ class Hub(Base) :
     name = Column(String)
     lat = Column(Double)
     lng = Column(Double)
+    manager = Column(String)
+    phone = Column(String)
+    mail = Column(String)
+    start_time = Column(String)
+    end_time = Column(String)
     
     deliver = relationship("Deliver", back_populates="hub")
     management = relationship("Management", back_populates="hub")
