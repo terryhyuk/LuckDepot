@@ -11,6 +11,7 @@ class OrderDetail(Base) :
     product_id = Column(Integer, ForeignKey('luckydepot.product.id')) # 외래키 product id
     price = Column(Double)
     quantity = Column(Integer) 
+    name = Column(String)
 
     user = relationship("User", back_populates="orderdetail")
     product = relationship("Product", back_populates="orderdetail")
