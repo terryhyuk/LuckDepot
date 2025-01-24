@@ -24,7 +24,7 @@ class ProductRepository {
     }
   }
 
-  deleteProduct(int productId) async {
+  Future<bool> deleteProduct(int productId) async {
     try {
       final response = await http.delete(
         Uri.parse('$url/product/$productId'),
@@ -37,63 +37,113 @@ class ProductRepository {
   }
 
   // 새 상품 추가
-  addProduct(String name, double price, String image, int quantity,
-      int categoryId) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$url/product/'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'name': name,
-          'price': price,
-          'image': image,
-          'quantity': quantity,
-          'category_id': categoryId
-        }),
-      );
-      return response.statusCode == 200;
-    } catch (e) {
-      print('Error adding product: $e');
-      return false;
-    }
-  }
-
-  // 수량 업데이트
-  updateQuantity(int productId, int quantity) async {
+  addProduct(String name, String price, String image, String quantity,
+    String categoryId, String imageBytes) async {
   try {
-    final response = await http.put(
-      Uri.parse('$url/product/$productId/?quantity=$quantity'),
-      headers: {'Content-Type': 'application/json'},
-    );
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${utf8.decode(response.bodyBytes)}');  // utf8.decode 사용
-    return response.statusCode == 200;
-  } catch (e) {
-    print('Error updating quantity: $e');
-    return false;
-  }
-}
-
-// 카테고리 추가
-addCategory(String name, double price, String image, int quantity, int categoryId) async {
-  try {
-    final response = await http.post(
+    // 1. 상품 정보 먼저 저장
+    final productResponse = await http.post(
       Uri.parse('$url/product/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'name': name,
-        'price': price,
+        'price': int.parse(price),
         'image': image,
-        'quantity': quantity,
-        'category_id': categoryId,
+        'quantity': int.parse(quantity),
+        'category_id': int.parse(categoryId)
       }),
     );
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${utf8.decode(response.bodyBytes)}');
-    return response.statusCode == 200;
+
+    if (productResponse.statusCode == 201) {
+      // 2. 상품 생성 성공 후 이미지 업로드
+      final productData = jsonDecode(productResponse.body);
+      final productId = productData['id'];  // 생성된 상품의 ID
+
+      var imageRequest = http.MultipartRequest(
+        'POST', 
+        Uri.parse('$url/product/view/$productId')
+      );
+      imageRequest.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          base64Decode(imageBytes),
+          filename: image
+        )
+      );
+      
+      var imageResponse = await imageRequest.send();
+      print('Image upload status: ${imageResponse.statusCode}');
+      
+      return imageResponse.statusCode == 201;
+    }
+    return false;
   } catch (e) {
     print('Error adding product: $e');
     return false;
   }
 }
+
+
+  // 수량 업데이트
+  updateQuantity(int productId, int additionalQuantity) async {
+    try {
+      // 현재 상품 정보 가져오기
+      final productResponse = await http.get(Uri.parse('$url/product/$productId'));
+      if (productResponse.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(productResponse.body);
+        if (responseData['result'] != null) {
+          final currentQuantity = responseData['result']['quantity'] as int;
+          final newQuantity = currentQuantity + additionalQuantity;
+
+          final response = await http.put(
+            Uri.parse('$url/product/$productId/?quantity=$newQuantity'),
+            headers: {'Content-Type': 'application/json'},
+          );
+          print('Response status: ${response.statusCode}');
+          print('Response body: ${utf8.decode(response.bodyBytes)}');
+          return response.statusCode == 200;
+        }
+      }
+      return false;
+    } catch (e) {
+      print('Error updating quantity: $e');
+      return false;
+    }
+  }
+
+  // 카테고리 추가
+  addNewCategory(String categoryName) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$url/category/'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'name': categoryName
+        }),
+      );
+      print('Category Response status: ${response.statusCode}');
+      print('Category Response body: ${response.body}');
+      return response.statusCode == 201;
+    } catch (e) {
+      print('Error adding category: $e');
+      return false;
+    }
+  }
+
+  // 카테고리 목록 조회
+  Future<List<String>> getCategories() async {
+    try {
+      final response = await http.get(Uri.parse('$url/category/'));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
+        if (responseData['result'] != null && responseData['result'] is List) {
+          final List<dynamic> data = responseData['result'];
+          return data.map((item) => item['name'].toString()).toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching categories: $e');
+      return [];
+    }
+  }
 }

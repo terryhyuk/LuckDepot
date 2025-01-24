@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,7 @@ enum DialogType {
   input,
   error,
   addCategory,
+  addProduct,
 }
 
 class DialogConfig {
@@ -69,9 +71,17 @@ class CustomDialog {
       confirmText: 'OK',
     ),
     DialogType.addCategory: DialogConfig(
+      title: 'Add New Category',
+      content: 'Enter category name',
+      icon: Icons.category,
+      iconColor: Colors.blue,
+      cancelText: 'Cancel',
+      confirmText: 'Add',
+    ),
+    DialogType.addProduct: DialogConfig(
       title: 'Add New Product',
       content: 'Enter product details',
-      icon: Icons.edit,
+      icon: Icons.add_shopping_cart,
       iconColor: Colors.blue,
       cancelText: 'Cancel',
       confirmText: 'Add',
@@ -87,12 +97,22 @@ class CustomDialog {
     VoidCallback? onConfirm,
   }) {
     final config = _dialogConfigs[type]!;
-    final TextEditingController inputController = TextEditingController();
+    
+    // Controllers
+    final TextEditingController categoryNameController = TextEditingController();
     final TextEditingController nameController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
     final TextEditingController quantityController = TextEditingController();
-    final ValueNotifier<int> selectedCategoryId = ValueNotifier<int>(1);
+    final TextEditingController inputController = TextEditingController();
+    
+    // Value Notifiers
     final ValueNotifier<String> selectedImage = ValueNotifier<String>('');
+    final ValueNotifier<Uint8List?> imageBytes = ValueNotifier<Uint8List?>(null);
+    
+    // Category selection
+    final categories = Get.find<InventoryController>().categories;
+    final initialCategory = categories.where((c) => c != 'All').firstOrNull ?? categories[1];
+    final ValueNotifier<String> selectedCategory = ValueNotifier<String>(initialCategory);
 
     showDialog(
       context: context,
@@ -101,44 +121,82 @@ class CustomDialog {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Container(
+          width: type == DialogType.addProduct ? 1000 : 500,
           padding: const EdgeInsets.all(24),
-          width: 400,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                config.icon,
-                color: config.iconColor,
-                size: 48,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                config.title,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(customContent ?? config.content),
-              if (type == DialogType.input) ...[
-                const SizedBox(height: 16),
-                MouseRegion(
-                  cursor: SystemMouseCursors.text,
-                  child: TextField(
-                    controller: inputController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Quantity',
-                      border: OutlineInputBorder(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    config.title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                    splashRadius: 20,
+                  ),
+                ],
+              ),
+              const Divider(),
+              const SizedBox(height: 16),
+
+              if (type == DialogType.addCategory) ...[
+                TextField(
+                  controller: categoryNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Category Name',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // 현재 카테고리 목록 표시
+                const Text('Current Categories:', 
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: ListView.builder(
+                    itemCount: categories.length - 1,  // 'All' 제외
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(categories[index + 1]),
+                      );
+                    },
                   ),
                 ),
               ],
-              if (type == DialogType.addCategory) ...[
+
+              if (type == DialogType.addProduct) ...[
+                DropdownButtonFormField<String>(
+                  value: selectedCategory.value,
+                  items: categories
+                      .where((category) => category != 'All')
+                      .map((category) {
+                    return DropdownMenuItem<String>(
+                      value: category,
+                      child: Text(category),
+                    );
+                  }).toList(),
+                  decoration: const InputDecoration(
+                    labelText: 'Select Category',
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    if (value != null) {
+                      selectedCategory.value = value;
+                    }
+                  },
+                ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: nameController,
@@ -166,31 +224,6 @@ class CustomDialog {
                   ),
                 ),
                 const SizedBox(height: 16),
-                ValueListenableBuilder<int>(
-                  valueListenable: selectedCategoryId,
-                  builder: (context, value, child) {
-                    final categories =
-                        Get.find<InventoryController>().categories;
-                    return DropdownButtonFormField<int>(
-                      value: value,
-                      items: List.generate(categories.length, (index) {
-                        final category = categories[index];
-                        return DropdownMenuItem<int>(
-                          value: index, // All은 0, Tables는 1, ...
-                          child: Text(category),
-                        );
-                      }),
-                      decoration: const InputDecoration(
-                        labelText: 'Category',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (newValue) {
-                        selectedCategoryId.value = newValue!;
-                      },
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
                 ValueListenableBuilder<String>(
                   valueListenable: selectedImage,
                   builder: (context, value, child) {
@@ -202,21 +235,33 @@ class CustomDialog {
                               type: FileType.image,
                               allowMultiple: false,
                             );
-
+                            
                             if (result != null) {
                               final file = result.files.first;
-                              selectedImage.value = file.name; // 파일 이름만 저장
-
-                              // bytes는 별도로 처리해야 함
-                              final bytes = file.bytes;
-                              // TODO: bytes 데이터를 처리하는 로직 추가
+                              selectedImage.value = file.name;
+                              imageBytes.value = file.bytes;
                             }
                           },
-                          child: Text(selectedImage.value.isEmpty
-                              ? 'Select Image'
-                              : 'Change Image'),
+                          child: Text(value.isEmpty ? 'Select Image' : 'Change Image'),
                         ),
                         if (value.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          Container(
+                            width: double.infinity,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: imageBytes.value != null
+                                ? Image.memory(
+                                    imageBytes.value!,
+                                    fit: BoxFit.contain,
+                                  )
+                                : const Center(
+                                    child: Text('No image selected'),
+                                  ),
+                          ),
                           const SizedBox(height: 8),
                           Text('Selected: ${value.split('/').last}'),
                         ],
@@ -225,67 +270,67 @@ class CustomDialog {
                   },
                 ),
               ],
+
+              if (type == DialogType.input) ...[
+                TextField(
+                  controller: inputController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Quantity',
+                    border: OutlineInputBorder(),
+                  ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                ),
+              ],
+
               const SizedBox(height: 24),
-              if (config.cancelText != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(120, 40),
-                      ),
-                      child: Text(config.cancelText!),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(120, 40),
                     ),
-                    const SizedBox(width: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        if (type == DialogType.input &&
-                            onInputConfirm != null) {
-                          onInputConfirm(inputController.text);
-                          if (inputController.text.isNotEmpty) {
-                            final quantity = int.tryParse(inputController.text);
-                            if (quantity != null && quantity > 0) {
-                              show(
-                                context,
-                                DialogType.success,
-                                customContent:
-                                    '$quantity items have been added successfully',
-                              );
-                            }
-                          }
-                        } else if (type == DialogType.addCategory &&
-                            onCategoryConfirm != null) {
+                    child: Text(config.cancelText ?? 'Cancel'),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (type == DialogType.addCategory) {
+                        if (onCategoryConfirm != null) {
+                          onCategoryConfirm({
+                            'categoryName': categoryNameController.text,
+                          });
+                        }
+                      } else if (type == DialogType.addProduct) {
+                        if (onCategoryConfirm != null) {
                           onCategoryConfirm({
                             'name': nameController.text,
                             'price': priceController.text,
-                            'quantity': quantityController.text,
-                            'category_id': selectedCategoryId.value.toString(),
                             'image': selectedImage.value,
+                            'quantity': quantityController.text,
+                            'category_id': '${categories.indexOf(selectedCategory.value)}',
+                            'imageBytes': base64Encode(imageBytes.value ?? Uint8List(0)),
                           });
-                        } else if (onConfirm != null) {
-                          onConfirm();
                         }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(120, 40),
-                        backgroundColor: type == DialogType.delete
-                            ? Colors.red
-                            : Colors.blue,
-                      ),
-                      child: Text(config.confirmText ?? 'OK'),
+                      } else if (type == DialogType.input && onInputConfirm != null) {
+                        onInputConfirm(inputController.text);
+                      } else if (onConfirm != null) {
+                        onConfirm();
+                      }
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(120, 40),
+                      backgroundColor: type == DialogType.delete ? Colors.red : Colors.blue,
                     ),
-                  ],
-                )
-              else
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(200, 40),
+                    child: Text(config.confirmText ?? 'OK'),
                   ),
-                  child: Text(config.confirmText ?? 'OK'),
-                ),
+                ],
+              ),
             ],
           ),
         ),

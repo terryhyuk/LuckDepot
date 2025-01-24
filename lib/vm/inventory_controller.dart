@@ -28,6 +28,7 @@ class InventoryController extends GetxController {
   void onInit() {
     super.onInit();
     loadProducts();
+    loadCategories();  // 카테고리 목록 로드 추가
   }
 
   @override
@@ -36,6 +37,22 @@ class InventoryController extends GetxController {
     super.onClose();
   }
 
+  // 카테고리 목록 로드
+  loadCategories() async {
+    try {
+      final categoryList = await productRepository.getCategories();
+      if (categoryList.isNotEmpty) {
+        categories.clear();
+        categories.add('All');
+        categories.addAll(categoryList);
+        categories.refresh();  // UI 업데이트
+      }
+    } catch (e) {
+      print('Error loading categories: $e');
+    }
+  }
+
+  // 상품 목록 로드
   loadProducts() async {
     try {
       final productList = await productRepository.getProducts();
@@ -46,6 +63,7 @@ class InventoryController extends GetxController {
     }
   }
 
+  // 상품 필터링 (검색 및 카테고리)
   filterProducts() {
     if (searchController.text.isEmpty &&
         (selectedCategory.value.isEmpty || selectedCategory.value == 'All')) {
@@ -73,10 +91,9 @@ class InventoryController extends GetxController {
 
   updateQuantity(int productId, int quantity) async {
     try {
-      final success =
-          await productRepository.updateQuantity(productId, quantity);
+      final success = await productRepository.updateQuantity(productId, quantity);
       if (success) {
-        loadProducts();
+        await loadProducts();  // await 추가
       }
     } catch (e) {
       print('Error updating quantity: $e');
@@ -92,7 +109,7 @@ class InventoryController extends GetxController {
     try {
       final success = await productRepository.deleteProduct(productId);
       if (success) {
-        loadProducts();
+        await loadProducts();  // await 추가
         CustomDialog.show(
           Get.context!,
           DialogType.deleteSuccess,
@@ -109,24 +126,34 @@ class InventoryController extends GetxController {
     }
   }
 
-  addCategory(String name, double price, String image, int quantity,
-      int categoryId) async {
+  addNewCategory(String categoryName) async {
     try {
-      final success = await productRepository.addCategory(
+      final success = await productRepository.addNewCategory(categoryName);
+      if (success) {
+        await loadCategories();  // 카테고리 목록 새로고침
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Error adding new category: $e');
+      return false;
+    }
+  }
+
+  // 상품 추가 메서드 수정
+  addProduct(String name, String price, String image, String quantity,
+      String categoryId, String imageBytes) async {
+    try {
+      final success = await productRepository.addProduct(
         name,
         price,
         image,
         quantity,
         categoryId,
+        imageBytes,
       );
       if (success) {
-        // 새 카테고리 추가 (아직 리스트에 없는 경우에만)
-        final categoryName =
-            getCategoryName(categoryId); // categoryId에 해당하는 카테고리명 가져오기
-        if (!categories.contains(categoryName)) {
-          categories.add(categoryName);
-        }
-        loadProducts();
+        await loadProducts();    // 상품 목록 새로고침
         CustomDialog.show(
           Get.context!,
           DialogType.success,
@@ -143,29 +170,40 @@ class InventoryController extends GetxController {
     }
   }
 
-// categoryId로 카테고리명 가져오는 메서드
-  String getCategoryName(int categoryId) {
-    switch (categoryId) {
-      case 1:
-        return 'Tables';
-      case 2:
-        return 'Chairs';
-      case 3:
-        return 'Bookcases';
-      case 4:
-        return 'Storage';
-      case 5:
-        return 'Paper';
-      case 6:
-        return 'Binders';
-      case 7:
-        return 'Copiers';
-      case 8:
-        return 'Envelopes';
-      case 9:
-        return 'Fasteners';
-      default:
-        return '';
+  // 카테고리와 상품을 함께 추가하는 메서드
+  addCategoryAndProduct(String categoryName, String name, String price, 
+      String image, String quantity, String categoryId, String imageBytes) async {
+    try {
+      // 1. 새 카테고리 추가
+      if (categoryId == '1') {  // 새 카테고리인 경우
+        final categorySuccess = await addNewCategory(categoryName);
+        if (!categorySuccess) {
+          CustomDialog.show(
+            Get.context!,
+            DialogType.error,
+            customContent: 'Failed to add category',
+          );
+          return;
+        }
+      }
+
+      // 2. 상품 추가
+      await addProduct(
+        name,
+        price,
+        image,
+        quantity,
+        categoryId,
+        imageBytes,
+      );
+    } catch (e) {
+      print('Error in addCategoryAndProduct: $e');
+      CustomDialog.show(
+        Get.context!,
+        DialogType.error,
+        customContent: 'Failed to add category and product',
+      );
     }
   }
+  
 }
