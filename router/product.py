@@ -1,12 +1,12 @@
 from database.model.product import Product
 from database.model.category import Category
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from database.conn.connection import db
 from starlette.responses import FileResponse
 from errors import exceptions as ex
 from static.models import ProductCreate
-import os
+import os, shutil
 
 UPLOAD_FOLDER = 'crawling_img'
 
@@ -42,6 +42,34 @@ async def get_product_detail(product_id: int, session: Session = Depends(db.sess
     """
     product = session.query(Product).filter(Product.id == product_id).first()
     return {"result" :product}
+
+
+# 카테고리 별로 상품 가져오기
+@router.get("/category/{category_id}", status_code=200)
+async def get_products_by_category(category_id: int, session: Session = Depends(db.session)):
+    """
+    `Products by Category`\n
+    주어진 카테고리 ID에 속하는 모든 Product 정보 가져오기 \n
+    :param category_id: 카테고리 ID
+    :param session: SQLAlchemy 세션
+    :return: 해당 카테고리의 상품 목록
+    """
+    try:
+        # 카테고리 존재 여부 확인
+        category = session.query(Category).filter(Category.id == category_id).first()
+        if not category:
+            raise HTTPException(status_code=404, detail="Category not found")
+
+        # 카테고리 ID로 상품 조회
+        products = session.query(Product).filter(Product.category_id == category_id).all()
+        if not products:
+            raise HTTPException(status_code=404, detail="No products found for this category")
+
+        # 결과 반환
+        return {"result": [product.__dict__ for product in products]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+
 
 # 새로운 상품을 등록하는 API
 @router.post("/", status_code=201)
@@ -142,3 +170,15 @@ async def get_file(image: str):
         raise HTTPException(status_code=404, detail="File not found")
 
     return FileResponse(file_path, media_type="image/jpeg")
+
+
+@router.post("/image")
+async def upload_file(file:UploadFile=File(...)):
+    try:
+        file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        return {'result' : 'OK'}
+    except Exception as e:
+        print("Error:", e)
+        return{"results" : "Error"}

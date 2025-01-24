@@ -6,6 +6,11 @@ from pydantic.main import BaseModel
 from pydantic.networks import EmailStr
 
 
+class GoogleRegister(BaseModel):
+    id: str = None
+    name: str = None
+    loginType: str = None
+
 class UserRegister(BaseModel):
     # pip install 'pydantic[email]'
     email: EmailStr = None

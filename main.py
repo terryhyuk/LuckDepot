@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Depends
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.security import APIKeyHeader
-from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 from middlewares.trusted_hosts import TrustedHostMiddleware
 from database.conn import connection
@@ -16,9 +15,10 @@ from router.auth import router as auth_router
 from router.product import router as product_router
 from router.orderdetail import router as od_router
 from router.order_router import router as order_router
+from router.login import router as login_router
 from router.deliver import router as deliver_router
-from router.hub import router as hub_router
 from router.driver import router as driver_router
+from router.hub import router as hub_router
 
 static_dir = "../crawiling_img"
 API_KEY_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
@@ -55,6 +55,7 @@ app.include_router(test_router, tags=["Test"],prefix="/test", dependencies=[Depe
 app.include_router(product_router, tags=["Product"],prefix="/product", dependencies=[Depends(API_KEY_HEADER)])
 app.include_router(od_router, tags=["Detail"], prefix="/detail")
 app.include_router(order_router, tags=["Order"], prefix="/order")
+app.include_router(login_router, tags=["Login"], prefix="/login")
 app.include_router(deliver_router, tags=["Deliver"], prefix="/deliver")
 app.include_router(hub_router, tags=["Hub"], prefix="/hub")
 app.include_router(driver_router, tags=["Driver"], prefix="/driver")
