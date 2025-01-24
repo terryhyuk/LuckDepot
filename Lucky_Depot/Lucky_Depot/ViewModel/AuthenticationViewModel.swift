@@ -199,16 +199,44 @@ extension AuthenticationViewModel {
                 Auth.auth().signIn(with: credential) { [self] result, error in
                     if let error = error {
                         print("Firebase Auth Error: \(error.localizedDescription)")
+
                         continuation.resume(returning: false)
                         return
                     }
+                    guard let firebaseUser = result?.user else {
+                                        print("Firebase user is nil")
+                                        continuation.resume(returning: false)
+                                        return
+                                    }
+                    firebaseUser.getIDToken { idToken, error in
+                        if let error = error {
+                        print("ID Token Error: \(error.localizedDescription)")
+                        continuation.resume(returning: false)
+                        return
+                        }
+                        if let idToken = idToken {
+                        print("ID Token: \(idToken)")
+                        self.idToken = idToken
+                        }
+                    }
                     
+                    Task{
+                        do{
+                            let jsonResponse = try await userModel?.sendUserData(idToken: self.idToken, type: "facebook")
+                            print("서버 응답: \(jsonResponse ??   ["message": "응답없음"])")
+                            print("facebook login 성공")
+                        }catch{
+                            print("서버 데이터 전송 오류: \(error.localizedDescription)")
+                        }
+                    }
                     userRealM.addUser(user: LoginUser(email: (result?.user.email)!, name: (result?.user.displayName)!))
                     print("User signed in with Facebook: \(result?.user.uid ?? "")")
                     print("User signed in with Facebook: \(result?.user.email ?? "")")
                     print("User signed in with Facebook: \(result?.user.displayName ?? "")")
+                    
                     continuation.resume(returning: true)
                 }
+                
             }
         }
     }

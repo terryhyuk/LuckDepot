@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CategoryView: View {
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    @State var selectedType: Categories.category0
+    @State var selectedType: Categories?
 
     var body: some View {
         
