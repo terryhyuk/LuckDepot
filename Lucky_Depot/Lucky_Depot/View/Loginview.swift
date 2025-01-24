@@ -98,7 +98,7 @@ struct Loginview: View {
       }
     private func signInWithFacebook() {
         Task {
-          if await viewModel.signInWithFacebook3() == true {
+          if await viewModel.signInWithFacebook() == true {
               navigationPath.append("PersonView")
           }
         }

@@ -38,7 +38,10 @@ class AuthenticationViewModel: ObservableObject {
     @Published var displayName: String = ""
     @State var manager = LoginManager()
     @State var userRealM : UserLoginViewModel = UserLoginViewModel()
-
+    
+    @Published var idToken: String?
+    @State var userModel: UserViewModel?
+    
     init() {
     registerAuthStateHandler()
 
@@ -130,6 +133,23 @@ extension AuthenticationViewModel {
                                                        accessToken: accessToken.tokenString)
 
         let result = try await Auth.auth().signIn(with: credential)
+        if let firebaseUser = Auth.auth().currentUser{
+              firebaseUser.getIDToken{ idToken, error in
+                  if let error = error {
+                      print("오류발생 : \(error.localizedDescription)" )
+                      return
+                  }
+                  
+                  if let idToken = idToken {
+                      print("ID Token:\(idToken)")
+                      self.idToken = idToken
+                      
+                  }
+              }
+          }
+          let jsonResponse = try await userModel?.sendUserData(idToken: self.idToken, type: "google")
+          print("서버 응답: \(jsonResponse ??   ["message": "응답없음"])")
+      
           
         let firebaseUser = result.user
 //          print(firebaseUser.email)
@@ -159,7 +179,7 @@ extension AuthenticationViewModel {
 
 
     
-    func signInWithFacebook3() async -> Bool {
+    func signInWithFacebook() async -> Bool {
         //withCheckedContinuation 비동기 클로저를 동기식으로 기다릴 수 있게 해주는 Swift의 비동기 API
         // 클로저는 비동기 작업을 마친 후 continuation.resume(returning:)으로 결과를 반환
         return await withCheckedContinuation { continuation in
@@ -175,6 +195,7 @@ extension AuthenticationViewModel {
                     return
                 }
                 let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
+                
                 Auth.auth().signIn(with: credential) { [self] result, error in
                     if let error = error {
                         print("Firebase Auth Error: \(error.localizedDescription)")
