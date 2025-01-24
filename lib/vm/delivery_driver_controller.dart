@@ -62,24 +62,20 @@ class DeliveryDriverController extends GetxController {
   }
 
   deleteDriver(BuildContext context, int index) async {
+  try {
+    await _repository.deleteDriver(index);  // 삭제 요청
+    await getDriverListenable(); 
+  } catch (e) {
+    print('Error deleting driver: $e');
     if (context.mounted) {
       CustomDialog.show(
-        context, 
-        DialogType.delete,
-        customContent: 'Are you sure you want to delete this driver?',
-        onConfirm: () async {
-          await _repository.deleteDriver(index);
-          if (context.mounted) {
-            CustomDialog.show(
-              context, 
-              DialogType.success,
-              customContent: 'Driver has been deleted successfully'
-            );
-          }
-        },
+        context,
+        DialogType.error,
+        customContent: 'Failed to delete driver',
       );
     }
   }
+}
 
   ValueListenable getDriverListenable() {
     return _repository.getDriverListenable();

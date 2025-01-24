@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucky_depot/view/widgets/dialog.dart';
 import '../repository/product_repository.dart';
 import '../model/product.dart';
+import 'package:http/http.dart' as http;
 
 class InventoryController extends GetxController {
   final productRepository = ProductRepository();
@@ -131,33 +134,70 @@ class InventoryController extends GetxController {
       final success = await productRepository.addNewCategory(categoryName);
       if (success) {
         await loadCategories();  // 카테고리 목록 새로고침
-        return true;
-      }
-      return false;
-    } catch (e) {
-      print('Error adding new category: $e');
-      return false;
-    }
-  }
-
-  // 상품 추가 메서드 수정
-  addProduct(String name, String price, String image, String quantity,
-      String categoryId, String imageBytes) async {
-    try {
-      final success = await productRepository.addProduct(
-        name,
-        price,
-        image,
-        quantity,
-        categoryId,
-        imageBytes,
-      );
-      if (success) {
-        await loadProducts();    // 상품 목록 새로고침
         CustomDialog.show(
           Get.context!,
           DialogType.success,
-          customContent: 'Product added successfully',
+          customContent: 'Category added successfully',
+        );
+      } else {
+        CustomDialog.show(
+          Get.context!,
+          DialogType.error,
+          customContent: 'Failed to add category',
+        );
+      }
+    } catch (e) {
+      print('Error adding new category: $e');
+      CustomDialog.show(
+        Get.context!,
+        DialogType.error,
+        customContent: 'Failed to add category',
+      );
+    }
+  }
+
+  // 상품 추가 메서드
+  Future<void> addProduct(String name, String price, String image, String quantity,
+      String categoryId, String imageBytes) async {
+    try {
+      // 1. 이미지 업로드
+      var imageRequest = http.MultipartRequest(
+        'POST', 
+        Uri.parse('${productRepository.url}/product/image/')
+      );
+      imageRequest.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          base64Decode(imageBytes),
+          filename: image
+        )
+      );
+      
+      var imageResponse = await imageRequest.send();
+      if (imageResponse.statusCode == 200) {
+        // 2. 상품 정보 저장
+        final success = await productRepository.addProduct(
+          name,
+          price,
+          image,
+          quantity,
+          categoryId,
+          imageBytes,
+        );
+        
+        if (success) {
+          await loadProducts();
+          CustomDialog.show(
+            Get.context!,
+            DialogType.success,
+            customContent: 'Product added successfully',
+          );
+        }
+      } else {
+        CustomDialog.show(
+          Get.context!,
+          DialogType.error,
+          customContent: 'Failed to upload image',
         );
       }
     } catch (e) {
@@ -166,42 +206,6 @@ class InventoryController extends GetxController {
         Get.context!,
         DialogType.error,
         customContent: 'Failed to add product',
-      );
-    }
-  }
-
-  // 카테고리와 상품을 함께 추가하는 메서드
-  addCategoryAndProduct(String categoryName, String name, String price, 
-      String image, String quantity, String categoryId, String imageBytes) async {
-    try {
-      // 1. 새 카테고리 추가
-      if (categoryId == '1') {  // 새 카테고리인 경우
-        final categorySuccess = await addNewCategory(categoryName);
-        if (!categorySuccess) {
-          CustomDialog.show(
-            Get.context!,
-            DialogType.error,
-            customContent: 'Failed to add category',
-          );
-          return;
-        }
-      }
-
-      // 2. 상품 추가
-      await addProduct(
-        name,
-        price,
-        image,
-        quantity,
-        categoryId,
-        imageBytes,
-      );
-    } catch (e) {
-      print('Error in addCategoryAndProduct: $e');
-      CustomDialog.show(
-        Get.context!,
-        DialogType.error,
-        customContent: 'Failed to add category and product',
       );
     }
   }

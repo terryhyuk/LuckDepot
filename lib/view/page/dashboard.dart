@@ -40,7 +40,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   SizedBox(height: 24),
-                  // 여기에 대시보드 컨텐츠 추가
+                  
                 ],
               ),
             ),

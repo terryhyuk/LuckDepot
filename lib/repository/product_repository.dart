@@ -1,4 +1,3 @@
-// lib/repository/product_repository.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../model/product.dart';
@@ -40,40 +39,38 @@ class ProductRepository {
   addProduct(String name, String price, String image, String quantity,
     String categoryId, String imageBytes) async {
   try {
-    // 1. 상품 정보 먼저 저장
-    final productResponse = await http.post(
-      Uri.parse('$url/product/'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'name': name,
-        'price': int.parse(price),
-        'image': image,
-        'quantity': int.parse(quantity),
-        'category_id': int.parse(categoryId)
-      }),
+    // 1. 이미지 업로드
+    var imageRequest = http.MultipartRequest(
+      'POST', 
+      Uri.parse('$url/product/image/')  // 올바른 이미지 업로드 엔드포인트
     );
-
-    if (productResponse.statusCode == 201) {
-      // 2. 상품 생성 성공 후 이미지 업로드
-      final productData = jsonDecode(productResponse.body);
-      final productId = productData['id'];  // 생성된 상품의 ID
-
-      var imageRequest = http.MultipartRequest(
-        'POST', 
-        Uri.parse('$url/product/view/$productId')
-      );
-      imageRequest.files.add(
-        http.MultipartFile.fromBytes(
-          'file',
-          base64Decode(imageBytes),
-          filename: image
-        )
+    imageRequest.files.add(
+      http.MultipartFile.fromBytes(
+        'file',
+        base64Decode(imageBytes),
+        filename: image
+      )
+    );
+    
+    var imageResponse = await imageRequest.send();
+    print('Image upload status: ${imageResponse.statusCode}');
+    
+    if (imageResponse.statusCode == 200) {
+      // 2. 상품 정보 저장
+      final response = await http.post(
+        Uri.parse('$url/product/'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'name': name,
+          'price': int.parse(price),
+          'image': image,
+          'quantity': int.parse(quantity),
+          'category_id': int.parse(categoryId)
+        }),
       );
       
-      var imageResponse = await imageRequest.send();
-      print('Image upload status: ${imageResponse.statusCode}');
-      
-      return imageResponse.statusCode == 201;
+      print('Product creation status: ${response.statusCode}');
+      return response.statusCode == 201;
     }
     return false;
   } catch (e) {

@@ -98,18 +98,15 @@ class CustomDialog {
   }) {
     final config = _dialogConfigs[type]!;
     
-    // Controllers
     final TextEditingController categoryNameController = TextEditingController();
     final TextEditingController nameController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
     final TextEditingController quantityController = TextEditingController();
     final TextEditingController inputController = TextEditingController();
     
-    // Value Notifiers
     final ValueNotifier<String> selectedImage = ValueNotifier<String>('');
     final ValueNotifier<Uint8List?> imageBytes = ValueNotifier<Uint8List?>(null);
     
-    // Category selection
     final categories = Get.find<InventoryController>().categories;
     final initialCategory = categories.where((c) => c != 'All').firstOrNull ?? categories[1];
     final ValueNotifier<String> selectedCategory = ValueNotifier<String>(initialCategory);
@@ -155,7 +152,6 @@ class CustomDialog {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // 현재 카테고리 목록 표시
                 const Text('Current Categories:', 
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
@@ -166,7 +162,7 @@ class CustomDialog {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: ListView.builder(
-                    itemCount: categories.length - 1,  // 'All' 제외
+                    itemCount: categories.length - 1,
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(categories[index + 1]),
@@ -318,7 +314,7 @@ class CustomDialog {
                         }
                       } else if (type == DialogType.input && onInputConfirm != null) {
                         onInputConfirm(inputController.text);
-                      } else if (onConfirm != null) {
+                      } else if (type == DialogType.delete && onConfirm != null) {
                         onConfirm();
                       }
                       Navigator.pop(context);

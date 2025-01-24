@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucky_depot/vm/inventory_controller.dart';
 import '../../vm/custom_drawer_controller.dart';
 
 class CustomDrawer extends StatelessWidget {
   CustomDrawer({super.key});
 
   final drawerController = Get.put(CustomDrawerController());
+  final inventory = Get.put(InventoryController());
+  
 
   @override
   Widget build(BuildContext context) {

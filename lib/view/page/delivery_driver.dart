@@ -218,11 +218,9 @@ class DeliveryDriver extends StatelessWidget {
                                                         DialogType.delete,
                                                         customContent:
                                                             'Are you sure you want to delete "${driver.name}"?',
-                                                        onConfirm: () =>
-                                                            delivery
-                                                                .deleteDriver(
-                                                                    context,
-                                                                    index),
+                                                        onConfirm: ()async{
+                                                          await delivery.deleteDriver(context,index);
+                                                        },
                                                       ),
                                                     ),
                                                   ],
