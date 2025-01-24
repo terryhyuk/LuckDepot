@@ -2,7 +2,7 @@ from database.model.orderdetail import OrderDetail
 from database.model.product import Product
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, func, cast, String, Integer
+from sqlalchemy import desc, func, cast, String
 from database.conn.connection import db
 from datetime import datetime, timedelta
 
@@ -222,10 +222,13 @@ async def delete(session : Session = Depends(db.session), orderdetail_id : str =
         session.close()
 
 
-@router.get('/{user_seq}/orderlist')
-async def select_orderlist(session : Session = Depends(db.session), user_seq : int = None,status_code=200):
+@router.get('/list/{user_seq}')
+async def select_orderlist(session : Session = Depends(db.session), user_seq : int = None):
     """
     주문내역 불러오기
+    대표상품 : name, quantity,image
+    총 합 : price
+    count : 주문 상품 갯수 -1 
     """
     try:
         lists = session.query(
@@ -233,8 +236,8 @@ async def select_orderlist(session : Session = Depends(db.session), user_seq : i
             func.min(Product.image).label('image'),
             func.min(Product.name).label('name'),
             func.count(OrderDetail.name).label('count'),
-            func.sum(OrderDetail.quantity).label('quantity'),
-            func.sum(OrderDetail.price).label('price')
+            func.min(OrderDetail.quantity).label('quantity'),
+            func.sum(OrderDetail.price).label('price'),
             ).join(
                 Product,
                 Product.id == OrderDetail.product_id,
@@ -250,9 +253,11 @@ async def select_orderlist(session : Session = Depends(db.session), user_seq : i
             {
                 "id" : list[0],
                 "image" : list[1],
-                "name" : list[2] if list[3] == 1 else f"{list[2]} and {list[3]-1} item ",
+                "name" : list[2],
+                "count" : list[3]-1,
                 "quantity" : list[4],
-                "price" : list[5]
+                "price" : list[5],
+                "date" : f"20{list[0][:2]}.{list[0][2:4]}.{list[0][4:6]}"
             }
             for list in lists 
                 ]
