@@ -96,6 +96,7 @@ struct Loginview: View {
           }
         }
       }
+    
     private func signInWithFacebook() {
         Task {
           if await viewModel.signInWithFacebook() == true {

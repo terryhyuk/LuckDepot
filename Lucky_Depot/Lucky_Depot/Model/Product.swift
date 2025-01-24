@@ -36,9 +36,9 @@ extension Product: Hashable {
 }
 
  //테스트 용
-var productList: [Product] = [
-   // Product(id: 1, name: "copper", price: 12.5, image: "namsan", quantity: 1,category_id: "Food"),
- //   Product(id: 2, name: "aluminium", price: 130.3, image: "hyeondai", quantity:2, category_id: "Food"),
-  //  Product(id: 3, name: "lithium", price: 15.4, imag: "lithium", quantity:13, category_id: "Music"),
-    Product(id: 1, image: "nickel", category_id: 1, name: "mdm", price: 12, quantity: 1)
-]
+//var productList: [Product] = [
+//   Product(id: 1, name: "copper", price: 12.5, image: "namsan", quantity: 1,category_id: "Food"),
+// Product(id: 2, name: "aluminium", price: 130.3, image: "hyeondai", quantity:2, category_id: "Food"),
+//   Product(id: 3, name: "lithium", price: 15.4, imag: "lithium", quantity:13, category_id: "Music"),
+//    Product(id: 1, image: "nickel", category_id: 1, name: "mdm", price: 12, quantity: 1)
+//]

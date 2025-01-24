@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
-
+import SDWebImageSwiftUI
 
 struct CategoryView: View {
+    
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
     @State var selectedType: Categories?
-
+    @ObservedObject var categoryViewModel: CategoryViewModel = CategoryViewModel()
+    @State var productList: [Product] = []
+    
     var body: some View {
         
         ZStack {
@@ -24,11 +27,11 @@ struct CategoryView: View {
                     Category(selectedType: $selectedType)
                         .padding(.vertical, 10)
                     
-//                    ScrollView {
-//                        LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
-//                            ForEach(productList, id: \.id, content: {
-//                                product in
-//                                
+                    ScrollView (showsIndicators: false){
+                        LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
+                            ForEach(productList, id: \.id, content: {
+                                product in
+                                
 //                                if selectedType == product.category_id {
 //                                    
 //                                    ProductView(product:product)
@@ -36,15 +39,22 @@ struct CategoryView: View {
 //                                } else if selectedType == 1 {
 //                                    
 //                                    ProductView(product:product)
-//                                }
-//                               
-//                            })
-//                        })
-//                    }.padding(.horizontal)
+//                                } else {
+                                ProductView(product:product)
+                               
+                            })
+                        })
+                    }.padding(.horizontal)
                     Spacer()
                 })
                 
                 
+            })
+            .onAppear(perform: {
+                Task{
+                    productList = try await categoryViewModel.fetchCategory(category_id: 1)
+                    print(productList)
+                }
             })
             .navigationTitle("Categories")
         }
@@ -98,10 +108,10 @@ struct ProductView: View {
     var body: some View {
         VStack(alignment:.leading,content: {
             
-            Image(product.image)
+            WebImage(url: URL(string: "http://192.168.50.38:8000/product/view/\(product.image)"))
                 .resizable()
-                .aspectRatio(contentMode: .fill)
                 .frame(width:170, height: 150)
+            
             VStack(alignment: .leading){
                 Text(product.name)
                     .foregroundStyle(.black)
