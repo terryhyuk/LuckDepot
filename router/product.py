@@ -1,12 +1,12 @@
 from database.model.product import Product
 from database.model.category import Category
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from database.conn.connection import db
 from starlette.responses import FileResponse
 from errors import exceptions as ex
 from static.models import ProductCreate
-import os
+import os, shutil
 
 UPLOAD_FOLDER = 'crawling_img'
 
@@ -170,3 +170,15 @@ async def get_file(image: str):
         raise HTTPException(status_code=404, detail="File not found")
 
     return FileResponse(file_path, media_type="image/jpeg")
+
+
+@router.post("/image")
+async def upload_file(file:UploadFile=File(...)):
+    try:
+        file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        return {'result' : 'OK'}
+    except Exception as e:
+        print("Error:", e)
+        return{"results" : "Error"}
