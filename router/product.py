@@ -43,6 +43,34 @@ async def get_product_detail(product_id: int, session: Session = Depends(db.sess
     product = session.query(Product).filter(Product.id == product_id).first()
     return {"result" :product}
 
+
+# 카테고리 별로 상품 가져오기
+@router.get("/category/{category_id}", status_code=200)
+async def get_products_by_category(category_id: int, session: Session = Depends(db.session)):
+    """
+    `Products by Category`\n
+    주어진 카테고리 ID에 속하는 모든 Product 정보 가져오기 \n
+    :param category_id: 카테고리 ID
+    :param session: SQLAlchemy 세션
+    :return: 해당 카테고리의 상품 목록
+    """
+    try:
+        # 카테고리 존재 여부 확인
+        category = session.query(Category).filter(Category.id == category_id).first()
+        if not category:
+            raise HTTPException(status_code=404, detail="Category not found")
+
+        # 카테고리 ID로 상품 조회
+        products = session.query(Product).filter(Product.category_id == category_id).all()
+        if not products:
+            raise HTTPException(status_code=404, detail="No products found for this category")
+
+        # 결과 반환
+        return {"result": [product.__dict__ for product in products]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+
+
 # 새로운 상품을 등록하는 API
 @router.post("/", status_code=201)
 async def create_product(product: ProductCreate, session: Session = Depends(db.session)):
