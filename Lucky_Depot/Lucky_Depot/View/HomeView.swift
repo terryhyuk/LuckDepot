@@ -44,7 +44,7 @@ struct HomeView: View {
                                     .onTapGesture(perform: {
                                         productViewModel.productId = product.id
                                         navigationPath.append("DetailView")
-                                        print("Detail")
+                                        
                                     })
                             })
                         })
@@ -52,10 +52,6 @@ struct HomeView: View {
                     .padding(.horizontal)
                     .navigationTitle("Lucky Depot")
                     .navigationBarTitleDisplayMode(.inline)
-                    .navigationDestination(for: String.self) {
-                        destination in
-                        
-                    }
                 }
                 
             }

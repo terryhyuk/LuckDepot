@@ -41,7 +41,7 @@ struct JSONViewModel {
         }
         
         let (data, _) = try await URLSession.shared.data(from: url)
-        
+        print("Raw data: \(String(data: data, encoding: .utf8) ?? "Invalid data")")
         return try JSONDecoder().decode(JsonResult<T>.self, from: data)
     }
 }

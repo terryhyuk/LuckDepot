@@ -26,19 +26,19 @@ class ShoppingBasketViewModel: ObservableObject {
     }
     
     // 상품 추가 함수
-//    func addProduct(product: Product) {
-//        let newProduct = RealMProduct()
-//        newProduct.id = product.id
-//        newProduct.name = product.name
-//        newProduct.price = product.price
-//        newProduct.imagePath = product.imagePath
-//        newProduct.quantity = product.quantity
-//        newProduct.category = product.category
-//        
-//        try! realm.write {
-//            realm.add(newProduct)
-//        }
-//    }
+    func addProduct(product: Product) {
+        let newProduct = RealMProduct()
+        newProduct.id = String(product.id)
+        newProduct.name = product.name
+        newProduct.price = product.price
+        newProduct.imagePath = product.imagePath
+        newProduct.quantity = product.quantity
+        newProduct.category = String(product.category_id)
+        
+        try! realm.write {
+            realm.add(newProduct)
+        }
+    }
     
     // 상품 갯수 업데이트
     func updateProductQuantity(_ product: RealMProduct, quantity: Int) {

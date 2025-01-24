@@ -9,10 +9,6 @@ import SwiftUI
 import TossPayments
 
 struct PaymentsView: View {
-//    @State var productList: [Product] = [
-//        Product(id: "1", name: "제품", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
-//        Product(id: "2", name: "제품2", price: 2334, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
-//    ]
     static let clientKey: String = "test_ck_DpexMgkW367ekQZ9PG4BVGbR5ozO"
 
     @ObservedObject var shoppingBasketViewModel: ShoppingBasketViewModel
@@ -33,6 +29,8 @@ struct PaymentsView: View {
     @State var orderId: String = ""
     @State var totalPrice: Double = 0
     
+    let directPurchaseProducts : Product? = nil
+    @State var shoppingBasket: [RealMProduct] = []
     
     var body: some View {
         VStack {

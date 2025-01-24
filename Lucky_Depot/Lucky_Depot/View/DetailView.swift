@@ -10,6 +10,7 @@ import SDWebImageSwiftUI
 
 struct DetailView: View {
     @ObservedObject var productViewModel :ProductViewModel
+    @ObservedObject var shoppingBasketViewModel: ShoppingBasketViewModel
     @Binding var navigationPath: NavigationPath
     
     @State var product: Product?
@@ -24,20 +25,24 @@ struct DetailView: View {
                     .padding()
             } else {
                 ScrollView {
-                    VStack(spacing: 20) {
+                    VStack(alignment: .leading ,spacing: 20) {
                         // Product Image
-                        WebImage(url: URL(string: product!.image))
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: .infinity, height: 300)
-                            .cornerRadius(8)
+                        HStack {
+                            Spacer()
+                            WebImage(url: URL(string: product!.imagePath))
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: .infinity, height: 300)
+                                .cornerRadius(8)
+                            Spacer()
+                        }
                         
                         // Title and Price
                         VStack(alignment: .leading, spacing: 5) {
-                            Text("프리미엄 메쉬 사무용 의자")
+                            Text(product!.name)
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            Text("289,000원")
+                            Text("$"+String(format : "%.2f", product!.price)+" Each")
                                 .font(.title3)
                                 .foregroundColor(.blue)
                         }
@@ -54,7 +59,7 @@ struct DetailView: View {
                         // Action Buttons
                         VStack(spacing: 10) {
                             Button(action: {
-                                // Immediate Purchase Action
+                                navigationPath.append("PaymentsView")
                             }) {
                                 Text("바로 구매하기")
                                     .font(.headline)
@@ -66,7 +71,9 @@ struct DetailView: View {
                             }
                             
                             Button(action: {
-                                // Add to Cart Action
+                                // 알러트 후
+                                // 장바구니 이동
+                                // 뒤로가기
                             }) {
                                 Text("장바구니 담기")
                                     .font(.headline)
@@ -103,38 +110,53 @@ struct DetailView: View {
                             .frame(maxWidth: .infinity)
                         }
                         
-                        Divider()
-                        
-                        // Product Details
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("제품 상세 정보")
-                                .font(.headline)
-                            
-                            Text("최고급 메쉬 소재를 사용한 프리미엄 사무용 의자입니다. 인체공학적 설계로 장시간 착석에도 편안함을 제공합니다. 통기성이 우수한 메쉬 소재로 쾌적한 사용이 가능합니다.")
-                                .font(.body)
-                            
-                            Text("- 인체공학적 설계\n- 고급 메쉬 소재 사용\n- 조절 가능한 팔걸이\n- 최대 하중: 120kg")
-                                .font(.body)
-                                .lineSpacing(5)
-                        }
+//                        Divider()
+//                        
+//                        // Product Details
+//                        VStack(alignment: .leading, spacing: 10) {
+//                            Text("제품 상세 정보")
+//                                .font(.headline)
+//                            
+//                            Text("최고급 메쉬 소재를 사용한 프리미엄 사무용 의자입니다. 인체공학적 설계로 장시간 착석에도 편안함을 제공합니다. 통기성이 우수한 메쉬 소재로 쾌적한 사용이 가능합니다.")
+//                                .font(.body)
+//                            
+//                            Text("- 인체공학적 설계\n- 고급 메쉬 소재 사용\n- 조절 가능한 팔걸이\n- 최대 하중: 120kg")
+//                                .font(.body)
+//                                .lineSpacing(5)
+//                        }
                     }
                     .padding()
                 }
                 .navigationTitle("제품 상세")
-                .onAppear(perform: {
-                    Task {
-                        product = try await productViewModel.fetchDetail()
-                    }
-                })
+                
             }
         }
+        .onAppear(perform: {
+            Task{
+                product = try await productViewModel.fetchDetail()
+            }
+
+        })
     }
 }
 
-#Preview {
-    DetailView(
-//        product: Product(id: "1", name: "제품", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1")
-        productViewModel: ProductViewModel(),
-        navigationPath: .constant(NavigationPath())
-    )
+//#Preview {
+//    DetailView(
+////        product: Product(id: "1", name: "제품", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1")
+////        productViewModel: ProductViewModel(),
+////        navigationPath: .constant(NavigationPath())
+//    )
+//}
+
+struct DetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        @StateObject var productViewModel = ProductViewModel()
+        @StateObject var shoppingBasketViewModel = ShoppingBasketViewModel()
+        DetailView(
+            productViewModel: productViewModel,
+            shoppingBasketViewModel: shoppingBasketViewModel,
+            navigationPath: .constant(NavigationPath())
+        )
+    }
 }
+
