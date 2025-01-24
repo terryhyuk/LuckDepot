@@ -8,13 +8,16 @@
 import Foundation
 
 class ProductViewModel: ObservableObject {
-    let baseURL = "http://192.168.50.38:8000/"
-    @Published var productId: Int = 0
+    @Published var productId: Int = 1
     var jsonViewModel: JSONViewModel = JSONViewModel()
+    
+    init() {
+//        print(productId)
+    }
     
     func fetchProduct() async throws -> [Product]{
         do {
-            let result: JsonResult<[Product]> = try await jsonViewModel.fetchJSON(path: "/product")
+            let result: JsonResult<[Product]> = try await jsonViewModel.fetchJSONList(path: "/product")
             let products = result.result
             return products
         } catch {
@@ -24,8 +27,13 @@ class ProductViewModel: ObservableObject {
     }
     
     func fetchDetail() async throws -> Product{
-        let url = URL(string: baseURL+"/product?product_id=\(productId)")!
-        let (data, _) = try await URLSession.shared.data(from: url)
-        return try JSONDecoder().decode(Product.self, from: data)
+        do {
+            let result: JsonResult<Product> = try await jsonViewModel.fetchJSON(path: "/product/\(productId)")
+            let product = result.result
+            return product
+        } catch {
+            print("Error: \(error)")
+            throw error
+        }
     }
 }

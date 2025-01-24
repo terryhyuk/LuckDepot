@@ -67,9 +67,12 @@ private struct TabsLayoutView: View {
                     } else if tab == .cart {
                         navigationPath.append("CartView")
                     } else if tab == .person {
+                        print(viewModel.authenticationState)
                         if viewModel.authenticationState == .unauthenticated {
+                            print("loginError")
                             navigationPath.append("LoginView")
                         } else {
+                            print("PersonError")
                             navigationPath.append("PersonView")
                         }
                     }

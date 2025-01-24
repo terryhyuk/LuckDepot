@@ -49,6 +49,9 @@ struct ContentView: View {
                         .padding(.horizontal)
                 }
             }
+            .onAppear(perform: {
+                print(viewModel.authenticationState)
+            })
             .navigationTitle("Lucky Depot")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: String.self) { destination in
@@ -65,12 +68,8 @@ struct ContentView: View {
                 } else if destination == "OrderHistoryView" {
                     OrderHistory(navigationPath: $navigationPath)
                 } else if destination == "DetailView" {
-                    DetailView(productViewModel: productViewModel, navigationPath: $navigationPath)
-                } else if destination == "ShippingStatusView"{
-                    ShippingStatusView()
-                } else if destination == "OrderDetailsView" {
-                    OrderDetailsView()
-                } 
+                    DetailView(productViewModel: productViewModel, shoppingBasketViewModel: shoppingBasketViewModel, navigationPath: $navigationPath)
+                }
             }
             
         }
