@@ -8,7 +8,7 @@ class ChartWidget extends StatelessWidget {
 
   ChartWidget({super.key});
 
-  // 막대 차트 위젯 - 월별 매출액
+  // 막대 차트
   Widget buildBarChart() {
     return Obx(() => Container(
           padding: const EdgeInsets.all(16),
@@ -74,6 +74,7 @@ class ChartWidget extends StatelessWidget {
         ));
   }
 
+  // 파이차트
   Widget buildPieChart() {
     final touchedIndex = ValueNotifier<int>(-1);
 
