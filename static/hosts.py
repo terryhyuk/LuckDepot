@@ -12,7 +12,11 @@ load_dotenv()
 POSTGRESQL_HOST = os.getenv('POSTGRESQL_HOST')
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
-EXCEPT_PATH_LIST = ["/", "/openapi.json"]
+EXCEPT_PATH_LIST = ["/", "/openapi.json", 
+    "/login/google",  # ✅ 로그인 API
+    "/signup",  # ✅ 회원가입 API (필요하면 추가)
+    "/healthcheck"  # ✅ 서버 상태 확인 API (필요하면 추가)
+]
 EXCEPT_PATH_REGEX = "^(/docs|/redoc|/auth)"
 TRUSTED_HOSTS = ["*"]
 ALLOW_SITE = ["*"]

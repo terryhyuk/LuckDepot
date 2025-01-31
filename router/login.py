@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.conn.connection import db
 from errors import exceptions as ex
-from static.models import GoogleRegister
+from static.models import LoginRequest
 from static.hosts import firebase_auth
 
 
@@ -21,7 +21,7 @@ router = APIRouter()
 
 # 모든 상품 가져오는 API
 @router.post("/", status_code=200)
-async def index(user = GoogleRegister, session: Session = Depends(db.session)):
+async def index(user = LoginRequest, session: Session = Depends(db.session)):
     """
     `구글 로그인`\n
     DB에 저장된 중복 유저가 있나 확인하고  \n
@@ -32,37 +32,51 @@ async def index(user = GoogleRegister, session: Session = Depends(db.session)):
     # return {"result" :product}
 
 
-
 @router.post("/google")
-async def google_login(token: str, login_type: str,session: Session = Depends(db.session)):
+async def google_login(request: LoginRequest, session: Session = Depends(db.session)):
     """
     Firebase Google 로그인 처리
-    :param id_token: 클라이언트에서 전달된 Firebase ID 토큰
-    :param session: SQLAlchemy 세션
-    :return: 사용자 정보 또는 오류 메시지
     """
-    print(f"Recieved JWT Token : \n{token}")
+    print(f"📡 Received JWT Token: {request.idToken}")
+
     try:
-        # Firebase ID 토큰 검증
-        decoded_token = firebase_auth.verify_id_token(token)
-        firebase_uid = decoded_token["uid"]  # Firebase 사용자 고유 ID
-        name = decoded_token.get("name", "Unknown")  # 사용자 이름
-        email = decoded_token.get("email", None)  # 사용자 이메일 (옵션)
+        # ✅ Firebase ID 토큰 검증
+        decoded_token = firebase_auth.verify_id_token(request.idToken)
+        firebase_uid = decoded_token["uid"]  
+        name = decoded_token.get("name", "Unknown")  
+        email = decoded_token.get("email", None)  
 
-        # DB에서 사용자 검색
-        user = session.query(User).filter(User.id == firebase_uid).first()
+        # ✅ DB에서 사용자 검색 (이메일을 ID로 사용)
+        user = session.query(User).filter(User.id == email).first()
 
-    #     if user:
-    #         # 기존 사용자 처리
-    #         return {"result": "Existing user", "user": {"id": user.id, "name": user.name, "login_type": user.login_type}}
-    #     else:
-    #         # 새 사용자 저장
-    #         new_user = User(id=firebase_uid, name=name, login_type="google")
-    #         session.add(new_user)
-    #         session.commit()
-    #         session.refresh(new_user)
+        if user:
+            print("✅ 기존 사용자 로그인: ", user.name)
+            return {
+                "result": "Existing user",
+                "user": {
+                    "id": user.id,
+                    "email": user.id,  # ✅ FastAPI 응답에서 `id`를 `email` 필드로 추가
+                    "name": user.name,
+                    "login_type": user.login_type
+                }
+            }
+        else:
+            # ✅ 새 사용자 저장
+            new_user = User(id=email, name=name, login_type="google")
+            session.add(new_user)
+            session.commit()
+            session.refresh(new_user)
 
-    #         return {"result": "New user created", "user": {"id": new_user.id, "name": new_user.name, "login_type": new_user.login_type}}
+            print("🆕 새로운 사용자 추가됨: ", new_user.name)
+            return {
+                "result": "New user created",
+                "user": {
+                    "id": new_user.id,
+                    "email": new_user.id,  # ✅ `email` 필드 추가
+                    "name": new_user.name,
+                    "login_type": new_user.login_type
+                }
+            }
 
     except firebase_auth.InvalidIdTokenError:
         raise HTTPException(status_code=401, detail="Invalid ID token")
