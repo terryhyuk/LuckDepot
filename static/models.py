@@ -7,6 +7,7 @@ from pydantic.networks import EmailStr
 
 
 class GoogleRegister(BaseModel):
+    
     id: str = None
     name: str = None
     loginType: str = None

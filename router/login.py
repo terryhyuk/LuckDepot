@@ -34,7 +34,7 @@ async def index(user = GoogleRegister, session: Session = Depends(db.session)):
 
 
 @router.post("/google")
-async def google_login(token: str, session: Session = Depends(db.session)):
+async def google_login(token: str, login_type: str,session: Session = Depends(db.session)):
     """
     Firebase Google 로그인 처리
     :param id_token: 클라이언트에서 전달된 Firebase ID 토큰
