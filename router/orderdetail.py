@@ -1,5 +1,6 @@
 from database.model.orderdetail import OrderDetail
 from database.model.product import Product
+from database.model.order import Order
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func, cast, String
@@ -256,20 +257,22 @@ async def dashboard(session : Session = Depends(db.session)):
         dashs = session.query(
             OrderDetail.id,
             OrderDetail.name, # 유저 이름
-            func.min(Product.name).label('name'),
-            func.count(Product.name).label('count'),
-            func.sum(OrderDetail.price).label('price'),
-            func.sum(func.sum(OrderDetail.price)).over().label('total_price'),
-            func.sum(func.count("*")).over().label('total_order')
+            func.min(Product.name).label('name'), # 최근주문 상품 이름
+            func.count(Product.name).label('count'), # 최근주문 유저별 대표 상품 외 갯수(ex: 볼펜 외 "2"개)
+            func.sum(OrderDetail.price).label('price'), # 최근 주문 유저별 주문 금액(합)
+            func.sum(func.sum(OrderDetail.price)).over().label('total_price'), # 총 매출
+            func.sum(func.count("*")).over().label('total_order'), # 총 주문 
+            func.min(Order.status) # 주문별 배송 상태
         ).join(
             Product,
             Product.id == OrderDetail.product_id
+        ).join(
+            Order,
+            Order.id == OrderDetail.id
         ).group_by(
             OrderDetail.id,
             OrderDetail.name
         ).all()
-        # 총합 계산
-        # total_price = sum(dash[4] for dash in dashs)
         if not dashs : 
             raise HTTPException(status_code=400, detail='dashs not found')
         return {'result' :[
@@ -279,8 +282,9 @@ async def dashboard(session : Session = Depends(db.session)):
                 'product_name' : dash[2],
                 'count' : dash[3]-1,
                 'price' : dash[4],
+                'status' : dash[7],
             }
-            for dash in dashs
+            for dash in dashs[:5]
         ],
         'total_price' : dashs[0][5],
         'total_order' : dashs[0][6]
