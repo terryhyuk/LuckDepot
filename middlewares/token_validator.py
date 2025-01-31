@@ -31,13 +31,15 @@ async def access_control(request: Request, call_next):
         response = await call_next(request)
         return response
     try:
-        if "authorization" in headers.keys():
-            token_info = await token_decode(access_token=headers.get("Authorization"))
-            request.state.user = UserToken(**token_info)
-            # 토큰 없음
-        else:
-            if "Authorization" not in headers.keys():
-                raise ex.NotAuthorized()
+        # 일단은 JWT 검사 안함
+        
+        # if "authorization" in headers.keys():
+        #     token_info = await token_decode(access_token=headers.get("Authorization"))
+        #     request.state.user = UserToken(**token_info)
+        #     # 토큰 없음
+        # else:
+        #     if "Authorization" not in headers.keys():
+        #         raise ex.NotAuthorized()
         response = await call_next(request)
     except Exception as e:
 
