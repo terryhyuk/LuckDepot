@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from joblib import load
 # from datetime import datetime, date
 import router.deliver as deliver
+from database.conn.connection import db
 
 router = APIRouter()
 
@@ -12,13 +13,13 @@ model = load('./machine_learning/model/cluster_ny_gb.joblib')
 
 
 def get_prediction_features(order_id):
-    result = deliver.user_deliver(order_id=order_id)
+    result = deliver.user_deliver(order_id=order_id, session=Depends(db.session))
     year = result['order_date']['year']
     month = result['order_date']['month']
     weekday = result['order_date']['weekday']
     ship_mode = result['delivery_type']
     address = result['address']
-    
+    print(result)
     postal_code = 0
     hurricane = 0
     badweather = 0
