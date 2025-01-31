@@ -42,3 +42,19 @@ async def predict(
     
     duration = model.predict(features)
     return {"predicted_value": int(duration[0])}
+    
+
+# def getDateInfo(selectDate:datetime):
+#     """
+#     날짜 정보를 리턴하는 함수
+#     Parameter : datetime
+#     return : 연도, 월, 일, 요일, 시간, 공휴일
+#     """
+#     # 데이터 추출
+#     y = selectDate.year  # 연도
+#     m = selectDate.month  # 월
+#     d = selectDate.day  # 일
+#     w = selectDate.weekday() # 요일
+#     # 한국 공휴일 설정
+#     weekend = 1 if selectDate.weekday() >= 5 else 0,
+#     return (y,m,d,w,weekend)
