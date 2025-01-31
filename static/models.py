@@ -8,8 +8,8 @@ from pydantic.networks import EmailStr
 
 
 class LoginRequest(BaseModel):
-    idToken: str
-    login_type: str
+    idToken: str = None
+    login_type: str = None
 
 class GoogleRegister(BaseModel):
     id: str = None
