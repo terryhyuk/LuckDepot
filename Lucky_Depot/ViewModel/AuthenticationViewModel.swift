@@ -177,7 +177,7 @@ extension AuthenticationViewModel {
             }
             
             // ✅ `getIDToken()`을 Firebase에서 가져와 FastAPI에 전송
-            let idToken = try await firebaseUser.getIDToken()
+            let idToken = try await firebaseUser.getIDToken(forcingRefresh: true)
             print("📡 FastAPI에 전송할 ID Token: \(idToken)")
             
             let jsonResponse = try await userModel.sendUserData(idToken: idToken, type: "google")

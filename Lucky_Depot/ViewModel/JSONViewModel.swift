@@ -32,9 +32,9 @@ struct JSONViewModel {
 //        guard let url = URL(string: baseURL + path) else {
 //            throw URLError(.badURL)
 //        }
-//        
+//
 //        let (data, _) = try await URLSession.shared.data(from: url)
-//        
+//
 //        return try JSONDecoder().decode(JsonResult<[T]>.self, from: data)
 //    }
 //    // result : {} 일때
@@ -42,9 +42,9 @@ struct JSONViewModel {
 //        guard let url = URL(string: baseURL + path) else {
 //            throw URLError(.badURL)
 //        }
-//        
+//
 //        let (data, _) = try await URLSession.shared.data(from: url)
-//        
+//
 //        return try JSONDecoder().decode(JsonResult<T>.self, from: data)
 //    }
     
@@ -69,15 +69,34 @@ struct JSONViewModel {
            return request
        }
     /// ✅ 리스트 응답이 필요한 API 요청 (ex: `[Product]`)
-        func fetchJSONList<T: Decodable>(path: String) async throws -> JsonResult<[T]> {
-            let request = try makeAuthorizedRequest(path: path)
+        func fetchJSONList<T: Decodable>(path: String, jwtToken: String? = nil) async throws -> JsonResult<[T]> {
+            guard let url = URL(string: baseURL + path) else {
+                throw URLError(.badURL)
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            if let token = jwtToken {
+                request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // ✅ JWT 토큰 추가
+            }
+
             let (data, _) = try await URLSession.shared.data(for: request)
             return try JSONDecoder().decode(JsonResult<[T]>.self, from: data)
         }
 
-        /// ✅ 단일 객체 응답이 필요한 API 요청 (ex: `Product`)
-        func fetchJSON<T: Decodable>(path: String) async throws -> JsonResult<T> {
-            let request = try makeAuthorizedRequest(path: path)
+        func fetchJSON<T: Decodable>(path: String, jwtToken: String? = nil) async throws -> JsonResult<T> {
+            guard let url = URL(string: baseURL + path) else {
+                throw URLError(.badURL)
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            if let token = jwtToken {
+                request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // ✅ JWT 토큰 추가
+            }
+
             let (data, _) = try await URLSession.shared.data(for: request)
             return try JSONDecoder().decode(JsonResult<T>.self, from: data)
         }

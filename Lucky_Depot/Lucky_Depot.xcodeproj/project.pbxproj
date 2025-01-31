@@ -11,9 +11,9 @@
 		A25A2C992D3F33E600959C46 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = A25A2C982D3F33E600959C46 /* SDWebImageSwiftUI */; };
 		A25A2D5C2D3F910F00959C46 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A25A2D5B2D3F910F00959C46 /* RealmSwift */; };
 		A25A2D5D2D3F912300959C46 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = A25A2D5B2D3F910F00959C46 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		A2E925EB2D43426D00D5BAA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A2E925EA2D43426D00D5BAA0 /* FirebaseAuth */; };
-		A2E925ED2D43426D00D5BAA0 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = A2E925EC2D43426D00D5BAA0 /* FirebaseAuthCombine-Community */; };
-		A2E925EF2D43426D00D5BAA0 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = A2E925EE2D43426D00D5BAA0 /* FirebaseCore */; };
+		C0347F262D40C563009025AF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F252D40C563009025AF /* FirebaseAuth */; };
+		C0347F282D40C563009025AF /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F272D40C563009025AF /* FirebaseAuthCombine-Community */; };
+		C0347F2A2D40C563009025AF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F292D40C563009025AF /* FirebaseCore */; };
 		C0347F2D2D40C5A1009025AF /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F2C2D40C5A1009025AF /* GoogleSignIn */; };
 		C0347F2F2D40C5A1009025AF /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F2E2D40C5A1009025AF /* GoogleSignInSwift */; };
 		C0347F572D40E693009025AF /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = C0347F562D40E693009025AF /* FacebookCore */; };
@@ -52,15 +52,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0347F592D40E693009025AF /* FacebookLogin in Frameworks */,
-				A2E925ED2D43426D00D5BAA0 /* FirebaseAuthCombine-Community in Frameworks */,
 				A25A2D5C2D3F910F00959C46 /* RealmSwift in Frameworks */,
 				A25A2C992D3F33E600959C46 /* SDWebImageSwiftUI in Frameworks */,
 				A25A2C962D3F33DC00959C46 /* TossPayments in Frameworks */,
 				C0347F2F2D40C5A1009025AF /* GoogleSignInSwift in Frameworks */,
-				A2E925EF2D43426D00D5BAA0 /* FirebaseCore in Frameworks */,
+				C0347F262D40C563009025AF /* FirebaseAuth in Frameworks */,
+				C0347F2A2D40C563009025AF /* FirebaseCore in Frameworks */,
+				C0347F282D40C563009025AF /* FirebaseAuthCombine-Community in Frameworks */,
 				C0347F572D40E693009025AF /* FacebookCore in Frameworks */,
 				C0347F2D2D40C5A1009025AF /* GoogleSignIn in Frameworks */,
-				A2E925EB2D43426D00D5BAA0 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,13 +107,13 @@
 				A25A2C952D3F33DC00959C46 /* TossPayments */,
 				A25A2C982D3F33E600959C46 /* SDWebImageSwiftUI */,
 				A25A2D5B2D3F910F00959C46 /* RealmSwift */,
+				C0347F252D40C563009025AF /* FirebaseAuth */,
+				C0347F272D40C563009025AF /* FirebaseAuthCombine-Community */,
+				C0347F292D40C563009025AF /* FirebaseCore */,
 				C0347F2C2D40C5A1009025AF /* GoogleSignIn */,
 				C0347F2E2D40C5A1009025AF /* GoogleSignInSwift */,
 				C0347F562D40E693009025AF /* FacebookCore */,
 				C0347F582D40E693009025AF /* FacebookLogin */,
-				A2E925EA2D43426D00D5BAA0 /* FirebaseAuth */,
-				A2E925EC2D43426D00D5BAA0 /* FirebaseAuthCombine-Community */,
-				A2E925EE2D43426D00D5BAA0 /* FirebaseCore */,
 			);
 			productName = Lucky_Depot;
 			productReference = A25A2C832D3F33CD00959C46 /* Lucky_Depot.app */;
@@ -147,9 +147,9 @@
 				A25A2C942D3F33DC00959C46 /* XCRemoteSwiftPackageReference "payment-sdk-ios" */,
 				A25A2C972D3F33E600959C46 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				A25A2D5A2D3F910F00959C46 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				C0347F242D40C563009025AF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C0347F2B2D40C5A1009025AF /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				C0347F552D40E693009025AF /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
-				A2E925E92D43426D00D5BAA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A25A2C842D3F33CD00959C46 /* Products */;
@@ -413,9 +413,9 @@
 				kind = branch;
 			};
 		};
-		A2E925E92D43426D00D5BAA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		C0347F242D40C563009025AF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 11.7.0;
@@ -455,19 +455,19 @@
 			package = A25A2D5A2D3F910F00959C46 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
 		};
-		A2E925EA2D43426D00D5BAA0 /* FirebaseAuth */ = {
+		C0347F252D40C563009025AF /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A2E925E92D43426D00D5BAA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = C0347F242D40C563009025AF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
-		A2E925EC2D43426D00D5BAA0 /* FirebaseAuthCombine-Community */ = {
+		C0347F272D40C563009025AF /* FirebaseAuthCombine-Community */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A2E925E92D43426D00D5BAA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = C0347F242D40C563009025AF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = "FirebaseAuthCombine-Community";
 		};
-		A2E925EE2D43426D00D5BAA0 /* FirebaseCore */ = {
+		C0347F292D40C563009025AF /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A2E925E92D43426D00D5BAA0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = C0347F242D40C563009025AF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCore;
 		};
 		C0347F2C2D40C5A1009025AF /* GoogleSignIn */ = {

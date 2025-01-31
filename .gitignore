@@ -1,6 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/flutter,macos,swift,python,visualstudiocode,windows,linux,redis,jupyternotebooks
 # Edit at https://www.toptal.com/developers/gitignore?templates=flutter,macos,swift,python,visualstudiocode,windows,linux,redis,jupyternotebooks
-
+lucky-depot-firebase-adminsdk-fbsvc-f5947922f7.json
 ### Flutter ###
 # Flutter/Dart/Pub related
 **/doc/api/
