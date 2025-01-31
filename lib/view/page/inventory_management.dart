@@ -34,7 +34,7 @@ class InventoryManagement extends StatelessWidget {
                     ),
                     Column(
                       children: [
-                        // TextButton(
+                        // TextButton( // 카테고리 추가버튼
                         //   onPressed: () {
                         //     CustomDialog.show(
                         //       context,

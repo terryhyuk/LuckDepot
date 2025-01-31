@@ -23,7 +23,7 @@ class ProductRepository {
     }
   }
 
-  Future<bool> deleteProduct(int productId) async {
+  deleteProduct(int productId) async {
     try {
       final response = await http.delete(
         Uri.parse('$url/product/$productId'),
