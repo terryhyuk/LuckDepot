@@ -4,6 +4,7 @@ from joblib import load
 # from datetime import datetime, date
 import router.deliver as deliver
 from database.conn.connection import db
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 
@@ -12,14 +13,13 @@ model = load('./machine_learning/model/cluster_ny_gb.joblib')
 # Feature: [['Ship Mode', 'year', 'month', 'Weekday', 'num_Postal Code', 'Hurricane', 'BadWeather']]
 
 
-def get_prediction_features(order_id):
-    result = deliver.user_deliver(order_id=order_id, session=Depends(db.session))
+def get_prediction_features(order_id, session=Session):
+    result = deliver.user_deliver(order_id=order_id, session=session)
     year = result['order_date']['year']
     month = result['order_date']['month']
     weekday = result['order_date']['weekday']
     ship_mode = result['delivery_type']
     address = result['address']
-    print(result)
     postal_code = 0
     hurricane = 0
     badweather = 0
@@ -48,8 +48,8 @@ class InputFeatures(BaseModel):
     badweather: int
 
 @router.get("/duration/{order_id}")
-def predict_duration(order_id: str):
-    features = get_prediction_features(order_id)
+async def predict_duration(order_id: str, session : Session = Depends(db.session)):
+    features = get_prediction_features(order_id,session=session)
     
     duration = model.predict([[
         features["ship_mode"],

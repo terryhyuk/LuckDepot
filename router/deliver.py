@@ -62,5 +62,5 @@ def user_deliver(session: Session = Depends(db.session), order_id: str = None):
         }
         
     except Exception as e:
-        print('deliver-user_deliver', e)
+        print('error', e)
         return {'result' : e}
