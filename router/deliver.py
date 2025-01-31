@@ -23,6 +23,7 @@ def user_deliver(session: Session = Depends(db.session), order_id: str = None):
             Deliver.id, # 배송 번호
             OrderDetail.id, # 주문 번호
             Order.status, # 배송 상태
+            Order.order_date # 주문날짜
         ).join(
             Product,
             OrderDetail.product_id == Product.id
@@ -49,6 +50,7 @@ def user_deliver(session: Session = Depends(db.session), order_id: str = None):
         'deliver_id': delivers[0][2],
         'order_id': delivers[0][4],
         'status': delivers[0][5],
+        'order_date' : delivers[0][6].strftime('%Y-%m-%d')
         }
             
     except Exception as e:
