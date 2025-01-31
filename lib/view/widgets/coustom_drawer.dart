@@ -8,7 +8,6 @@ class CustomDrawer extends StatelessWidget {
 
   final drawerController = Get.put(CustomDrawerController());
   final inventory = Get.put(InventoryController());
-  
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +17,29 @@ class CustomDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           const DrawerHeader(
-              child: Center(
-            child: Text(
-              'Lucky Depot',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 24,
+            child: Center(
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 50, 
+                    height: 50,
+                    child: Image(
+                      image: AssetImage('images/luckydepot.png'),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Text(
+                    'Lucky Depot',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                    ),
+                  ),
+                ],
               ),
             ),
-          )),
+          ),
           Obx(() => ListTile(
                 selected: drawerController.isCurrentRoute('/'),
                 selectedTileColor: Colors.white,
