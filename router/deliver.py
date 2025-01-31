@@ -35,7 +35,7 @@ def user_deliver(session: Session = Depends(db.session), order_id: str = None):
             Order.id == OrderDetail.id
         ).filter(
             OrderDetail.id == order_id
-        )
+        ).all()
         if not delivers:
             raise HTTPException(status_code=400, detail="deliverlist not found")
             

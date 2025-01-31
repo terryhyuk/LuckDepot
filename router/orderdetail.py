@@ -1,9 +1,10 @@
 from database.model.orderdetail import OrderDetail
 from database.model.product import Product
 from database.model.order import Order
+from database.model.category import Category
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, func, cast, String
+from sqlalchemy import desc, func, cast, String, Integer
 from database.conn.connection import db
 from datetime import datetime, timedelta
 
@@ -16,6 +17,8 @@ async def select(session : Session = Depends(db.session)):
     """
     관리자용
     상품이름, 상품별 판매수량, 상품별 총 합 조회
+    1. 상품별 매출 표 key : result
+    2. 년도별 매출 그래프 key : year_sales
     """
     try :
         # 현재 시간 기준 년도
@@ -34,18 +37,41 @@ async def select(session : Session = Depends(db.session)):
         ).order_by(desc('order_count'))
         if not orders :
             raise HTTPException(status_code=400, detail="detail year not found")
+        
+        # 년도별 매출 그래프
+        years = session.query(
+            func.substring(func.min(Order.id),1,2).label('year'), # 월
+            func.sum(Order.price).label('year_sales'), # 연 매출
+        ).filter(
+            cast(func.substring(Order.id,1,2), Integer) <= int(current_year),
+        ).group_by(
+            func.substring(Order.id,1,2)
+        ).order_by(
+            func.substring(Order.id,1,2).desc()
+        ).all()
+        if not years :
+            raise HTTPException(status_code=400, detail='years not found')
         return {'result' : 
                     [
                         {
                             'name' : order[0],
                             'order_count' : order[1],
-                            'total_price' : order[2]
+                            'total_price' : order[2],
                         }
                         for order in orders
-                    ]
+                    ],
+                    'year_sales' : [
+                {
+                'year' : year[0],
+                'sales' : year[1]
+                }
+                    for year in reversed(years[:6])
+                ],
                 }
     except Exception as e:
         return {'result' : e}
+    
+
 
 # 관리자용 매출 관리 주별 조회
 @router.get('/week')
@@ -89,7 +115,7 @@ async def select(session : Session = Depends(db.session)):
                 }
     except Exception as e:
         return {'result' : e}
-
+    
 
 # 관리자용 매출 관리 주별 조회
 @router.get('/month')
@@ -100,7 +126,7 @@ async def select(session : Session = Depends(db.session)):
     """
     try :
         # 현재 시간 기준 월
-        current_month = datetime.now().strftime('%m')
+        current = datetime.now().strftime('%y%m')
         orders = session.query(
             Product.name, # 상품 이름
             func.sum(OrderDetail.quantity).label('order_count'), # 판매 수량
@@ -109,7 +135,8 @@ async def select(session : Session = Depends(db.session)):
             Product, 
             Product.id == OrderDetail.product_id
         ).filter(
-            cast(func.substring(OrderDetail.id, 3, 2), String) == current_month
+            func.substring(OrderDetail.id, 3, 2) == current[2:],
+            func.substring(OrderDetail.id,1,2) == current[:2]
         ).group_by(
         Product.name
         ).order_by(desc('order_count'))
@@ -248,10 +275,17 @@ async def select_orderlist(session : Session = Depends(db.session), user_seq : i
 @router.get('/home', status_code=200)
 async def dashboard(session : Session = Depends(db.session)): 
     """
-    관리자 dashboard
+    관리자 dashboard 
+    1. 최근 주문 key = result
     count : 대표 상품 외 상품 갯수
     price : 주문별 금액
-    quantity : 
+    quantity : \n
+
+    2. 카테고리별 판매율 key = category_sales
+    category_id : 카테고리 id,
+    category_name: 카테고리명,
+    total_sales : 카테고리별 매출 \n
+
     """
     try :   
         dashs = session.query(
@@ -272,10 +306,15 @@ async def dashboard(session : Session = Depends(db.session)):
         ).group_by(
             OrderDetail.id,
             OrderDetail.name
+        ).order_by(
+            func.substring(OrderDetail.id, 1, 6).desc()
         ).all()
         if not dashs : 
             raise HTTPException(status_code=400, detail='dashs not found')
-        return {'result' :[
+
+        
+        return {
+            'result' :[
             {
                 'id' : dash[0],
                 'user_name' : dash[1],
@@ -287,8 +326,10 @@ async def dashboard(session : Session = Depends(db.session)):
             for dash in dashs[:5]
         ],
         'total_price' : dashs[0][5],
-        'total_order' : dashs[0][6]
+        'total_order' : dashs[0][6],
         }
     except Exception as e :
         print(e)
         return {'result' : e}
+
+

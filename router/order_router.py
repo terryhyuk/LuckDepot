@@ -1,8 +1,9 @@
 from database.model.user import User
 from database.model.order import Order
+from database.model.product import Product
 from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, cast, Integer, String
 from database.conn.connection import db
 from datetime import datetime
 
@@ -147,3 +148,34 @@ async def update(session : Session = Depends(db.session), order_id : str = None,
         return {'result' : 'ok'}
     except Exception as e:
         return {'result' : e}   
+
+
+@router.get('/month', status_code=200)
+def test (session : Session = Depends(db.session)):
+    try :
+        now = datetime.now().strftime('%y%m')
+        months = session.query(
+            func.substring(func.min(Order.id),3,2).label('month'), # 월
+            func.sum(Order.price).label('month_price'), # 월 매출
+        ).filter(
+            cast(func.substring(Order.id,1,4), Integer) <= int(now),
+        ).group_by(
+            func.substring(Order.id,1,4)
+        ).order_by(
+            func.substring(Order.id,1,4).desc()
+        ).all()
+        if not months :
+            raise HTTPException(status_code=400, detail='months not found')
+        return {'result' : [
+            {
+                'month' : month[0],
+                'sales' : month[1]
+            }
+            for month in reversed(months[:6])
+            ],
+        }
+    except Exception as e:
+        print(e)
+        return {'result' : e}
+
+
