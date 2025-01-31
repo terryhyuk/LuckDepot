@@ -37,11 +37,11 @@ class TopSellingTable extends StatelessWidget {
             final index = controller.topSellingItems.indexOf(item);
             return DataRow(
               cells: [
-                DataCell(Container(width: 40, child: Text('${index + 1}'))),
+                DataCell(SizedBox(width: 40, child: Text('${index + 1}'))),
                 DataCell(Container(
-                    constraints: BoxConstraints(maxWidth: 300),
+                    constraints: const BoxConstraints(maxWidth: 300),
                     child: Text(item['name']))),
-                DataCell(Text('${item['order_count']}개')),
+                DataCell(Text('${item['order_count']}')),
                 DataCell(Text('\$${item['total_price']}')),
               ],
             );
@@ -149,10 +149,10 @@ class SalesTrendsChart extends StatelessWidget {
                           },
                         ),
                       ),
-                      rightTitles: AxisTitles(
+                      rightTitles: const AxisTitles(
                         sideTitles: SideTitles(showTitles: false),
                       ),
-                      topTitles: AxisTitles(
+                      topTitles: const AxisTitles(
                         sideTitles: SideTitles(showTitles: false),
                       ),
                     ),
