@@ -13,6 +13,7 @@ class Order(Base) :
     address = Column(String)
     order_date = Column(TIMESTAMP)
     status = Column(String)
+    delivery_type = Column(Integer)
     
     user = relationship("User", back_populates="order") # 관계 표시, sql쿼리 없이 관련된 테이블 접근 가능,  데이터 동기화
 

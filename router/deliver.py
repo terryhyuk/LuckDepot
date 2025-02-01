@@ -9,7 +9,7 @@ from database.conn.connection import db
 
 router = APIRouter()
 
-@router.get('/{order_id}')
+@router.get('/{orderid}')
 def user_deliver(session: Session = Depends(db.session), order_id: str = None):
     """
     배송현황 페이지
@@ -23,7 +23,8 @@ def user_deliver(session: Session = Depends(db.session), order_id: str = None):
             Deliver.id, # 배송 번호
             OrderDetail.id, # 주문 번호
             Order.status, # 배송 상태
-            Order.order_date # 주문날짜
+            Order.order_date, # 주문날짜
+            Order.delivery_type # 배송 모드
         ).join(
             Product,
             OrderDetail.product_id == Product.id
@@ -43,16 +44,23 @@ def user_deliver(session: Session = Depends(db.session), order_id: str = None):
             {
                 'product_name': deliver[0],
                 'image': deliver[1], 
-                'quantity': deliver[2], 
+                'quantity': deliver[2],
+                
             }
             for deliver in delivers
         ],
         'deliver_id': delivers[0][2],
         'order_id': delivers[0][4],
         'status': delivers[0][5],
-        'order_date' : delivers[0][6].strftime('%Y-%m-%d')
+        'order_date' : delivers[0][6].strftime('%Y-%m-%d'),
+        'delivery_type' : delivers[0][7]
         }
             
     except Exception as e:
         print('deliver-user_deliver', e)
         return {'result' : e}
+
+
+# @router.post('/')
+# async def new_delivery(sesison : Session = Depends(db.session), id : str = None, driver_seq : int = None, hub_id : int = None, truck_id :str = None, order_id : str = None, start_date : str = None, end_date : str = None, delivery_type : int = None):
+
