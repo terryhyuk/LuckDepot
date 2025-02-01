@@ -17,8 +17,10 @@ async def select(session : Session = Depends(db.session)):
     """
     관리자용
     상품이름, 상품별 판매수량, 상품별 총 합 조회
-    1. 상품별 매출 표 key : result
-    2. 년도별 매출 그래프 key : year_sales
+    
+    전체 key : result \n
+    1. 상품별 매출 표 key : products \n
+    2. 년도별 매출 그래프 key : year_sales \n
     """
     try :
         # 현재 시간 기준 년도
@@ -51,23 +53,24 @@ async def select(session : Session = Depends(db.session)):
         ).all()
         if not years :
             raise HTTPException(status_code=400, detail='years not found')
-        return {'result' : 
-                    [
-                        {
-                            'name' : order[0],
-                            'order_count' : order[1],
-                            'total_price' : order[2],
-                        }
-                        for order in orders
-                    ],
-                    'year_sales' : [
+        
+        return {'result': {
+            'products': [
                 {
-                'year' : year[0],
-                'sales' : year[1]
+                    'name': order[0],
+                    'order_count': order[1],
+                    'total_price': order[2],
                 }
-                    for year in reversed(years[:6])
-                ],
+                for order in orders
+            ],
+            'year_sales': [
+                {
+                    'year': year[0],
+                    'sales': year[1]
                 }
+                for year in reversed(years[:6])
+            ]
+        }}
     except Exception as e:
         return {'result' : e}
     
@@ -77,8 +80,12 @@ async def select(session : Session = Depends(db.session)):
 @router.get('/week')
 async def select(session : Session = Depends(db.session)):
     """
-    관리자용 매출관리 "월"
-    상품이름, 상품별 판매수량, 상품별 총 합 조회
+    관리자용 매출관리 "월" \n
+    상품이름, 상품별 판매수량, 상품별 총 합, 요일별 매출(3개월) \n
+
+    전체 key : 'result' \n
+    상품 매출 표 key : 'products' \n
+    그래프 key : 'weekday_sales'
     """
     try :
         # 현재 날짜 기준으로 이번주의 시작일과 종료일 계산
@@ -86,6 +93,7 @@ async def select(session : Session = Depends(db.session)):
         # 월요일이 0, 일요일이 6
         start_of_week = current_date - timedelta(days=current_date.weekday())
         end_of_week = start_of_week + timedelta(days=6)
+        # 이번주 상품별 매출 표 쿼리
         orders = session.query(
             Product.name, # 상품 이름
             func.sum(OrderDetail.quantity).label('order_count'), # 판매 수량
@@ -101,10 +109,30 @@ async def select(session : Session = Depends(db.session)):
         ).group_by(
         Product.name
         ).order_by(desc('order_count'))
+        # orders 값이 없을경우 
         if not orders :
             raise HTTPException(status_code=400, detail="detail week not found")
+        
+        # 한 분기의 요일별 매출 그래프 쿼리
+        # current_ym = current_date.strftime('%y%m')  
+        # three_months_ago = (current_date - timedelta(days=90)).strftime('%y%m')  # 3개월 전 년월
+        
+        # weekday_sales = session.query(
+        #     func.substring(Order.id, 5, 2).label('day'),  # 일자 추출
+        #     func.sum(Order.price).label('daily_sales')
+        # ).filter(
+        #     cast(func.substring(Order.id, 1, 4), String).between(
+        #         three_months_ago,
+        #         current_ym
+        #     )
+        # ).group_by(
+        #     func.substring(Order.id, 5, 2)  # 일자별 그룹화
+        # ).order_by(
+        #     func.substring(Order.id, 5, 2)
+        # ).all()
         return {'result' : 
-                    [
+                    {
+                        "products":[
                         {
                             'name' : order[0],
                             'order_count' : order[1],
@@ -112,17 +140,20 @@ async def select(session : Session = Depends(db.session)):
                         }
                         for order in orders
                     ]
+                    }
                 }
     except Exception as e:
         return {'result' : e}
     
 
-# 관리자용 매출 관리 주별 조회
+# 관리자용 매출 관리 월별 조회 (상품별 매출 표)
 @router.get('/month')
 async def select(session : Session = Depends(db.session)):
     """
-    관리자용 매출관리 "월"
-    상품이름, 상품별 판매수량, 상품별 총 합 조회
+    관리자용 매출관리 "월" \n
+    상품이름, 상품별 판매수량, 상품별 총 합 조회  \n
+    key : result
+    
     """
     try :
         # 현재 시간 기준 월
