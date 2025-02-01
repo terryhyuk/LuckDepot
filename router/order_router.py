@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc, func, cast, Integer, String
 from database.conn.connection import db
 from datetime import datetime
-
+from dateutil.relativedelta import relativedelta
 
 router = APIRouter()
 
@@ -63,39 +63,52 @@ async def get_orders(session: Session = Depends(db.session)):
 
 # 관리자 dash board, 매출관리 월별 그래프
 @router.get('/month', status_code=200)
-def test (session : Session = Depends(db.session)):
-    """
-    관리자용 \n
-    대시보드에 사용되는 월별 그래프  \n
-    key : result \n
-    하위 키  : month, sales
-    """
-    try :
-        now = datetime.now().strftime('%y%m')
-        months = session.query(
-            func.substring(func.min(Order.id),3,2).label('month'), # 월
-            func.sum(Order.price).label('month_price'), # 월 매출
+def test(session: Session = Depends(db.session)):
+    try:
+        current_date = datetime.now()
+        
+        # 월별 매출 쿼리
+        months_data = session.query(
+            func.substring(func.min(Order.id),3,2).label('month'),
+            func.sum(Order.price).label('month_price'),
         ).filter(
-            cast(func.substring(Order.id,1,4), Integer) <= int(now),
+            cast(func.substring(Order.id, 1, 4), String).between(
+                (current_date - relativedelta(months=5)).strftime('%y%m'),
+                current_date.strftime('%y%m')
+            )
         ).group_by(
-            func.substring(Order.id,1,4)
+            func.substring(Order.id,3,2)
         ).order_by(
-            func.substring(Order.id,1,4).desc()
+            func.substring(Order.id,3,2).desc()
         ).all()
-        if not months :
+
+        if not months_data:
             raise HTTPException(status_code=400, detail='months not found')
-        return {'result' : [
+            
+        # 월별 매출 데이터를 딕셔너리로 변환
+        sales_dict = {month[0]: month[1] for month in months_data}
+
+        # 최근 6개월의 월 리스트 생성
+        months_list = []
+        for i in range(6):
+            past_date = current_date - relativedelta(months=i)
+            months_list.append(past_date.strftime('%Y%m'))
+            
+        
+        # 최근 6개월 데이터 생성 (없는 월은 0으로 설정)
+        month_sales_list = [
             {
-                'month' : month[0],
-                'sales' : month[1]
+                'month': f"{month[:4]}.{month[-2:]}",
+                'sales': sales_dict.get(month[-2:], 0)
             }
-            for month in reversed(months[:6])
-            ],
-        }
+            for month in reversed(months_list)
+        ]
+        return {'result': month_sales_list}
+        
     except Exception as e:
         print(e)
-        return {'result' : e}
-    
+        return {'result': e}
+
 
 @router.put('/')
 async def update(session : Session = Depends(db.session), order_id : str = None, status : str = None):
