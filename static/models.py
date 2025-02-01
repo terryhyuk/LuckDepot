@@ -6,8 +6,12 @@ from pydantic.main import BaseModel
 from pydantic.networks import EmailStr
 
 
+
+class LoginRequest(BaseModel):
+    idToken: str = None
+    login_type: str = None
+
 class GoogleRegister(BaseModel):
-    
     id: str = None
     name: str = None
     loginType: str = None

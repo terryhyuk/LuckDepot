@@ -1,4 +1,5 @@
 import time
+import typing
 import re
 
 import jwt
@@ -30,6 +31,8 @@ async def access_control(request: Request, call_next):
         response = await call_next(request)
         return response
     try:
+        # 일단은 JWT 검사 안함
+        
         # if "authorization" in headers.keys():
         #     token_info = await token_decode(access_token=headers.get("Authorization"))
         #     request.state.user = UserToken(**token_info)
