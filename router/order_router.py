@@ -147,3 +147,26 @@ async def update(session : Session = Depends(db.session), order_id : str = None,
         return {'result' : 'ok'}
     except Exception as e:
         return {'result' : e}   
+
+
+
+
+# 사용자의 주문 건수 조회
+@router.get('/{user_seq}/count')
+async def order_select(user_seq : int, session : Session = Depends(db.session)):
+    """
+    `사용자의 주문 갯수 가져오기`\n
+    ID와 주문의 count 가져오기 \n
+    :return:
+    """
+    try :
+        orders = session.query(
+            Order.id, 
+            ).filter(
+            Order.user_seq == user_seq
+            ).count()
+        if not orders:
+            raise HTTPException(status_code=400, detail="user order not found")
+        return {'result' : orders} 
+    except Exception as e: 
+        return {'results' : e}

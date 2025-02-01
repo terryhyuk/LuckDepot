@@ -13,41 +13,52 @@ from errors import exceptions as ex
 
 from errors.exceptions import APIException
 from static.models import UserToken
-from static.hosts import JWT_ALGORITHM, JWT_SECRET
+from static.hosts import JWT_ALGORITHM, JWT_SECRET, firebase_auth
 
 
 async def access_control(request: Request, call_next):
+    """
+    ✅ Firebase JWT 토큰 검증 미들웨어
+    """
     request.state.start = time.time()
-    request.state.inspect = None
-    request.state.user = None
+    request.state.user = None  # 사용자 정보 초기화
 
-    ip = request.headers["x-forwarded-for"] if "x-forwarded-for" in request.headers.keys() else request.client.host
-    request.state.ip = ip.split(",")[0] if "," in ip else ip
     headers = request.headers
-    # cookies = request.cookies
-
     url = request.url.path
-    if await url_pattern_check(url, EXCEPT_PATH_REGEX) or url in EXCEPT_PATH_LIST:
-        response = await call_next(request)
-        return response
+    print(f"요청받은 url: {url}")
+    
+    # ✅ Authorization 헤더 가져오기
+    auth_header = headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        if url in EXCEPT_PATH_LIST or re.match(EXCEPT_PATH_REGEX, url):
+            print(f"✅ [예외처리] {url} 요청은 인증 없이 통과")
+            return await call_next(request)
+        else:
+            print("❌ Authorization 헤더 없음 또는 형식 오류")
+            return JSONResponse(status_code=401, content={"detail": "Unauthorized: Missing token"})
+
+    token = auth_header.split("Bearer ")[1]  # "Bearer {JWT}"에서 JWT 추출
+    print(f"📡 받은 JWT 토큰: {token}")
+
     try:
-        # 일단은 JWT 검사 안함
-        
-        # if "authorization" in headers.keys():
-        #     token_info = await token_decode(access_token=headers.get("Authorization"))
-        #     request.state.user = UserToken(**token_info)
-        #     # 토큰 없음
-        # else:
-        #     if "Authorization" not in headers.keys():
-        #         raise ex.NotAuthorized()
-        response = await call_next(request)
+        decoded_token = firebase_auth.verify_id_token(token)  # ✅ Firebase JWT 검증
+        request.state.user = decoded_token  # ✅ 사용자 정보 저장
+        print(f"✅ 토큰 검증 성공: {decoded_token}")
+
+    except firebase_auth.ExpiredIdTokenError:
+        print("❌ 만료된 토큰")
+        return JSONResponse(status_code=401, content={"detail": "Unauthorized: Expired token"})
+
+    except firebase_auth.InvalidIdTokenError:
+        print("❌ 잘못된 토큰")
+        return JSONResponse(status_code=401, content={"detail": "Unauthorized: Invalid token"})
+
     except Exception as e:
+        print(f"❌ Firebase 검증 중 오류 발생: {e}")
+        return JSONResponse(status_code=500, content={"detail": f"Firebase token verification error: {str(e)}"})
 
-        error = await exception_handler(e)
-        error_dict = dict(status=error.status_code, msg=error.msg, detail=error.detail, code=error.code)
-        response = JSONResponse(status_code=error.status_code, content=error_dict)
+    return await call_next(request)
 
-    return response
 
 
 async def url_pattern_check(path, pattern):
