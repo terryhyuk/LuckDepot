@@ -20,6 +20,7 @@ from router.deliver import router as deliver_router
 from router.driver import router as driver_router
 from router.hub import router as hub_router
 from router.category import router as category_router
+from router.ml_model import router as ml_router
 
 static_dir = "../crawiling_img"
 API_KEY_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
@@ -62,6 +63,7 @@ app.include_router(deliver_router, tags=["Deliver"], prefix="/deliver")
 app.include_router(hub_router, tags=["Hub"], prefix="/hub")
 app.include_router(driver_router, tags=["Driver"], prefix="/driver")
 app.include_router(category_router, tags=["Category"], prefix="/category")
+app.include_router(ml_router, tags=["ML"], prefix="/ml")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

@@ -24,7 +24,8 @@ def user_deliver(session: Session = Depends(db.session), order_id: str = None):
             OrderDetail.id, # 주문 번호
             Order.status, # 배송 상태
             Order.order_date, # 주문날짜
-            Order.delivery_type # 배송 모드
+            Order.address # 배송지            
+            Deliver.delivery_type, # Ship Mode
         ).join(
             Product,
             OrderDetail.product_id == Product.id
@@ -52,12 +53,17 @@ def user_deliver(session: Session = Depends(db.session), order_id: str = None):
         'deliver_id': delivers[0][2],
         'order_id': delivers[0][4],
         'status': delivers[0][5],
-        'order_date' : delivers[0][6].strftime('%Y-%m-%d'),
-        'delivery_type' : delivers[0][7]
+        'order_date' : {
+                        'month': int(delivers[0][6].strftime('%m')),
+                        'year': int(delivers[0][6].strftime('%Y')),
+                        },
+                        'weekday': (int(delivers[0][6].strftime('%w'))-1)%7
+        'delivery_type' : delivers[0][7],
+        'address' : delivers[0][8]
         }
-            
+        
     except Exception as e:
-        print('deliver-user_deliver', e)
+        print('error', e)
         return {'result' : e}
 
 
