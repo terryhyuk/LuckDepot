@@ -49,6 +49,7 @@ async def google_login(request: LoginRequest, session: Session = Depends(db.sess
     try:
         # ✅ Firebase ID 토큰 검증
         decoded_token = firebase_auth.verify_id_token(id_token, check_revoked=True)
+        print(decoded_token)
         firebase_uid = decoded_token.get("uid")
         name = decoded_token.get("name", "Unknown")
         email = decoded_token.get("email")

@@ -1,6 +1,6 @@
 from database.model.product import Product
 from database.model.category import Category
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
 from sqlalchemy.orm import Session
 from database.conn.connection import db
 from starlette.responses import FileResponse
@@ -33,7 +33,7 @@ async def index(session: Session = Depends(db.session)):
     return {"result" :product}
 
 # 상품 하나의 정보 가져오는 API
-@router.get("/{product_id}", status_code=200)
+@router.get("/{product_id}/", status_code=200)
 async def get_product_detail(product_id: int, session: Session = Depends(db.session)):
     """
     `Product by ID`\n
@@ -182,3 +182,32 @@ async def upload_file(file:UploadFile=File(...)):
     except Exception as e:
         print("Error:", e)
         return{"results" : "Error"}
+    
+async def get_current_user(request: Request):
+    """
+    ✅ 미들웨어에서 검증된 사용자 정보 반환
+    - 인증되지 않은 경우 401 에러 발생
+    """
+    print("유효한 사용자 확인")
+    if not request.state.user:
+        raise HTTPException(status_code=401, detail="Unauthorized: Invalid token")
+    return request.state.user
+
+# ✅ JWT 검증 후 전체 상품 리스트 반환
+@router.get("/test/jwt-test", status_code=200)
+async def get_all_products_with_jwt(
+    session: Session = Depends(db.session), 
+    current_user: dict = Depends(get_current_user)  # ✅ 토큰 검증된 사용자 정보 가져오기
+):
+    """
+    ✅ JWT 인증이 필요한 API
+    - 인증된 사용자만 모든 상품 리스트 조회 가능
+    """
+    products = session.query(Product).all()
+    if not products:
+        raise HTTPException(status_code=404, detail="No products found")
+
+    return {
+        "user": current_user["email"],  # ✅ 요청한 사용자의 이메일 포함
+        "products": products
+    }
