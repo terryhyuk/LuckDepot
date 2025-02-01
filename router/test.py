@@ -1,4 +1,4 @@
-from database.model.user import User
+from database.model.order import Order
 from database.model.product import Product
 from fastapi import APIRouter, Depends, Request, HTTPException
 from sqlalchemy.orm import Session
@@ -19,6 +19,9 @@ async def get_current_user(request: Request):
 
     print(f"✅ 요청한 사용자: {request.state.user['email']}")
     return request.state.user
+
+
+    return product
 
 
 

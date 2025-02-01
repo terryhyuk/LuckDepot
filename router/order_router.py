@@ -1,58 +1,26 @@
 from database.model.user import User
 from database.model.order import Order
+from database.model.product import Product
 from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, cast, Integer, String
 from database.conn.connection import db
 from datetime import datetime
 
 
 router = APIRouter()
 
-# 사용자에 따른 주문 조회
-@router.get('/select/{user_seq}')
-async def order_select(user_seq : int, session : Session = Depends(db.session)):
-    """
-    내(사용자) 주문목록 조회 user_seq사용
-    """
-    try :
-        orders = session.query(
-            Order.id, 
-            Order.user_seq, 
-            Order.payment_type, 
-            Order.price, 
-            Order.address, 
-            Order.order_date, 
-            Order.status
-            ).filter(
-            Order.user_seq == user_seq
-            ).all()
-        if not orders:
-            raise HTTPException(status_code=400, detail="user order not found")
-        return {'result' : 
-                [
-                    {
-                        'id' : order[0], #주문 번호
-                        'user_seq' : order[1], # 유저 seq(user pk)
-                        'payment_type' : order[2], # 결제 수단
-                        'price' : order[3], # 가격
-                        'address' : order[4],  # 배송지
-                        'order_date' : order[5].strftime('%Y-%m-%d %H:%M'), # 주문일자 (년-월-일 시간:분)
-                        'status' : order[6], # 배송 상태
-                    }
-                    for order in orders
-                ]
-                } #
-    except Exception as e: 
-        return {'results' : e}
+
+
+## ----------------관리자용--------------------
 
 # 관리자용 유저 구매내역 조회
 @router.get("/select_all")
 async def get_orders(session: Session = Depends(db.session)):
     """
-    관리자용 
-    사용자별 구매내역 조회 (이름, 아이디, 총 구매금액, 최근 구매일)
-    사용자 합계 (총 구매금액, 평균 구매금액)
+    관리자용 \n
+    사용자별 구매내역 조회 (이름, 아이디, 총 구매금액, 최근 구매일) \n
+    사용자 합계 (총 구매금액, 평균 구매금액) 
     """
     try:
         orders = session.query(
@@ -91,52 +59,49 @@ async def get_orders(session: Session = Depends(db.session)):
             }
     except Exception as e:
         return {'result' : e}
+    
 
-
-# 주문입력
-# 주문번호, user_seq, 결제수단, 가격, 배송지 
-# 최초 입력시 배송상태는 '배송전'으로 고정값 입력
-@router.get('/insert')
-async def insert(session : Session = Depends(db.session), id : str = None, user_seq : int = None, payment_type : str = None, price : float = None, address : str = None):
+# 관리자 dash board, 매출관리 월별 그래프
+@router.get('/month', status_code=200)
+def test (session : Session = Depends(db.session)):
     """
-    사용자용
-    주문 입력함수
+    관리자용 \n
+    대시보드에 사용되는 월별 그래프  \n
+    key : result \n
+    하위 키  : month, sales
     """
     try :
-        new_order = Order(
-            id  = id, # 주문 번호
-            user_seq = user_seq, # 유저 seq
-            payment_type = payment_type, # 결제수단
-            price = price, # 가격
-            address = address, # 배송지
-            order_date = datetime.now(), # 주문일자
-            status = "배송전" # 배송 상태
-        )
-        session.add(new_order)
-        session.commit()
-        return {'result' : 'ok'}
+        now = datetime.now().strftime('%y%m')
+        months = session.query(
+            func.substring(func.min(Order.id),3,2).label('month'), # 월
+            func.sum(Order.price).label('month_price'), # 월 매출
+        ).filter(
+            cast(func.substring(Order.id,1,4), Integer) <= int(now),
+        ).group_by(
+            func.substring(Order.id,1,4)
+        ).order_by(
+            func.substring(Order.id,1,4).desc()
+        ).all()
+        if not months :
+            raise HTTPException(status_code=400, detail='months not found')
+        return {'result' : [
+            {
+                'month' : month[0],
+                'sales' : month[1]
+            }
+            for month in reversed(months[:6])
+            ],
+        }
     except Exception as e:
+        print(e)
         return {'result' : e}
+    
 
-
-@router.delete('/delete')
-async def delete(session : Session = Depends(db.session), order_id : str = None):
-    try :
-        order = session.query(Order).filter(Order.id == order_id).first()
-        session.delete(order)
-        session.commit()
-        return {'result' : 'ok'}
-    except Exception as e:
-        return {'result' : e}
-
-
-
-@router.get('/update')
+@router.put('/')
 async def update(session : Session = Depends(db.session), order_id : str = None, status : str = None):
     """
-    관리자용
-    order테이블 배송상태 업데이트,
-    배송완료가 아닌 주문만 수정가능
+    관리자용 \n
+    order테이블 배송상태 업데이트, \n
     """
     try :
         order = session.query(Order).filter(Order.id == order_id, Order.status != "배송완료").first()
@@ -150,23 +115,78 @@ async def update(session : Session = Depends(db.session), order_id : str = None,
 
 
 
+##----------------------- 유저 ----------------------------
 
-# 사용자의 주문 건수 조회
-@router.get('/{user_seq}/count')
+# 사용자에 따른 주문 조회
+@router.get('/{user_seq}')
 async def order_select(user_seq : int, session : Session = Depends(db.session)):
     """
-    `사용자의 주문 갯수 가져오기`\n
-    ID와 주문의 count 가져오기 \n
-    :return:
+    사용자용 \n
+    주문목록 조회 user_seq사용 \n
+    임시
     """
     try :
         orders = session.query(
             Order.id, 
+            Order.user_seq, 
+            Order.payment_type, 
+            Order.price, 
+            Order.address, 
+            Order.order_date, 
+            Order.status,
+            Order.delivery_type
             ).filter(
             Order.user_seq == user_seq
-            ).count()
+            ).all()
         if not orders:
             raise HTTPException(status_code=400, detail="user order not found")
-        return {'result' : orders} 
+        return {'result' : 
+                [
+                    {
+                        'id' : order[0], #주문 번호
+                        'user_seq' : order[1], # 유저 seq(user pk)
+                        'payment_type' : order[2], # 결제 수단
+                        'price' : order[3], # 가격
+                        'address' : order[4],  # 배송지
+                        'order_date' : order[5].strftime('%Y-%m-%d %H:%M'), # 주문일자 (년-월-일 시간:분)
+                        'status' : order[6], # 배송 상태
+                        'delivery_type' : order[7]
+                    }
+                    for order in orders
+                ]
+                } #
     except Exception as e: 
         return {'results' : e}
+
+# 주문입력
+# 주문번호, user_seq, 결제수단, 가격, 배송지 
+# 최초 입력시 배송상태는 '배송전'으로 고정값 입력
+@router.post('/')
+async def insert(session : Session = Depends(db.session), id : str = None,user_seq : int = None, payment_type : str = None, price : float = None, address : str = None, delivery_type : int = None):
+    """
+    사용자용
+    주문 입력함수
+    """
+    try :
+        new_order = Order(
+            id  = id, # 주문 번호,
+            user_seq = user_seq, # 유저 seq
+            payment_type = payment_type, # 결제수단
+            price = price, # 가격
+            address = address, # 배송지
+            order_date = datetime.now(), # 주문일자
+            status = "배송전", # 배송 상태
+            delivery_type = delivery_type
+        )
+        session.add(new_order)
+        session.commit()
+        return {'result' : 'ok'}
+    except Exception as e:
+        return {'result' : e}
+
+
+
+
+
+
+
