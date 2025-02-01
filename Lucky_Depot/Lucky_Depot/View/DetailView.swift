@@ -22,6 +22,16 @@ struct DetailView: View {
                     .progressViewStyle(CircularProgressViewStyle())
                     .frame(height: 200)
                     .padding()
+                    .onAppear{
+                        print("onAppear")
+                        Task{
+                            do{
+                                product = try await productViewModel.fetchDetail()
+                            }catch{
+                                print("nil")
+                            }
+                        }
+                    }
             } else {
                 ScrollView {
                     VStack(spacing: 20) {
@@ -121,11 +131,17 @@ struct DetailView: View {
                     .padding()
                 }
                 .navigationTitle("제품 상세")
-                .onAppear(perform: {
-                    Task {
-                        product = try await productViewModel.fetchDetail()
+                .onAppear{
+                    print("onAppear")
+                    Task{
+                        do{
+                            product = try await productViewModel.fetchDetail()
+                        }catch{
+                            print("nil")
+                        }
                     }
-                })
+                    
+                }
             }
         }
     }

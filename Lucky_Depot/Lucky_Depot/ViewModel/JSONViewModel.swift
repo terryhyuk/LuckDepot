@@ -16,88 +16,93 @@ struct JSONViewModel {
     // result : [] 일때
     // 예시
     
-//    func fetchProduct() async throws -> [Product]{
-//        do {
-//            let result: JsonResult<[Product]> = try await jsonViewModel.fetchJSON(path: "/product")
-//            let products = result.result
-//            return products
-//        } catch {
-//            print("Error: \(error)")
-//            throw error
-//        }
-//    }
+    //    func fetchProduct() async throws -> [Product]{
+    //        do {
+    //            let result: JsonResult<[Product]> = try await jsonViewModel.fetchJSON(path: "/product")
+    //            let products = result.result
+    //            return products
+    //        } catch {
+    //            print("Error: \(error)")
+    //            throw error
+    //        }
+    //    }
     
     
-//    func fetchJSONList<T: Decodable>(path: String) async throws -> JsonResult<[T]> {
-//        guard let url = URL(string: baseURL + path) else {
-//            throw URLError(.badURL)
-//        }
-//
-//        let (data, _) = try await URLSession.shared.data(from: url)
-//
-//        return try JSONDecoder().decode(JsonResult<[T]>.self, from: data)
-//    }
-//    // result : {} 일때
-//    func fetchJSON<T: Decodable>(path: String) async throws -> JsonResult<T> {
-//        guard let url = URL(string: baseURL + path) else {
-//            throw URLError(.badURL)
-//        }
-//
-//        let (data, _) = try await URLSession.shared.data(from: url)
-//
-//        return try JSONDecoder().decode(JsonResult<T>.self, from: data)
-//    }
+    //    func fetchJSONList<T: Decodable>(path: String) async throws -> JsonResult<[T]> {
+    //        guard let url = URL(string: baseURL + path) else {
+    //            throw URLError(.badURL)
+    //        }
+    //
+    //        let (data, _) = try await URLSession.shared.data(from: url)
+    //
+    //        return try JSONDecoder().decode(JsonResult<[T]>.self, from: data)
+    //    }
+    //    // result : {} 일때
+    //    func fetchJSON<T: Decodable>(path: String) async throws -> JsonResult<T> {
+    //        guard let url = URL(string: baseURL + path) else {
+    //            throw URLError(.badURL)
+    //        }
+    //
+    //        let (data, _) = try await URLSession.shared.data(from: url)
+    //
+    //        return try JSONDecoder().decode(JsonResult<T>.self, from: data)
+    //    }
     
     // Write by LWY Firebase에서 JWT Token을 준다면? UserDefaults에 로그인할 떄 저장하고 담아서 보내기
     private func makeAuthorizedRequest(path: String) throws -> URLRequest {
-           guard let url = URL(string: baseURL + path) else {
-               throw URLError(.badURL)
-           }
-           
-           var request = URLRequest(url: url)
-           request.httpMethod = "GET"
-           request.addValue("application/json", forHTTPHeaderField: "Accept")
-
-           // ✅ UserDefaults에서 JWT 토큰 가져오기
-           if let token = UserDefaults.standard.string(forKey: "jwtToken") {
-               request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-               print("📡 JWT 토큰 포함 요청: \(token)")
-           } else {
-               print("⚠️ JWT 토큰 없음, 인증 없이 요청 진행")
-           }
-           
-           return request
-       }
+        guard let url = URL(string: baseURL + path) else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        // ✅ UserDefaults에서 JWT 토큰 가져오기
+        if let token = UserDefaults.standard.string(forKey: "jwtToken") {
+            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ JWT 토큰 없음, 인증 없이 요청 진행")
+        }
+        
+        return request
+    }
     /// ✅ 리스트 응답이 필요한 API 요청 (ex: `[Product]`)
-        func fetchJSONList<T: Decodable>(path: String, jwtToken: String? = nil) async throws -> JsonResult<[T]> {
-            guard let url = URL(string: baseURL + path) else {
-                throw URLError(.badURL)
-            }
-
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            if let token = jwtToken {
-                request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // ✅ JWT 토큰 추가
-            }
-
-            let (data, _) = try await URLSession.shared.data(for: request)
-            return try JSONDecoder().decode(JsonResult<[T]>.self, from: data)
+    func fetchJSONList<T: Decodable>(path: String, jwtToken: String? = nil) async throws -> JsonResult<[T]> {
+        guard let url = URL(string: baseURL + path) else {
+            throw URLError(.badURL)
         }
-
-        func fetchJSON<T: Decodable>(path: String, jwtToken: String? = nil) async throws -> JsonResult<T> {
-            guard let url = URL(string: baseURL + path) else {
-                throw URLError(.badURL)
-            }
-
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            if let token = jwtToken {
-                request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // ✅ JWT 토큰 추가
-            }
-
-            let (data, _) = try await URLSession.shared.data(for: request)
-            return try JSONDecoder().decode(JsonResult<T>.self, from: data)
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        if let token = jwtToken ?? UserDefaults.standard.string(forKey: "jwtToken") {
+            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ JWT 없음, 인증 없이 요청 진행")
         }
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try JSONDecoder().decode(JsonResult<[T]>.self, from: data)
+    }
+    
+    
+    func fetchJSON<T: Decodable>(path: String, jwtToken: String? = nil) async throws -> JsonResult<T> {
+        guard let url = URL(string: baseURL + path) else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let token = jwtToken ?? UserDefaults.standard.string(forKey: "jwtToken") {
+            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else {
+            print("⚠️ JWT 없음, 인증 없이 요청 진행")
+        }
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try JSONDecoder().decode(JsonResult<T>.self, from: data)
+    }
 }

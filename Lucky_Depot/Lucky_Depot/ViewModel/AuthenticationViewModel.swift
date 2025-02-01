@@ -196,6 +196,16 @@ extension AuthenticationViewModel {
                 
                 // ✅ JWT 토큰을 UserDefaults에 저장 (API 요청 시 활용)
                 UserDefaults.standard.set(idToken, forKey: "jwtToken")
+                UserDefaults.standard.synchronize() // ⚠️ 동기화 시도 (디버깅 목적)
+                print("✅ JWT 토큰 저장 완료: \(idToken)")
+                
+                // ✅ 저장된 토큰이 정상적으로 저장되었는지 즉시 확인
+                if let savedToken = UserDefaults.standard.string(forKey: "jwtToken") {
+                    print("🔍 저장된 JWT 토큰 확인: \(savedToken)")
+                } else {
+                    print("❌ JWT 토큰 저장 실패")
+                }
+                
                 print("✅ JWT 토큰 저장 완료: \(idToken)")
             }
             

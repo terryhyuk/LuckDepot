@@ -26,8 +26,6 @@ class UserViewModel: ObservableObject {
         ]
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody, options: [])
 
-        print("📡 Sending request to: \(url.absoluteString)")
-        print("📡 Request Body: \(requestBody)")
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -40,7 +38,6 @@ class UserViewModel: ObservableObject {
                 throw URLError(.cannotParseResponse)
             }
 
-            print("📡 Response JSON: \(jsonResponse)")
             return jsonResponse
         } catch {
             print("❌ Network Error: \(error.localizedDescription)")
