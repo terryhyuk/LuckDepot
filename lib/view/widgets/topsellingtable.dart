@@ -12,7 +12,10 @@ class TopSellingTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => DataTable(
+    return Obx(
+      () => SizedBox(
+        width: double.infinity,
+        child: DataTable(
           columnSpacing: 24.0,
           horizontalMargin: 16.0,
           columns: const [
@@ -46,7 +49,9 @@ class TopSellingTable extends StatelessWidget {
               ],
             );
           }).toList(),
-        ));
+        ),
+      ),
+    );
   }
 }
 
@@ -62,7 +67,7 @@ class SalesTrendsChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,7 +92,7 @@ class SalesTrendsChart extends StatelessWidget {
                     maxY: controller.salesTrends.isEmpty
                         ? 400000
                         : controller.salesTrends
-                                .map((e) => e['total_price'] as int)
+                                .map((e) => e['sales'] as int? ?? 0)
                                 .reduce((a, b) => a > b ? a : b)
                                 .toDouble() *
                             1.2,
@@ -133,11 +138,22 @@ class SalesTrendsChart extends StatelessWidget {
                             final index = value.toInt();
                             if (index >= 0 &&
                                 index < controller.salesTrends.length) {
+                              final weekdays = [
+                                'Mon',
+                                'Tue',
+                                'Wed',
+                                'Thu',
+                                'Fri',
+                                'Sat',
+                                'Sun'
+                              ];
+                              final weekday = controller.salesTrends[index]
+                                      ['weekday'] as int? ??
+                                  0;
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  controller.salesTrends[index]['date']
-                                      .toString(),
+                                  weekdays[weekday % 7],
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 12,
@@ -169,7 +185,7 @@ class SalesTrendsChart extends StatelessWidget {
                             controller.salesTrends.asMap().entries.map((entry) {
                           return FlSpot(
                             entry.key.toDouble(),
-                            entry.value['total_price'].toDouble(),
+                            (entry.value['sales'] as num?)?.toDouble() ?? 0.0,
                           );
                         }).toList(),
                         isCurved: true,
@@ -285,10 +301,11 @@ class TopSellingBarChart extends StatelessWidget {
                               showTitles: true,
                               reservedSize: 60,
                               getTitlesWidget: (value, meta) {
+                                final items =
+                                    controller.topSellingItems.take(5).toList();
                                 final index = value.toInt();
-                                if (index < controller.topSellingItems.length) {
-                                  String name =
-                                      controller.topSellingItems[index]['name'];
+                                if (index < items.length) {
+                                  String name = items[index]['name'];
                                   if (name.length > 20) {
                                     name = '${name.substring(0, 17)}...';
                                   }

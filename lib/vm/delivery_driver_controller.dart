@@ -8,7 +8,7 @@ import 'package:lucky_depot/view/widgets/dialog.dart';
 class DeliveryDriverController extends GetxController {
   final DriverRepository _repository = DriverRepository();
   final formKey = GlobalKey<FormState>();
-  
+
   // Controllers
   final nameController = TextEditingController();
   final idController = TextEditingController();
@@ -17,6 +17,17 @@ class DeliveryDriverController extends GetxController {
   final phoneController = TextEditingController();
   final isRegular = false.obs;
 
+  final FocusNode nameFocusNode = FocusNode();
+  final FocusNode idFocusNode = FocusNode();
+  final FocusNode phoneFocusNode = FocusNode();
+  final FocusNode passwordFocusNode = FocusNode();
+  final FocusNode emailFocusNode = FocusNode();
+
+  @override
+  void onInit() {
+    super.onInit();
+  }
+
   @override
   onClose() {
     nameController.dispose();
@@ -24,7 +35,26 @@ class DeliveryDriverController extends GetxController {
     passwordController.dispose();
     emailController.dispose();
     phoneController.dispose();
+    nameFocusNode.dispose();
+    idFocusNode.dispose();
+    passwordFocusNode.dispose();
+    emailFocusNode.dispose();
+    phoneFocusNode.dispose();
+
     super.onClose();
+  }
+
+  nextFocus(FocusNode current, FocusNode next) {
+    if (current != next) {
+      current.unfocus();
+      next.requestFocus();
+    } else {
+      current.unfocus();
+    }
+  }
+
+  finishInput() {
+    phoneFocusNode.unfocus();
   }
 
   clearForm() {
@@ -52,30 +82,27 @@ class DeliveryDriverController extends GetxController {
       clearForm();
 
       if (context.mounted) {
-        CustomDialog.show(
-          context, 
-          DialogType.success,
-          customContent: 'Driver has been registered successfully'
-        );
+        CustomDialog.show(context, DialogType.success,
+            customContent: 'Driver has been registered successfully');
       }
     }
   }
 
   deleteDriver(BuildContext context, int index) async {
-  try {
-    await _repository.deleteDriver(index);  // 삭제 요청
-    await getDriverListenable(); 
-  } catch (e) {
-    print('Error deleting driver: $e');
-    if (context.mounted) {
-      CustomDialog.show(
-        context,
-        DialogType.error,
-        customContent: 'Failed to delete driver',
-      );
+    try {
+      await _repository.deleteDriver(index); // 삭제 요청
+      await getDriverListenable();
+    } catch (e) {
+      print('Error deleting driver: $e');
+      if (context.mounted) {
+        CustomDialog.show(
+          context,
+          DialogType.error,
+          customContent: 'Failed to delete driver',
+        );
+      }
     }
   }
-}
 
   ValueListenable getDriverListenable() {
     return _repository.getDriverListenable();

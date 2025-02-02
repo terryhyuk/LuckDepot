@@ -53,52 +53,86 @@ class DeliveryDriver extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 16),
-                                    CustomTextFormFieldWidget(
-                                      controller: delivery.nameController,
-                                      config: TextFormFieldConfig(
-                                        labelText: 'Name',
-                                        textInputAction: TextInputAction.next,
+                                    FocusTraversalGroup(
+                                      policy: OrderedTraversalPolicy(),
+                                      child: Column(
+                                        children: [
+                                          CustomTextFormFieldWidget(
+                                            controller: delivery.nameController,
+                                            config: TextFormFieldConfig(
+                                              labelText: 'Name',
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                            ),
+                                            focusNode: delivery.nameFocusNode,
+                                            onFieldSubmitted: (_) =>
+                                                delivery.nextFocus(
+                                                    delivery.nameFocusNode,
+                                                    delivery.idFocusNode),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          CustomTextFormFieldWidget(
+                                            controller: delivery.idController,
+                                            config: TextFormFieldConfig(
+                                              labelText: 'ID',
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                            ),
+                                            focusNode: delivery.idFocusNode,
+                                            onFieldSubmitted: (_) =>
+                                                delivery.nextFocus(
+                                                    delivery.idFocusNode,
+                                                    delivery.passwordFocusNode),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          CustomTextFormFieldWidget(
+                                            controller:
+                                                delivery.passwordController,
+                                            config: TextFormFieldConfig(
+                                              labelText: 'Password',
+                                              isPassword: true,
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                            ),
+                                            focusNode:
+                                                delivery.passwordFocusNode,
+                                            onFieldSubmitted: (_) =>
+                                                delivery.nextFocus(
+                                                    delivery.passwordFocusNode,
+                                                    delivery.emailFocusNode),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          CustomTextFormFieldWidget(
+                                            controller:
+                                                delivery.emailController,
+                                            config: TextFormFieldConfig(
+                                              labelText: 'Email',
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                            ),
+                                            focusNode: delivery.emailFocusNode,
+                                            onFieldSubmitted: (_) =>
+                                                delivery.nextFocus(
+                                                    delivery.emailFocusNode,
+                                                    delivery.phoneFocusNode),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          CustomTextFormFieldWidget(
+                                            controller:
+                                                delivery.phoneController,
+                                            config: TextFormFieldConfig(
+                                              labelText: 'Phone',
+                                              isNumber: true,
+                                              hintText: 'Numbers only',
+                                              textInputAction:
+                                                  TextInputAction.done,
+                                            ),
+                                            focusNode: delivery.phoneFocusNode,
+                                            onFieldSubmitted: (_) =>
+                                                delivery.finishInput(),
+                                          ),
+                                        ],
                                       ),
-                                      labelText: '',
-                                    ),
-                                    const SizedBox(height: 16),
-                                    CustomTextFormFieldWidget(
-                                      controller: delivery.idController,
-                                      config: TextFormFieldConfig(
-                                        labelText: 'ID',
-                                        textInputAction: TextInputAction.next,
-                                      ),
-                                      labelText: '',
-                                    ),
-                                    const SizedBox(height: 16),
-                                    CustomTextFormFieldWidget(
-                                      controller: delivery.passwordController,
-                                      config: TextFormFieldConfig(
-                                        labelText: 'Password',
-                                        isPassword: true,
-                                        textInputAction: TextInputAction.next,
-                                      ),
-                                      labelText: '',
-                                    ),
-                                    const SizedBox(height: 16),
-                                    CustomTextFormFieldWidget(
-                                      controller: delivery.emailController,
-                                      config: TextFormFieldConfig(
-                                        labelText: 'Email',
-                                        textInputAction: TextInputAction.next,
-                                      ),
-                                      labelText: '',
-                                    ),
-                                    const SizedBox(height: 16),
-                                    CustomTextFormFieldWidget(
-                                      controller: delivery.phoneController,
-                                      config: TextFormFieldConfig(
-                                        labelText: 'Phone',
-                                        isNumber: true,
-                                        hintText: 'Numbers only',
-                                        textInputAction: TextInputAction.done,
-                                      ),
-                                      labelText: '',
                                     ),
                                     const SizedBox(height: 16),
                                     Obx(() => Row(
@@ -218,8 +252,11 @@ class DeliveryDriver extends StatelessWidget {
                                                         DialogType.delete,
                                                         customContent:
                                                             'Are you sure you want to delete "${driver.name}"?',
-                                                        onConfirm: ()async{
-                                                          await delivery.deleteDriver(context,index);
+                                                        onConfirm: () async {
+                                                          await delivery
+                                                              .deleteDriver(
+                                                                  context,
+                                                                  index);
                                                         },
                                                       ),
                                                     ),
@@ -248,4 +285,5 @@ class DeliveryDriver extends StatelessWidget {
       ),
     );
   }
-}
+}// END
+

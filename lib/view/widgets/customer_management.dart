@@ -59,7 +59,7 @@ class CustomerManagement extends StatelessWidget {
                 ),
                   const SizedBox(height: 24),
                   const Expanded(
-                    child: CustomerTable(),  // 고객 테이블 위젯 추가 필요
+                    child: CustomerTable(),
                   ),
                 ],
               ),

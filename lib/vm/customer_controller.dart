@@ -20,12 +20,15 @@ class CustomerController extends GetxController {
   final List<String> sortOptions = ['Name', 'Email'];
   final RxList<Customer> customers = <Customer>[].obs;
   final RxList<Customer> filteredCustomers = <Customer>[].obs;
+  final RxList<Map<String, dynamic>> recentOrders = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchCustomerStats();
+    fetchRecentOrders();
     loadCustomers();
+    
   }
 
   @override
@@ -33,6 +36,18 @@ class CustomerController extends GetxController {
     searchController.dispose();
     super.onClose();
   }
+
+    fetchRecentOrders() async {
+    try {
+      final response = await customerRepository.resentOrder();
+      if (response['result'] != null) {
+        recentOrders.value = List<Map<String, dynamic>>.from(response['result']);
+      }
+    } catch (e) {
+      print('Error fetching recent orders: $e');
+    }
+  }
+
 
   // 통계 데이터 로드
   fetchCustomerStats() async {

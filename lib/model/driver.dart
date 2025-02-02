@@ -25,6 +25,9 @@ class Driver{
   @HiveField(6)
   String password;  // 비밀번호
 
+  @HiveField(7)
+  String isworker = 'T';
+
   Driver({
     required this.driverNum,
     required this.name,
@@ -33,5 +36,6 @@ class Driver{
     required this.isRegular,
     required this.id,
     required this.password,
+    this.isworker = 'T',
   });
 }

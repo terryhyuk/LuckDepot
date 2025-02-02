@@ -25,5 +25,26 @@ class CustomerRepository {
       };
     }
   }
+  
+  Future<Map<String, dynamic>> resentOrder()async{
+    try {
+    final response = await http.get(Uri.parse('$url/detail/home'));
+    if (response.statusCode == 200) {
+        return jsonDecode(utf8.decode(response.bodyBytes));
+      }
+    return{
+      'result':[],
+      'total_price':0,
+      'total_order':0,
+    };
+    }catch (e){
+      print('Error fetching resentOrder : $e');
+      return{
+      'result':[],
+      'total_price':0,
+      'total_order':0,
+      };
+    }
+  }
 
 }

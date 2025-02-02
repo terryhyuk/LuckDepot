@@ -4,19 +4,22 @@ import 'package:lucky_depot/model/coustom_text_form_field.dart';
 class CustomTextFormFieldWidget extends StatelessWidget {
   final TextEditingController controller;
   final TextFormFieldConfig config;
-  final Function(String)? onFieldSubmitted;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onFieldSubmitted;
 
   const CustomTextFormFieldWidget({
     super.key,
     required this.controller,
     required this.config,
-    this.onFieldSubmitted, required String labelText,
+    this.focusNode,
+    this.onFieldSubmitted,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       decoration: InputDecoration(
         labelText: config.labelText,
         border: const OutlineInputBorder(),
@@ -25,7 +28,7 @@ class CustomTextFormFieldWidget extends StatelessWidget {
       obscureText: config.isPassword,
       keyboardType: config.isNumber ? TextInputType.number : TextInputType.text,
       textInputAction: config.textInputAction,
-      onFieldSubmitted: onFieldSubmitted ?? (_) => FocusScope.of(context).nextFocus(),
+      onFieldSubmitted: onFieldSubmitted,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter ${config.labelText}';

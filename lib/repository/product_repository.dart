@@ -42,7 +42,7 @@ class ProductRepository {
     // 1. 이미지 업로드
     var imageRequest = http.MultipartRequest(
       'POST', 
-      Uri.parse('$url/product/image/')  // 올바른 이미지 업로드 엔드포인트
+      Uri.parse('$url/product/image/')
     );
     imageRequest.files.add(
       http.MultipartFile.fromBytes(
