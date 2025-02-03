@@ -23,14 +23,21 @@ router = APIRouter()
 
 # 모든 상품 가져오는 API
 @router.get("/", status_code=200)
-async def index(session: Session = Depends(db.session)):
+async def index(session: Session = Depends(db.session), keyword : str = None):
     """
     `All Product`\n
     DB에 저장된 모든 Product 정보 가져오기 \n
     :return:
     """
-    product = session.query(Product).all()
+
+    if keyword != None :
+        product = session.query(Product).filter(Product.name.ilike(f"%{keyword}%")).all()
+        if not product :
+            raise HTTPException(status_code=404, detail='product not found')
+    else :
+        product = session.query(Product).all()
     return {"result" :product}
+
 
 # 상품 하나의 정보 가져오는 API
 @router.get("/{product_id}/", status_code=200)
