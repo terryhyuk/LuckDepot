@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from joblib import load
 # from datetime import datetime, date
@@ -15,6 +15,8 @@ model = load('./machine_learning/model/cluster_ny_gb.joblib')
 
 def get_prediction_features(order_id, session=Session):
     result = deliver.user(order_id=order_id, session=session)
+    if not result :
+        raise HTTPException(status_code=404, detail='deliver not found')
     year = result['order_date']['year']
     month = result['order_date']['month']
     weekday = result['order_date']['weekday']
@@ -47,7 +49,7 @@ class InputFeatures(BaseModel):
     hurricane: int
     badweather: int
 
-@router.get("/duration/{order_id}")
+@router.get("/duration/{order_id}", status_code=200)
 async def predict_duration(order_id: str, session : Session = Depends(db.session)):
     features = get_prediction_features(order_id,session=session)
     

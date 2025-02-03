@@ -7,6 +7,7 @@ from starlette.responses import JSONResponse
 from datetime import datetime
 from database.model.deliver import Deliver
 from database.model.orderdetail import OrderDetail
+from sqlalchemy import func
 
 
 
@@ -49,7 +50,7 @@ async def get_all_products_with_jwt(
     }
 
 
-@router.get('/{order_id}')
+@router.get('/test/{order_id}')
 def user_deliver(session: Session = Depends(db.session), order_id: str = None):
     """
     배송현황 페이지
@@ -105,3 +106,4 @@ def user_deliver(session: Session = Depends(db.session), order_id: str = None):
     except Exception as e:
         print('error', e)
         return {'result' : e}
+    

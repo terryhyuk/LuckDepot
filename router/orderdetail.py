@@ -17,7 +17,7 @@ router = APIRouter()
 
 # 관리자용 매출 연별 조회
 @router.get('/year', status_code=200)
-async def select(session : Session = Depends(db.session)):
+async def year(session : Session = Depends(db.session)):
     """
     관리자용
     상품이름, 상품별 판매수량, 상품별 총 합 조회  \n
@@ -38,16 +38,15 @@ async def select(session : Session = Depends(db.session)):
             Product, 
             Product.id == OrderDetail.product_id
         ).filter(
-            cast(func.substring(OrderDetail.id, 1, 2), String) == current_year[2:]
+            cast(func.substring(OrderDetail.id, 1, 2), String) == current_year[2:] # 현재년도 데이터 출력
         ).group_by(
         Product.name
         ).order_by(desc('order_count'))
 
         if not orders :
-            raise HTTPException(status_code=400, detail="detail year not found")
+            raise HTTPException(status_code=404, detail="detail year not found")
         
         # 년도별 매출 그래프
-        # 연도별 매출 쿼리
         years_data = session.query(
             func.substring(func.min(Order.id),1,2).label('year'),
             func.sum(Order.price).label('year_sales'),
@@ -56,7 +55,7 @@ async def select(session : Session = Depends(db.session)):
         ).all()
         
         if not years_data :
-            raise HTTPException(status_code=400, detail='year data not found')
+            raise HTTPException(status_code=404, detail='year data not found')
 
         # 최근 6년 연도 리스트 생성
         recent_years = [str(int(current_year) - i) for i in range(6)]
@@ -90,7 +89,7 @@ async def select(session : Session = Depends(db.session)):
 
 # 관리자용 매출 관리 주별 조회
 @router.get('/week', status_code=200)
-async def select(session: Session = Depends(db.session)):
+async def week(session: Session = Depends(db.session)):
     """
     관리자용 매출관리 "월" \n
     상품이름, 상품별 판매수량, 상품별 총 합, 요일별 매출(3개월) \n
@@ -123,7 +122,7 @@ async def select(session: Session = Depends(db.session)):
         ).order_by(desc('order_count'))
 
         if not orders:
-            raise HTTPException(status_code=400, detail="detail week not found")
+            raise HTTPException(status_code=404, detail="detail week not found")
         
         # 한 분기의 요일별 매출 그래프 쿼리
         weekday_sales = session.query(
@@ -141,7 +140,7 @@ async def select(session: Session = Depends(db.session)):
         ).all()
 
         if not weekday_sales :
-            raise HTTPException(status_code=400, detail='weekday_sales not found')
+            raise HTTPException(status_code=404, detail='weekday_sales not found')
 
         # 요일별 매출 데이터를 딕셔너리로 변환
         sales_dict = {day[0]: day[1] for day in weekday_sales}
@@ -172,7 +171,7 @@ async def select(session: Session = Depends(db.session)):
 
 # 관리자용 매출 관리 월별 조회 (상품별 매출 표)
 @router.get('/month', status_code=200)
-async def select(session : Session = Depends(db.session)):
+async def month(session : Session = Depends(db.session)):
     """
     관리자용 매출관리 "월" \n
     매출관리 페이지 월별 매출 표 \n
@@ -198,7 +197,7 @@ async def select(session : Session = Depends(db.session)):
         Product.name
         ).order_by(desc('order_count'))
         if not orders :
-            raise HTTPException(status_code=400, detail="detail month not found")
+            raise HTTPException(status_code=404, detail="detail month not found")
         return {'result' : 
                     [
                         {
@@ -250,7 +249,7 @@ async def dashboard(session : Session = Depends(db.session)):
             func.substring(OrderDetail.id, 1, 6).desc()
         ).all()
         if not dashs : 
-            raise HTTPException(status_code=400, detail='dashs not found')
+            raise HTTPException(status_code=404, detail='dashs not found')
 
         
         return {
@@ -274,42 +273,6 @@ async def dashboard(session : Session = Depends(db.session)):
 
 
 ## --------------------유저 --------------------------
-
-
-#유저 seq를 통한 주문내역 조회
-# @router.get("/{user_seq}")
-# async def user(session : Session = Depends(db.session), user_seq : int = None):
-#     """
-#     사용자용 \n
-#     user_seq(pk)를 통해 orderdetail 테이블 조회 \n
-#     주문내역 조회
-#     """
-#     try :
-#         orderdetail = session.query(
-#             OrderDetail.id,
-#             OrderDetail.user_seq,
-#             OrderDetail.product_id, 
-#             OrderDetail.price, 
-#             OrderDetail.quantity
-#             ).filter(OrderDetail.user_seq == user_seq).all()
-#         if not orderdetail :
-#             raise HTTPException(status_code=400, detail="detail user not found")
-#         return { "result": 
-#                 [
-#                     {
-#                     "id" : detail[0],
-#                     "user_seq" : detail[1],
-#                     "prodcut_id": detail[2], # 상품 아이디(pk)
-#                     "price": detail[3], # 상품 가격
-#                     "quantity": detail[4], # 수량
-#                     }
-#                 for detail in orderdetail
-#                 ],
-#             }
-#     except Exception as e:
-#         return {'result' : e}
-
-
 
 # 주문시 orderdetail 입력
 @router.post('/', status_code=200)
@@ -350,7 +313,7 @@ async def delete(session : Session = Depends(db.session), id : str = None):
         return {'result' : e}
 
 
-@router.get('/{user_seq}')
+@router.get('/{user_seq}', status_code=200)
 async def select_orderlist(session : Session = Depends(db.session), user_seq : int = None):
     """
     주문내역 불러오기
@@ -376,7 +339,7 @@ async def select_orderlist(session : Session = Depends(db.session), user_seq : i
                 OrderDetail.user_seq
             )
         if not lists :
-            raise HTTPException(status_code=400, detail="orderlist not found")
+            raise HTTPException(status_code=404, detail="orderlist not found")
         return {'result' : [
             {
                 "id" : list[0],
