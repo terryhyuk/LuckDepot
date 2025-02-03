@@ -10,7 +10,6 @@ import uvicorn
 
 
 # router
-from router.test import router as test_router
 from router.auth import router as auth_router
 from router.product import router as product_router
 from router.orderdetail import router as od_router
@@ -53,7 +52,6 @@ app = create_app()
 
 
 app.include_router(auth_router, tags=["Auth"], prefix="/auth")
-app.include_router(test_router, tags=["Test"],prefix="/test", dependencies=[Depends(API_KEY_HEADER)])
 app.include_router(product_router, tags=["Product"],prefix="/product")
                 #    , dependencies=[Depends(API_KEY_HEADER)])
 app.include_router(od_router, tags=["Detail"], prefix="/detail")
