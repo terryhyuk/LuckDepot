@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.conn.connection import db
 from errors import exceptions as ex
-from static.models import LoginRequest
+from static.models import LoginRequest, SeqRequest
 from static.hosts import firebase_auth
 
 
@@ -68,12 +68,10 @@ async def google_login(request: LoginRequest, session: Session = Depends(db.sess
 
         # ✅ 응답 반환 (유효한 사용자 정보)
         return {
-            "result": "Login successful",
             "user": {
                 "id": user.id,
                 "seq": user.seq,
-                "name": user.name,
-                "login_type": user.login_type
+                "name": user.name
             }
         }
 
@@ -86,3 +84,20 @@ async def google_login(request: LoginRequest, session: Session = Depends(db.sess
     except Exception as e:
         print(f"❌ Firebase 토큰 오류: {e}")
         raise HTTPException(status_code=500, detail=f"Firebase token error: {str(e)}")
+
+
+
+
+# 로그인한 유저의 seq컬럼 값 가져오기
+@router.post("/seq", status_code=200)
+async def index(request = SeqRequest, session: Session = Depends(db.session)):
+    """
+    `유저의 seq 가져오기`\n
+    DB에 저장된 id값과 비교하여 일치하는 유저의 seq값 리턴
+    :return:
+    result : {seq}
+    """
+    user = session.query(User).filter(User.id == request).first()
+    if not user:
+        return {"result" : "일치하는 사용자가 없습니다."}
+    return {"result" : user.seq,}

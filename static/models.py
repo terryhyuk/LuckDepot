@@ -6,7 +6,9 @@ from pydantic.main import BaseModel
 from pydantic.networks import EmailStr
 
 
-
+class SeqRequest(BaseModel):
+    id: str = None
+    
 class LoginRequest(BaseModel):
     idToken: str = None
     login_type: str = None
