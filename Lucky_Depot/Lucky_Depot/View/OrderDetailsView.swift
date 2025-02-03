@@ -6,112 +6,89 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct OrderDetailsView: View {
-
+    @StateObject var orderViewModel: OrderViewModel = OrderViewModel()
+    
+    @State var orderDetail: OrderDetail?
+    @State var order_id = "2502031602274b22"
+    
     var body: some View {
-            ZStack {
-                backgroundColor
-                  .ignoresSafeArea()
-                VStack(alignment: .leading, content: {
-                
-//                 Text("Recent Orders")
-//                        .font(.system(size:20))
-//                        .padding(.vertical, 10)
-                    
-                    VStack(alignment: .leading, spacing:10, content: {
-                        HStack(content: {
-                            VStack (alignment: .leading, spacing: 5){
-                                Text("2025-1-20")
-                                
-                                HStack(content: {
-                                    Text("Order No: ")
-                                    Text("123456")
-                                })
-                                .foregroundStyle(.gray)
-                            }
-                           
-                            Spacer()
-
-                        })
-                        
-                        Divider()
-                        HStack( spacing: 20,content: {
-                            Image("pen")
-                                .resizable()
-                                .frame(width: 70, height: 70)
-                                .clipShape(.rect(cornerRadius: 10))
-                            VStack (alignment: .leading, content: {
-                                Text("Ballpoint Pen")
-                                Text("Quantity:"+" "+"1")
-                                    .foregroundStyle(.gray)
-                                HStack(content: {
-                                    Text("Price: ")
-                                    Spacer()
-                                    Text("$15")
-                                })
-                                .bold()
-
-                            
-                            })
-                        })
-                        
-                        
-                        Divider()
-                        HStack( spacing: 20,content: {
-                            Image("pen2")
-                                .resizable()
-                                .frame(width: 70, height: 70)
-                                .clipShape(.rect(cornerRadius: 10))
-                            VStack (alignment: .leading, content: {
-                                Text("Ballpoint Pen")
-                                Text("Quantity:"+" "+"1")
-                                    .foregroundStyle(.gray)
-                                HStack(content: {
-                                    Text("Price: ")
-                                    Spacer()
-                                    Text("$12.5")
-                                })
-                                .bold()
-                            })
-                        })
-                        
-                        
-                        Divider()
-                        HStack {
-                            Text("Total Price")
-
-                            Spacer()
-                            Text("$27.5")
-                                .bold()
-                        }
-                        .font(.system(size: 18))
-                        .padding(.vertical, 5)
-                        .bold()
-                        .foregroundStyle(.blue)
-
-                        
-
-                        
-                    })
+        VStack(content: {
+            if orderDetail == nil{
+                ProgressView("loading...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .frame(height: 200)
                     .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.white)
-                    .clipShape(.rect(cornerRadius: 10))
-      
-                    
-                    Spacer()
-                    
+
+            } else {
+                VStack(content: {
+                    Form(content: {
+                        Section(content: {
+                            HStack(content: {
+                                VStack(alignment: .leading, content: {
+                                    Text("Order No: \(orderDetail!.order_id)")
+                                        
+                                    Text("Tracking No: \(orderDetail!.deliver_id)")
+                                        .foregroundStyle(.gray)
+                                })
+                                
+                                Spacer()
+                                
+                                Text(orderDetail!.status)
+                                    .padding(10)
+                                    .font(.system(size: 14))
+                                    .foregroundStyle(.blue)
+                                    .background(.blue.opacity(0.4))
+                                    .clipShape(.rect(cornerRadius: 20))
+                            })
+                            // 물건 종류수 만큼 반복
+                            VStack(content: {
+                                ForEach(orderDetail!.result, id: \.product_name) { product in
+                                    HStack(spacing: 20,content: {
+                                        WebImage(url:URL(string: product.imagePath))
+                                            .resizable()
+                                            .frame(width: 70, height: 70)
+                                            .clipShape(.rect(cornerRadius: 10))
+                                        VStack (alignment: .leading, content: {
+                                            Text(product.product_name)
+                                            Text("Quantity: " + "\(product.quantity)")
+                                                .foregroundStyle(.gray)
+                                            HStack(content: {
+                                                Text("Price: ")
+                                                Spacer()
+                                                Text("$\(product.price)")
+                                            })
+                                            .bold()
+
+
+                                        })
+                                    })
+                                }
+                            })
+                            
+                            // http://192.168.50.38:8000/ml/duration/2502031602274b22
+                            // 변경하기
+                            VStack (alignment: .leading, spacing: 10, content: {
+                                Text("Estimated Delivery Date")
+                                Text("2025.2.1")
+                                    .foregroundStyle(.blue)
+                                    .bold()
+                                    .font(.system(size:20))
+                            })
+                        })
+                    })
                 })
-                .padding()
-                .navigationTitle("Order Details")
-                
             }
-            
-      
-      
-      
-        
+        })
+        .onAppear(perform: {
+            orderDetail = nil
+            Task{
+                try await orderDetail = orderViewModel.orderDetailInfo(order_id: order_id)
+                print(orderDetail!.result[0].product_name)
+            }
+        })
         
     }
 }

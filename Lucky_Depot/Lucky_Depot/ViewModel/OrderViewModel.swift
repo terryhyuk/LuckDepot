@@ -81,4 +81,14 @@ class OrderViewModel: ObservableObject {
     func fetch(){
         // 주문목록
     }
+    
+    func orderDetailInfo(order_id: String) async throws -> OrderDetail{
+        guard let url = URL(string: baseURL + "deliver/" + order_id) else {
+            throw URLError(.badURL)
+        }
+
+        let (data, _) = try await URLSession.shared.data(from: url)
+        
+        return try JSONDecoder().decode(OrderDetail.self, from: data)
+    }
 }
