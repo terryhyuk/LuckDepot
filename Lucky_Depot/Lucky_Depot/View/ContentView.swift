@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-let backgroundColor = Color.init(white: 0.95)
+let backgroundColor = Color.background
 
 struct ContentView: View {
     @EnvironmentObject var viewModel: AuthenticationViewModel
@@ -64,9 +64,13 @@ struct ContentView: View {
                 } else if destination == "PersonView" {
                     PersonView(selectedTab: $selectedTab, navigationPath: $navigationPath, userRealM: userRealM)
                 } else if destination == "OrderHistoryView" {
-                    OrderHistory()
+                    OrderHistory(navigationPath: $navigationPath)
                 } else if destination == "DetailView" {
-                    DetailView(navigationPath: $navigationPath)
+                    DetailView( productViewModel: productViewModel, navigationPath: $navigationPath)
+                }else if destination == "ShippingStatusView"{
+                    ShippingStatusView()
+                } else if destination == "OrderDetailsView" {
+                    OrderDetailsView()
                 }
             }
             

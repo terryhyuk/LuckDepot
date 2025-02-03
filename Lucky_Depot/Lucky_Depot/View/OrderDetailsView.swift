@@ -1,14 +1,13 @@
 //
-//  OrderHistory.swift
-//  final_project
+//  OrderDetailsView.swift
+//  Lucky_Depot
 //
-//  Created by Eunji Kim on 1/21/25.
+//  Created by Eunji Kim on 1/24/25.
 //
 
 import SwiftUI
 
-struct OrderHistory: View {
-    @Binding var navigationPath: NavigationPath
+struct OrderDetailsView: View {
 
     var body: some View {
             ZStack {
@@ -16,9 +15,9 @@ struct OrderHistory: View {
                   .ignoresSafeArea()
                 VStack(alignment: .leading, content: {
                 
-                 Text("Recent Orders")
-                        .font(.system(size:20))
-                        .padding(.vertical, 10)
+//                 Text("Recent Orders")
+//                        .font(.system(size:20))
+//                        .padding(.vertical, 10)
                     
                     VStack(alignment: .leading, spacing:10, content: {
                         HStack(content: {
@@ -46,11 +45,35 @@ struct OrderHistory: View {
                                 Text("Ballpoint Pen")
                                 Text("Quantity:"+" "+"1")
                                     .foregroundStyle(.gray)
+                                HStack(content: {
+                                    Text("Price: ")
+                                    Spacer()
+                                    Text("$15")
+                                })
+                                .bold()
+
                             
                             })
-                            Spacer()
-                            Text("1 other")
-                                .foregroundStyle(.gray)
+                        })
+                        
+                        
+                        Divider()
+                        HStack( spacing: 20,content: {
+                            Image("pen2")
+                                .resizable()
+                                .frame(width: 70, height: 70)
+                                .clipShape(.rect(cornerRadius: 10))
+                            VStack (alignment: .leading, content: {
+                                Text("Ballpoint Pen")
+                                Text("Quantity:"+" "+"1")
+                                    .foregroundStyle(.gray)
+                                HStack(content: {
+                                    Text("Price: ")
+                                    Spacer()
+                                    Text("$12.5")
+                                })
+                                .bold()
+                            })
                         })
                         
                         
@@ -60,37 +83,14 @@ struct OrderHistory: View {
 
                             Spacer()
                             Text("$27.5")
-                                .foregroundStyle(.price)
                                 .bold()
                         }
                         .font(.system(size: 18))
                         .padding(.vertical, 5)
+                        .bold()
+                        .foregroundStyle(.blue)
+
                         
-                        VStack(alignment: .center, content: {
-                            Button("View Order Details", action: {
-                                navigationPath.append("OrderDetailsView")
-
-                            })
-                                .padding()
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .foregroundStyle(.button2)
-                                .overlay {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(.gray.opacity(0.4), lineWidth: 1)
-                                }
-
-                        })
-                        VStack(alignment: .center, content: {
-                            Button("View Shipping Status", action: {
-                                navigationPath.append("ShippingStatusView")
-                            })
-                                .padding()
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .foregroundStyle(.white)
-                                .background(.button2)
-                                .cornerRadius(10)
-
-                        })
 
                         
                     })
@@ -98,19 +98,13 @@ struct OrderHistory: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(.white)
                     .clipShape(.rect(cornerRadius: 10))
-                    
-                   
-                    
-                 Text("Past Orders")
-                        .font(.system(size:20))
-                        .padding(.vertical, 10)
+      
                     
                     Spacer()
                     
                 })
                 .padding()
-                .navigationTitle("Order History")
-                .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("Order Details")
                 
             }
             
@@ -123,6 +117,6 @@ struct OrderHistory: View {
 }
 
 
-//#Preview {
-//    OrderHistory(navigationPath: <#Binding<NavigationPath>#>)
-//}
+#Preview {
+    OrderDetailsView()
+}

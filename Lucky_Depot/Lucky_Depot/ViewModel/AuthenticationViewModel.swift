@@ -42,7 +42,7 @@ class AuthenticationViewModel: ObservableObject {
     @Published var idToken: String?
     // State -> Published 수정
     @Published var userModel: UserViewModel = UserViewModel()
-    
+    @Published var islogging: Bool = false
     
     init() {
         registerAuthStateHandler()
@@ -151,6 +151,7 @@ enum AuthenticationError: Error {
 
 extension AuthenticationViewModel {
     func signInWithGoogle() async -> Bool {
+        islogging = true
         guard let clientID = FirebaseApp.app()?.options.clientID else {
             fatalError("No client ID found in Firebase configuration")
         }
@@ -217,9 +218,11 @@ extension AuthenticationViewModel {
             }
             
             print("User \(firebaseUser.uid) signed in with email \(firebaseUser.email ?? "unknown")")
+            islogging = false
             return true
         }
         catch {
+            self.islogging = false
             print(error.localizedDescription)
             self.errorMessage = error.localizedDescription
             return false
@@ -228,17 +231,21 @@ extension AuthenticationViewModel {
     
     
     func signInWithFacebook() async -> Bool {
+        islogging = true
         //withCheckedContinuation 비동기 클로저를 동기식으로 기다릴 수 있게 해주는 Swift의 비동기 API
         // 클로저는 비동기 작업을 마친 후 continuation.resume(returning:)으로 결과를 반환
         return await withCheckedContinuation { continuation in
             manager.logIn(permissions: ["public_profile", "email"], from: getRootViewController()) { result, error in
                 if let error = error {
                     print("Facebook Login Error: \(error.localizedDescription)")
+                    self.islogging = false
+
                     continuation.resume(returning: false)
                     return
                 }
                 guard let result = result, !result.isCancelled else {
                     print("Facebook login cancelled.")
+                    self.islogging = false
                     continuation.resume(returning: false)
                     return
                 }
@@ -247,16 +254,44 @@ extension AuthenticationViewModel {
                 Auth.auth().signIn(with: credential) { [self] result, error in
                     if let error = error {
                         print("Firebase Auth Error: \(error.localizedDescription)")
+                        self.islogging = false
                         continuation.resume(returning: false)
                         return
                     }
+                    guard let firebaseUser = result?.user else {
+                                        print("Firebase user is nil")
+                                        continuation.resume(returning: false)
+                                        return
+                                    }
+                    firebaseUser.getIDToken { idToken, error in
+                        if let error = error {
+                        print("ID Token Error: \(error.localizedDescription)")
+                        continuation.resume(returning: false)
+                        return
+                        }
+                        if let idToken = idToken {
+                        //print("ID Token: \(idToken)")
+                        self.idToken = idToken
+                        }
+                    }
                     
+                    Task{
+                        do{
+                            let jsonResponse = try await userModel.sendUserData(idToken: self.idToken, type: "facebook")
+                            print("서버 응답: \(jsonResponse)")
+                            print("facebook login 성공")
+                        }catch{
+                            print("서버 데이터 전송 오류: \(error.localizedDescription)")
+                        }
+                    }
                     userRealM.addUser(user: LoginUser(email: (result?.user.email)!, name: (result?.user.displayName)!))
                     print("User signed in with Facebook: \(result?.user.uid ?? "")")
                     print("User signed in with Facebook: \(result?.user.email ?? "")")
                     print("User signed in with Facebook: \(result?.user.displayName ?? "")")
+                    islogging = false
                     continuation.resume(returning: true)
                 }
+                
             }
         }
     }
