@@ -9,7 +9,7 @@ from sqlalchemy.sql import func
 
 router = APIRouter()
 
-@router.get('/{orderid}')
+@router.get('/{order_id}')
 def user_deliver(session: Session = Depends(db.session), order_id: str = None):
     """
     배송현황 페이지
