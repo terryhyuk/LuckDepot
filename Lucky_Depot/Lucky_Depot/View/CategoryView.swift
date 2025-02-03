@@ -11,8 +11,7 @@ import SDWebImageSwiftUI
 struct CategoryView: View {
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    @State var selectedType: Category? = Category.allCases.first
-    @State var selectedTypeTest: Int = 0
+    @State var selectedType: Int = 0
     
     @ObservedObject var categoryViewModel: CategoryViewModel = CategoryViewModel()
     @ObservedObject var productViewModel: ProductViewModel = ProductViewModel()
@@ -27,12 +26,12 @@ struct CategoryView: View {
             backgroundColor
               .ignoresSafeArea()
             VStack(alignment: .leading, content: {
-                CategoryButton(selectedTypeTest: $selectedTypeTest, categories: $categories)
+                CategoryButton(selectedType: $selectedType, categories: $categories)
                     .padding(.vertical, 10)
                
                 ScrollView (showsIndicators: false){
                             let filteredProducts = productList.filter { product in
-                                       selectedTypeTest == 0 || selectedTypeTest == product.category_id
+                                       selectedType == 0 || selectedType == product.category_id
                                    }
                                    // 필터링된 제품이 없으면
                                    if filteredProducts.isEmpty {
@@ -69,19 +68,10 @@ struct CategoryView: View {
             .onAppear(perform: {
                 Task{
                     productList = try await productViewModel.fetchProduct()
-                    categories = try await categoryViewModel.fetchCategories()
+                    categories.append(contentsOf: try await categoryViewModel.fetchCategories())
                 }
                 
             })
-//            .onChange(of: selectedType?.rawValue, {
-//                Task{
-//                    if selectedType?.rawValue == 0 {
-//                        productList = try await productViewModel.fetchProduct()
-//                    } else{
-//                        productList = try await categoryViewModel.fetchCategoryProduct(category_id:  selectedTypeTest)
-//                    }
-//                }
-//            })
             .navigationTitle("Categories")
         }
         
@@ -93,18 +83,17 @@ struct CategoryView: View {
 }
 
 struct CategoryButton: View {
-//    @Binding var selectedType: Category?
-    @Binding var selectedTypeTest: Int
+    @Binding var selectedType: Int
     @Binding var categories: [Categories]
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing:10){
                 ForEach(categories, id: \.name){ category in
                     Button(category.name, action: {
-                        self.selectedTypeTest = category.id
+                        self.selectedType = category.id
 
                     })
-                    .tint(selectedTypeTest == category.id ? .green : .white)
+                    .tint(selectedType == category.id ? .green : .white)
                     .tint(.white)
                     .foregroundStyle(.black)
                     .buttonStyle(.bordered)
@@ -149,31 +138,3 @@ struct ProductView: View {
     }
 }
 
-
-enum Category: Int, CaseIterable {
-    case category0 = 0
-    case category1 = 1
-    case category2 = 2
-    case category3 = 3
-    case category4 = 4
-    case category5 = 5
-    case category6 = 6
-    case category7 = 7
-    case category8 = 8
-    case category9 = 9
-    
-    var name: String {
-        switch self {
-        case .category0: return "All"
-        case .category1: return "Tables"
-        case .category2: return "Chairs"
-        case .category3: return "Bookcases"
-        case .category4: return "storage"
-        case .category5: return "Paper"
-        case .category6: return "Binders"
-        case .category7: return "Copiers"
-        case .category8: return "Envelopes"
-        case .category9: return "Fasterners"
-        }
-    }
-}
