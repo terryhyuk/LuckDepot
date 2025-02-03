@@ -42,7 +42,7 @@ class AuthenticationViewModel: ObservableObject {
     @Published var idToken: String?
     // State -> Published 수정
     @Published var userModel: UserViewModel = UserViewModel()
-    
+    @Published var islogging: Bool = false
     
     init() {
         registerAuthStateHandler()
@@ -144,6 +144,7 @@ enum AuthenticationError: Error {
 
 extension AuthenticationViewModel {
     func signInWithGoogle() async -> Bool {
+        islogging = true
         guard let clientID = FirebaseApp.app()?.options.clientID else {
             fatalError("No client ID found in Firebase configuration")
         }
@@ -210,9 +211,11 @@ extension AuthenticationViewModel {
             }
             
             print("User \(firebaseUser.uid) signed in with email \(firebaseUser.email ?? "unknown")")
+            islogging = false
             return true
         }
         catch {
+            self.islogging = false
             print(error.localizedDescription)
             self.errorMessage = error.localizedDescription
             return false
@@ -267,8 +270,8 @@ extension AuthenticationViewModel {
                     
                     Task{
                         do{
-                            let jsonResponse = try await userModel?.sendUserData(idToken: self.idToken, type: "facebook")
-                            print("서버 응답: \(jsonResponse ??   ["message": "응답없음"])")
+                            let jsonResponse = try await userModel.sendUserData(idToken: self.idToken, type: "facebook")
+                            print("서버 응답: \(jsonResponse)")
                             print("facebook login 성공")
                         }catch{
                             print("서버 데이터 전송 오류: \(error.localizedDescription)")

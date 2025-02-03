@@ -11,10 +11,15 @@ import SDWebImageSwiftUI
 struct CategoryView: View {
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    @State var selectedType: Categoriess? = Categoriess.allCases.first
+    @State var selectedType: Category? = Category.allCases.first
+    @State var selectedTypeTest: Int = 0
+    
     @ObservedObject var categoryViewModel: CategoryViewModel = CategoryViewModel()
     @ObservedObject var productViewModel: ProductViewModel = ProductViewModel()
     @State var productList: [Product] = []
+    @State var categories : [Categories] = [
+        Categories(name: "All", id: 0)
+    ]
     
     var body: some View {
         
@@ -22,50 +27,61 @@ struct CategoryView: View {
             backgroundColor
               .ignoresSafeArea()
             VStack(alignment: .leading, content: {
-                
-                VStack(content: {
-                    
-                    Category(selectedType: $selectedType)
-                        .padding(.vertical, 10)
-                    
-                    ScrollView (showsIndicators: false){
-                        LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
-                            ForEach(productList, id: \.id, content: {
-                                product in
-                                
-                                if selectedType?.rawValue == product.category_id {
+                CategoryButton(selectedTypeTest: $selectedTypeTest, categories: $categories)
+                    .padding(.vertical, 10)
+               
+                ScrollView (showsIndicators: false){
+                            let filteredProducts = productList.filter { product in
+                                       selectedTypeTest == 0 || selectedTypeTest == product.category_id
+                                   }
+                                   // 필터링된 제품이 없으면
+                                   if filteredProducts.isEmpty {
                                     
-                                    ProductView(product:product)
-                                    
-                                } else if selectedType?.rawValue == 0 {
-                                    
-                                    ProductView(product:product)
-                                }
-                                //ProductView(product:product)
-
-                            })
-                        })
+                                       VStack {
+                                           Image(systemName: "archivebox")
+                                               .resizable()
+                                               .frame(width: 50, height: 50)
+                                               .padding(.bottom, 10)
+                                           Text("Product is coming soon")
+                                       }
+                                       .foregroundColor(.gray)
+                                       .frame(maxWidth:.infinity, alignment: .center)
+                                       .font(.title2)
+                                       .padding(.vertical, 200)
+                                       
+                                   } else {
+                                       // 필터링된 제품들이 있으면 ProductView를 표시
+                                       LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
+                                           ForEach(filteredProducts, id: \.id) { product in
+                                               ProductView(product: product)
+                                           }
+                                       })
+                                   }
+                            
+                        
                     }.padding(.horizontal)
+                    
                     Spacer()
-                })
+             
                 
                 
             })
             .onAppear(perform: {
                 Task{
                     productList = try await productViewModel.fetchProduct()
+                    categories = try await categoryViewModel.fetchCategories()
                 }
                 
             })
-            .onChange(of: selectedType?.rawValue, {
-                Task{
-                    if selectedType?.rawValue == 0 {
-                        productList = try await productViewModel.fetchProduct()
-                    } else{
-                        productList = try await categoryViewModel.fetchCategoryProduct(category_id:  selectedType!.rawValue)
-                    }
-                }
-            })
+//            .onChange(of: selectedType?.rawValue, {
+//                Task{
+//                    if selectedType?.rawValue == 0 {
+//                        productList = try await productViewModel.fetchProduct()
+//                    } else{
+//                        productList = try await categoryViewModel.fetchCategoryProduct(category_id:  selectedTypeTest)
+//                    }
+//                }
+//            })
             .navigationTitle("Categories")
         }
         
@@ -76,17 +92,20 @@ struct CategoryView: View {
     CategoryView()
 }
 
-struct Category: View {
-    @Binding var selectedType: Categoriess?
+struct CategoryButton: View {
+//    @Binding var selectedType: Category?
+    @Binding var selectedTypeTest: Int
+    @Binding var categories: [Categories]
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing:10){
-                ForEach(Categoriess.allCases, id: \.self){ category in
+                ForEach(categories, id: \.name){ category in
                     Button(category.name, action: {
-                        self.selectedType = category
+                        self.selectedTypeTest = category.id
 
                     })
-                    .tint(selectedType == category ? .green : .white)
+                    .tint(selectedTypeTest == category.id ? .green : .white)
+                    .tint(.white)
                     .foregroundStyle(.black)
                     .buttonStyle(.bordered)
                     .buttonBorderShape(.capsule)
@@ -131,7 +150,7 @@ struct ProductView: View {
 }
 
 
-enum Categoriess: Int, CaseIterable {
+enum Category: Int, CaseIterable {
     case category0 = 0
     case category1 = 1
     case category2 = 2

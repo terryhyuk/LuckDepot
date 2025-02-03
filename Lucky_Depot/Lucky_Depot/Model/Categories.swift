@@ -6,6 +6,6 @@
 //
 
 struct Categories: Identifiable, Decodable {
-    let id: Int
     let name: String
+    let id: Int
 }

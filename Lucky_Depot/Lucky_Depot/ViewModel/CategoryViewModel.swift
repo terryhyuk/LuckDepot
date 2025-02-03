@@ -35,6 +35,20 @@ class CategoryViewModel: ObservableObject {
         }
     }
     
+    
+    func fetchCategories() async throws -> [Categories]{
+        do {
+
+            let result: JsonResult<[Categories]> = try await jsonViewModel.fetchJSON(path: "/category/")
+            let cateogoies = result.result
+            return cateogoies
+        } catch {
+            print("Error: \(error)")
+            throw error
+        }
+    }
+    
+ 
 //    func fetchDetail() async throws -> Product{
 //        let url = URL(string: baseURL+"/product?product_id=\(productId)")!
 //        let (data, _) = try await URLSession.shared.data(from: url)
