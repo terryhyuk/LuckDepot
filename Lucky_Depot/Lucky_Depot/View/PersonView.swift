@@ -128,9 +128,9 @@ struct PersonView: View {
                    })
                    
                }.onAppear(perform: {
-//                   userRealM.fetchUser()
-//                   userName = userRealM.realMUser[0].name
-//                   userEmail = userRealM.realMUser[0].email
+                   userRealM.fetchUser()
+                   userName = userRealM.realMUser[0].name
+                   userEmail = userRealM.realMUser[0].email
                })
                
         }
