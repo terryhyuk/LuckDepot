@@ -37,7 +37,7 @@ class TestApi: ObservableObject {
 
                     if let jsonData = data {
                         if let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers) {
-//                            print(jsonObject)
+                            print(jsonObject)
                         }
                     }
                     guard let data = data else {

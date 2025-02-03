@@ -18,9 +18,6 @@ struct Product: Identifiable, Decodable {
     var totalPrice: Double{  // 전체 금액 (단가 * 수량)
            return price * Double(quantity)
        }
-    var imagePath: String{
-        return "http://192.168.50.38:8000/product/view/\(image)"
-    }
 
     init(id: Int, image: String, category_id: Int, name: String, price: Double, quantity: Int) {
         self.id = id

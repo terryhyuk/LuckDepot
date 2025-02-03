@@ -13,14 +13,14 @@ import FBSDKLoginKit
 import SwiftUI
 
 enum AuthenticationState {
-  case unauthenticated
-  case authenticating
-  case authenticated
+    case unauthenticated
+    case authenticating
+    case authenticated
 }
 
 enum AuthenticationFlow {
-  case login
-  case signUp
+    case login
+    case signUp
 }
 
 @MainActor
@@ -28,9 +28,9 @@ class AuthenticationViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
     @Published var confirmPassword: String = ""
-
+    
     @Published var flow: AuthenticationFlow = .login
-  
+    
     @Published var isValid: Bool  = false
     @Published var authenticationState: AuthenticationState = .unauthenticated
     @Published var errorMessage: String = ""
@@ -40,157 +40,185 @@ class AuthenticationViewModel: ObservableObject {
     @State var userRealM : UserLoginViewModel = UserLoginViewModel()
     
     @Published var idToken: String?
-    @State var userModel: UserViewModel?
-    @Published var islogging: Bool = false
-
+    // State -> Published 수정
+    @Published var userModel: UserViewModel = UserViewModel()
+    
+    
     init() {
-    registerAuthStateHandler()
-
-    $flow
-      .combineLatest($email, $password, $confirmPassword)
-      .map { flow, email, password, confirmPassword in
-        flow == .login
-        ? !(email.isEmpty || password.isEmpty)
-        : !(email.isEmpty || password.isEmpty || confirmPassword.isEmpty)
-      }
-      .assign(to: &$isValid)
-  }
-
-  private var authStateHandler: AuthStateDidChangeListenerHandle?
-
-  func registerAuthStateHandler() {
-      if !userRealM.realMUser.isEmpty{
-          if authStateHandler == nil {
-            authStateHandler = Auth.auth().addStateDidChangeListener { auth, user in
-              self.user = user
-              self.authenticationState = user == nil ? .unauthenticated : .authenticated
-              self.displayName = user?.email ?? ""
+        registerAuthStateHandler()
+        
+        $flow
+            .combineLatest($email, $password, $confirmPassword)
+            .map { flow, email, password, confirmPassword in
+                flow == .login
+                ? !(email.isEmpty || password.isEmpty)
+                : !(email.isEmpty || password.isEmpty || confirmPassword.isEmpty)
             }
-          }
-      } else {
-          self.authenticationState = .unauthenticated
-
-      }
-  }
-
-  func switchFlow() {
-    flow = flow == .login ? .signUp : .login
-    errorMessage = ""
-  }
-
-  private func wait() async {
-    do {
-      print("Wait")
-      try await Task.sleep(nanoseconds: 1_000_000_000)
-      print("Done")
+            .assign(to: &$isValid)
     }
-    catch { }
-  }
-
-  func reset() {
-    flow = .login
-    email = ""
-    password = ""
-    confirmPassword = ""
-  }
+    
+    private var authStateHandler: AuthStateDidChangeListenerHandle?
+    
+    // RealM 데이터와 FirebaseAuth 동기화되게 수정
+    func registerAuthStateHandler() {
+        if authStateHandler == nil {
+            authStateHandler = Auth.auth().addStateDidChangeListener { auth, user in
+                self.user = user
+                self.authenticationState = user == nil ? .unauthenticated : .authenticated
+                self.displayName = user?.email ?? ""
+                
+                if let firebaseUser = user {
+                    print("✅ 로그인된 사용자: \(firebaseUser.email ?? "unknown")")
+                    
+                    let loginUser = LoginUser(email: firebaseUser.email ?? "", name: firebaseUser.displayName ?? "Unknown User")
+                    
+                    // ✅ 기존 Realm addUser() 메서드 활용
+                    self.userRealM.addUser(user: loginUser)
+                } else {
+                    print("❌ 로그아웃됨 - Realm 데이터 정리")
+                    
+                    // ✅ 기존 Realm deleteAll() 메서드 활용
+                    self.userRealM.deleteAll()
+                }
+            }
+        }
+    }
+    
+    // 동기화 로직 함수
+    func checkAndSyncAuthState() {
+        if let firebaseUser = Auth.auth().currentUser {
+            let email = firebaseUser.email ?? ""
+            let name = firebaseUser.displayName ?? "Unknown User"
+            print("✅ Firebase 로그인 상태 확인됨: \(email)")
+            let loginUser = LoginUser(email: email, name: name)
+            self.userRealM.addUser(user: loginUser)
+        } else {
+            print("❌ Firebase에 로그인된 사용자가 없음 - Realm 데이터 정리")
+            
+            // ✅ 기존 Realm의 deleteAll() 활용
+            self.userRealM.deleteAll()
+        }
+    }
+    
+    
+    
+    func switchFlow() {
+        flow = flow == .login ? .signUp : .login
+        errorMessage = ""
+    }
+    
+    private func wait() async {
+        do {
+            print("Wait")
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            print("Done")
+        }
+        catch { }
+    }
+    
+    func reset() {
+        flow = .login
+        email = ""
+        password = ""
+        confirmPassword = ""
+    }
 }
 
 extension AuthenticationViewModel {
     
-
-  func signOut() {
-    do {
-      try Auth.auth().signOut()
+    
+    func signOut() {
+        do {
+            try Auth.auth().signOut()
+        }
+        catch {
+            print(error)
+            errorMessage = error.localizedDescription
+        }
     }
-    catch {
-      print(error)
-      errorMessage = error.localizedDescription
-    }
-  }
 }
 
 enum AuthenticationError: Error {
-  case tokenError(message: String)
+    case tokenError(message: String)
 }
 
 extension AuthenticationViewModel {
-  func signInWithGoogle() async -> Bool {
-      islogging = true
-    guard let clientID = FirebaseApp.app()?.options.clientID else {
+    func signInWithGoogle() async -> Bool {
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            fatalError("No client ID found in Firebase configuration")
+        }
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
         
-      fatalError("No client ID found in Firebase configuration")
-
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first,
+              let rootViewController = window.rootViewController else {
+            print("There is no root view controller!")
+            return false
+        }
+        
+        do {
+            let userAuthentication = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
+            let user = userAuthentication.user
+            
+            guard let googleIDToken = user.idToken else {
+                throw AuthenticationError.tokenError(message: "ID token missing")
+            }
+            let accessToken = user.accessToken
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: googleIDToken.tokenString,
+                                                           accessToken: accessToken.tokenString)
+            
+            _ = try await Auth.auth().signIn(with: credential)
+            
+            guard let firebaseUser = Auth.auth().currentUser else {
+                print("Firebase 로그인 실패")
+                return false
+            }
+            
+            // ✅ `getIDToken()`을 Firebase에서 가져와 FastAPI에 전송
+            let idToken = try await firebaseUser.getIDToken(forcingRefresh: true)
+            print("📡 FastAPI에 전송할 ID Token: \(idToken)")
+            
+            let jsonResponse = try await userModel.sendUserData(idToken: idToken, type: "google")
+            print("📡 서버 응답: \(jsonResponse)")
+            
+            // ✅ 서버 응답에서 사용자 정보 추출
+            if let userData = jsonResponse["user"] as? [String: Any],
+               let email = userData["email"] as? String,
+               let name = userData["name"] as? String {
+                
+                let loginUser = LoginUser(email: email, name: name)
+                
+                // ✅ Realm에 사용자 정보 저장
+                userRealM.addUser(user: loginUser)
+                print("✅ Realm에 사용자 저장: \(email)")
+                
+                // ✅ JWT 토큰을 UserDefaults에 저장 (API 요청 시 활용)
+                UserDefaults.standard.set(idToken, forKey: "jwtToken")
+                UserDefaults.standard.synchronize() // ⚠️ 동기화 시도 (디버깅 목적)
+                print("✅ JWT 토큰 저장 완료: \(idToken)")
+                
+                // ✅ 저장된 토큰이 정상적으로 저장되었는지 즉시 확인
+                if let savedToken = UserDefaults.standard.string(forKey: "jwtToken") {
+                    print("🔍 저장된 JWT 토큰 확인: \(savedToken)")
+                } else {
+                    print("❌ JWT 토큰 저장 실패")
+                }
+                
+                print("✅ JWT 토큰 저장 완료: \(idToken)")
+            }
+            
+            print("User \(firebaseUser.uid) signed in with email \(firebaseUser.email ?? "unknown")")
+            return true
+        }
+        catch {
+            print(error.localizedDescription)
+            self.errorMessage = error.localizedDescription
+            return false
+        }
     }
-    let config = GIDConfiguration(clientID: clientID)
-    GIDSignIn.sharedInstance.configuration = config
-
-    guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-          let window = windowScene.windows.first,
-          let rootViewController = window.rootViewController else {
-      print("There is no root view controller!")
     
-      return false
-    }
-
-      do {
-          
-        let userAuthentication = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
-
-        let user = userAuthentication.user
-        guard let idToken = user.idToken else { throw AuthenticationError.tokenError(message: "ID token missing") }
-        let accessToken = user.accessToken
-
-        let credential = GoogleAuthProvider.credential(withIDToken: idToken.tokenString,
-                                                       accessToken: accessToken.tokenString)
-
-        let result = try await Auth.auth().signIn(with: credential)
-        if let firebaseUser = Auth.auth().currentUser{
-              firebaseUser.getIDToken{ idToken, error in
-                  if let error = error {
-                      print("오류발생 : \(error.localizedDescription)" )
-                      return
-                  }
-                  
-                  if let idToken = idToken {
-                      //print("ID Token:\(idToken)")
-                      self.idToken = idToken
-                      
-                  }
-              }
-          }
-          let jsonResponse = try await userModel?.sendUserData(idToken: self.idToken, type: "google")
-          print("서버 응답: \(jsonResponse ??   ["message": "응답없음"])")
-      
-          
-        let firebaseUser = result.user
-//          print(firebaseUser.email)
-//          print(firebaseUser.uid)
-//          print(firebaseUser.displayName)
-//          print(firebaseUser.isAnonymous)
-//          print(firebaseUser.providerData)
-//          print(firebaseUser.photoURL)
-//          print(firebaseUser.metadata)
-//          print(firebaseUser.providerID)
-//          print(firebaseUser.tenantID)
-//          print(firebaseUser.isEmailVerified)
-//          print(firebaseUser.refreshToken)
-//          print(firebaseUser.multiFactor)
-//          print(firebaseUser.phoneNumber)
-        print("User \(firebaseUser.uid) signed in with email \(firebaseUser.email ?? "unknown")")
-        userRealM.addUser(user: LoginUser(email: firebaseUser.email!, name: firebaseUser.displayName!))
-          islogging = false
-        return true
-      }
-      catch {
-       self.islogging = false
-
-        print(error.localizedDescription)
-        self.errorMessage = error.localizedDescription
-        return false
-      }
-  }
-
-
     
     func signInWithFacebook() async -> Bool {
         islogging = true
@@ -257,18 +285,18 @@ extension AuthenticationViewModel {
             }
         }
     }
-
-        
+    
+    
     func getRootViewController() -> UIViewController? {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene ,
-                let rootViewController = scene.windows.first?.rootViewController else {
+              let rootViewController = scene.windows.first?.rootViewController else {
             return nil
         }
         return getVisibleViewController (from: rootViewController)
     }
-
+    
     private func getVisibleViewController (from vc: UIViewController) ->
-            UIViewController? {
+    UIViewController? {
         if let nav = vc as? UINavigationController {
             return getVisibleViewController(from: nav.visibleViewController!)
         }

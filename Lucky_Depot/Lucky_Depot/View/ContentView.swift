@@ -49,9 +49,6 @@ struct ContentView: View {
                         .padding(.horizontal)
                 }
             }
-            .onAppear(perform: {
-                print(viewModel.authenticationState)
-            })
             .navigationTitle("Lucky Depot")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: String.self) { destination in
