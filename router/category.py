@@ -1,11 +1,8 @@
-from database.model.product import Product
 from database.model.category import Category
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database.conn.connection import db
-from starlette.responses import FileResponse
 from errors import exceptions as ex
-# from static.models import 
 import os, shutil
 
 UPLOAD_FOLDER = 'crawling_img'

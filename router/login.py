@@ -101,3 +101,53 @@ async def index(request = SeqRequest, session: Session = Depends(db.session)):
     if not user:
         return {"result" : "일치하는 사용자가 없습니다."}
     return {"result" : user.seq,}
+
+
+@router.post("/facebook")
+async def facebook_login(request: LoginRequest, session: Session = Depends(db.session)):
+    """
+    ✅ Facebook 로그인 처리 (Firebase JWT 검증)
+    """
+    id_token = request.idToken
+
+    if not id_token:
+        print("❌ ID Token이 없음")
+        raise HTTPException(status_code=400, detail="ID Token is missing")
+
+    try:
+        # ✅ Firebase ID 토큰 검증
+        decoded_token = firebase_auth.verify_id_token(id_token, check_revoked=True)
+        name = decoded_token.get("name", "Unknown")
+        email = decoded_token.get("email")
+
+        if not email:
+            print("❌ 이메일 정보 없음")
+            raise HTTPException(status_code=401, detail="Invalid Firebase ID token")
+
+        # ✅ DB에서 사용자 검색 또는 새 사용자 추가
+        user = session.query(User).filter(User.id == email).first()
+        if not user:
+            new_user = User(id=email, name=name, login_type="facebook")
+            session.add(new_user)
+            session.commit()
+            session.refresh(new_user)
+            user = new_user
+
+        # ✅ 응답 반환 (유효한 사용자 정보)
+        return {
+            "user": {
+                "id": user.id,
+                "seq": user.seq,
+                "name": user.name
+            }
+        }
+
+    except firebase_auth.ExpiredIdTokenError:
+        print("❌ 만료된 토큰")
+        raise HTTPException(status_code=401, detail="Expired ID token")
+    except firebase_auth.InvalidIdTokenError:
+        print("❌ 잘못된 토큰")
+        raise HTTPException(status_code=401, detail="Invalid ID token")
+    except Exception as e:
+        print(f"❌ Firebase 토큰 오류: {e}")
+        raise HTTPException(status_code=500, detail=f"Firebase token error: {str(e)}")

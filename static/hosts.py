@@ -14,13 +14,8 @@ JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 EXCEPT_PATH_LIST = [
     "/openapi.json", 
-    "/google",
-    "/login/google",  # ✅ 로그인 API
-    "/signup",  # ✅ 회원가입 API
-    "/healthcheck",  # ✅ 서버 상태 확인 API,
-    # "/product/"
 ]
 
-EXCEPT_PATH_REGEX = r"^(/docs|/redoc|/auth|/login/google|/signup|/healthcheck|/product/image|/product/view/.*|/order/.*|/hub/.*|/driver/.*|/deliver/.*|/category/.*|/ml.*|/login/.*)$"
+EXCEPT_PATH_REGEX = r"^(/docs|/redoc|/auth|/order/.*|/hub/.*|/driver/.*|/deliver/.*|/category/.*|/ml.*|/login/.*|)$"
 TRUSTED_HOSTS = ["*"]
 ALLOW_SITE = ["*"]
