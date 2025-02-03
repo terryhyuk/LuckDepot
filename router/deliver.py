@@ -20,8 +20,7 @@ def user(session: Session = Depends(db.session), order_id: str = None):
             Product.name, # 상품 이름
             Product.image,  # 상품 이미지
             OrderDetail.quantity,  # 상품별 구매 수량
-            # Deliver.id, # 배송 번호
-            func.coalesce(Deliver.id, "None"),
+            func.coalesce(Deliver.id, "None"), # 운송장 번호 없을경우 : "None"
             OrderDetail.id, # 주문 번호
             Order.status, # 배송 상태
             Order.order_date, # 주문날짜
@@ -55,6 +54,7 @@ def user(session: Session = Depends(db.session), order_id: str = None):
         'order_id': delivers[0][4],
         'status': delivers[0][5],
         'order_date' : {
+                        "date" : f"{delivers[0][6].strftime("%Y.%m.%d")}",
                         'month': int(delivers[0][6].strftime('%m')),
                         'year': int(delivers[0][6].strftime('%Y')),
                         'weekday': (int(delivers[0][6].strftime('%w'))-1)%7,
