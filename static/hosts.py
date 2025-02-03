@@ -16,6 +16,6 @@ EXCEPT_PATH_LIST = [
     "/openapi.json", 
 ]
 
-EXCEPT_PATH_REGEX = r"^(/docs|/redoc|/auth|/order/.*|/hub/.*|/driver/.*|/deliver/.*|/category/.*|/ml.*|/login/.*|)$"
+EXCEPT_PATH_REGEX = r"^(/.*|/docs|/redoc|/auth|/order/.*|/hub/.*|/driver/.*|/deliver/.*|/category/.*|/ml.*|/login/.*|)$"
 TRUSTED_HOSTS = ["*"]
 ALLOW_SITE = ["*"]
