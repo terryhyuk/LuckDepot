@@ -72,15 +72,13 @@ class AuthenticationViewModel: ObservableObject {
                     
                     let loginUser = LoginUser(email: firebaseUser.email ?? "", name: firebaseUser.displayName ?? "Unknown User")
                     Task{
-                        var seq = try await self.userModel.getUserSeq(email: firebaseUser.email ?? "")
+                        let seq = try await self.userModel.getUserSeq(email: firebaseUser.email ?? "")
                         print(seq.result)
+                        // ✅ 기존 Realm addUser() 메서드 활용
+                        self.userRealM.addUser(user: loginUser, seq: seq.result)
                     }
-                    
-                    // ✅ 기존 Realm addUser() 메서드 활용
-                    self.userRealM.addUser(user: loginUser)
-                    
                     self.userRealM.fetchUser()
-                    print(self.userRealM.realMUser.count)
+//                    print(self.userRealM.realMUser.count)
                 } else {
                     print("❌ 로그아웃됨 - Realm 데이터 정리")
                     
@@ -98,7 +96,14 @@ class AuthenticationViewModel: ObservableObject {
             let name = firebaseUser.displayName ?? "Unknown User"
             print("✅ Firebase 로그인 상태 확인됨: \(email)")
             let loginUser = LoginUser(email: email, name: name)
-            self.userRealM.addUser(user: loginUser)
+//            self.userRealM.addUser(user: loginUser, seq: <#T##Int#>)
+            Task{
+                let seq = try await self.userModel.getUserSeq(email: firebaseUser.email ?? "")
+                print(seq.result)
+                // ✅ 기존 Realm addUser() 메서드 활용
+                self.userRealM.addUser(user: loginUser, seq: seq.result)
+            }
+
         } else {
             print("❌ Firebase에 로그인된 사용자가 없음 - Realm 데이터 정리")
             
@@ -193,13 +198,20 @@ extension AuthenticationViewModel {
             
             // ✅ 서버 응답에서 사용자 정보 추출
             if let userData = jsonResponse["user"] as? [String: Any],
-               let email = userData["email"] as? String,
+               let email = userData["id"] as? String,
                let name = userData["name"] as? String {
                 
                 let loginUser = LoginUser(email: email, name: name)
                 
                 // ✅ Realm에 사용자 정보 저장
-                userRealM.addUser(user: loginUser)
+                // userRealM.addUser(user: loginUser)
+                Task{
+                    let seq = try await self.userModel.getUserSeq(email: firebaseUser.email ?? "")
+                    print(seq.result)
+                    // ✅ 기존 Realm addUser() 메서드 활용
+                    self.userRealM.addUser(user: loginUser, seq: seq.result)
+                }
+
                 print("✅ Realm에 사용자 저장: \(email)")
                 
                 // ✅ JWT 토큰을 UserDefaults에 저장 (API 요청 시 활용)
@@ -284,7 +296,16 @@ extension AuthenticationViewModel {
                             print("서버 데이터 전송 오류: \(error.localizedDescription)")
                         }
                     }
-                    userRealM.addUser(user: LoginUser(email: (result?.user.email)!, name: (result?.user.displayName)!))
+                    
+                    let loginUser: LoginUser = LoginUser(email: (result?.user.email)!, name: (result?.user.displayName)!)
+                    Task{
+                        let seq = try await self.userModel.getUserSeq(email: firebaseUser.email ?? "")
+                        print(seq.result)
+                        // ✅ 기존 Realm addUser() 메서드 활용
+                        self.userRealM.addUser(user: loginUser, seq: seq.result)
+                    }
+
+//                    userRealM.addUser(user: LoginUser(email: (result?.user.email)!, name: (result?.user.displayName)!))
                     print("User signed in with Facebook: \(result?.user.uid ?? "")")
                     print("User signed in with Facebook: \(result?.user.email ?? "")")
                     print("User signed in with Facebook: \(result?.user.displayName ?? "")")
