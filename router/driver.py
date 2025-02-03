@@ -8,7 +8,7 @@ from database.conn.connection import db
 router = APIRouter()
 
 
-@router.get('/', status_code=200)
+@router.get('/{driver_seq}', status_code=200)
 async def driver(session : Session = Depends(db.session), driver_seq : int = None):
     try :
         drivers = session.query(
@@ -34,7 +34,7 @@ async def driver(session : Session = Depends(db.session), driver_seq : int = Non
                     'order_id' : driver[4],
                     'start_date' : driver[5],
                     'end_date' : driver[6],
-                    'deliver_type' : driver[7]
+                    'delivery_type' : driver[7]
                 }
                 for driver in drivers
             ]

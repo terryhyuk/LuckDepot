@@ -171,14 +171,13 @@ async def order_select(user_seq : int, session : Session = Depends(db.session)):
     except Exception as e: 
         return {'results' : e}
 
-# 주문입력
-# 주문번호, user_seq, 결제수단, 가격, 배송지 
-# 최초 입력시 배송상태는 '배송전'으로 고정값 입력
+
 @router.post('/')
 async def insert(session : Session = Depends(db.session), id : str = None,user_seq : int = None, payment_type : str = None, price : float = None, address : str = None, delivery_type : int = None):
     """
-    사용자용
-    주문 입력함수
+    사용자용 주문입력 \n
+    주문번호, user_seq, 결제수단, 가격, 배송지, 배송유형 \n
+    최초 입력시 배송상태는 '배송전'으로 고정값 입력
     """
     try :
         new_order = Order(
