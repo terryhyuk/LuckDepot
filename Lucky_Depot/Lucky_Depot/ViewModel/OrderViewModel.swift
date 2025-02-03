@@ -10,7 +10,8 @@ import CryptoKit
 
 class OrderViewModel: ObservableObject {
     let baseURL = "http://192.168.50.38:8000/"
-    
+    var jsonViewModel: JSONViewModel = JSONViewModel()
+
     func createOrderNum(user_seq: Int) -> String{
         let currentDate = Date()
         let formatter = DateFormatter()
@@ -80,5 +81,28 @@ class OrderViewModel: ObservableObject {
     
     func fetch(){
         // 주문목록
+    }
+    
+    func fetchUserOrders(userSeq:Int) async throws -> [Order]{
+        do {
+
+            let result: JsonResult<[Order]> = try await jsonViewModel.fetchJSON(path: "/order/\(userSeq)")
+            let order = result.result
+            return order
+        } catch {
+            print("Error: \(error)")
+            throw error
+        }
+    }
+    func fetchUserDetailOrders(userSeq:Int) async throws -> [UserOrder]{
+        do {
+
+            let result: JsonResult<[UserOrder]> = try await jsonViewModel.fetchJSON(path: "/detail/\(userSeq)")
+            let order = result.result
+            return order
+        } catch {
+            print("Error: \(error)")
+            throw error
+        }
     }
 }

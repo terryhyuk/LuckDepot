@@ -20,6 +20,7 @@ struct ContentView: View {
     
     @StateObject private var shoppingBasketViewModel = ShoppingBasketViewModel()
     @State var userRealM : UserLoginViewModel = UserLoginViewModel()
+    @State var orderViewModel : OrderViewModel = OrderViewModel()
     
 //    @StateObject private var productViewModel = ProductViewModel()
     
@@ -62,9 +63,9 @@ struct ContentView: View {
                 } else if destination == "LoginView" {
                     Loginview(navigationPath: $navigationPath, userRealM: userRealM)
                 } else if destination == "PersonView" {
-                    PersonView(selectedTab: $selectedTab, navigationPath: $navigationPath, userRealM: userRealM)
+                    PersonView(selectedTab: $selectedTab, navigationPath: $navigationPath, userRealM: userRealM, orderViewModel: orderViewModel)
                 } else if destination == "OrderHistoryView" {
-                    OrderHistory(navigationPath: $navigationPath)
+                    OrderHistory(navigationPath: $navigationPath,userRealM: userRealM, orderViewModel: orderViewModel )
                 } else if destination == "DetailView" {
                     DetailView(navigationPath: $navigationPath)
                 }else if destination == "ShippingStatusView"{
