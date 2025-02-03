@@ -362,6 +362,8 @@ async def select_orderlist(session : Session = Depends(db.session), user_seq : i
             ).group_by(
                 OrderDetail.id,
                 OrderDetail.user_seq
+            ).order_by(
+                func.substring(OrderDetail.id,0,6).desc()
             )
         if not lists :
             raise HTTPException(status_code=404, detail="orderlist not found")
@@ -375,7 +377,7 @@ async def select_orderlist(session : Session = Depends(db.session), user_seq : i
                 "price" : list[5],
                 "date" : f"20{list[0][:2]}.{list[0][2:4]}.{list[0][4:6]}"
             }
-            for list in lists 
+            for list in lists
                 ]
         }
     except Exception as e:

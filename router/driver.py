@@ -20,9 +20,7 @@ async def driver(session : Session = Depends(db.session), driver_seq : int = Non
             Deliver.end_date,
             Deliver.delivery_type
             ).filter(
-                Deliver.driver_seq == driver_seq,
-                Deliver.start_date == None, 
-                Deliver.end_date == None
+                Deliver.driver_seq == driver_seq
             ).all()
         if not drivers :
             raise HTTPException(status_code=404, detail='drivers not found')
