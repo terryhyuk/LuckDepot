@@ -9,7 +9,7 @@ import 'package:lucky_depot/vm/customer_controller.dart';
 class CustomerManagement extends StatelessWidget {
   CustomerManagement({super.key});
     
-  final CustomerController customer = Get.put(CustomerController());
+  final CustomerController customer = Get.find<CustomerController>();
 
   @override
   Widget build(BuildContext context) {

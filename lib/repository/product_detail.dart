@@ -25,33 +25,36 @@ class ProductDetailRepository {
     }
   }
 
-  Map<String, dynamic> _parseResponse(dynamic decodedData, String endpoint) {
-    switch (endpoint) {
-      case '/detail/year':
-        return {
-          'products': (decodedData['result']['products'] as List? ?? []),
-          'year_sales': (decodedData['result']['year_sales'] as List? ?? []),
-        };
-      case '/detail/week':
-        return {
-          'products': (decodedData['result']['products'] as List? ?? []),
-          'weekday_sales':
-              (decodedData['result']['weekday_sales'] as List? ?? []),
-        };
-      case '/detail/month':
-        return {
-          'products': (decodedData['result'] as List? ?? []),
-        };
-      default:
-        return _defaultResponse();
-    }
+Map<String, dynamic> _parseResponse(dynamic decodedData, String endpoint) {
+  switch (endpoint) {
+    case '/detail/year':
+      final result = decodedData['result'] as Map<String, dynamic>;
+      return {
+        'products': result['products'] as List? ?? [],
+        'year_sales': result['year_sales'] as List? ?? [],
+      };
+    case '/detail/week':
+      return {
+        'products': (decodedData['result']['products'] as List? ?? []),
+        'weekday_sales': (decodedData['result']['weekday_sales'] as List? ?? []),
+      };
+case '/detail/month':
+  final result = decodedData['result'] as Map<String, dynamic>;
+  return {
+    'products': result['products'] as List? ?? [],
+    'month_sales': result['month_sales'] as List? ?? [],
+  };
+    default:
+      return _defaultResponse();
   }
+}
 
   Map<String, dynamic> _defaultResponse() {
     return {
       'products': [],
       'year_sales': [],
       'weekday_sales': [],
+      'month_sales': [],
     };
   }
 }

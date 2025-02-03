@@ -9,7 +9,7 @@ import 'package:lucky_depot/vm/delivery_driver_controller.dart';
 class DeliveryDriver extends StatelessWidget {
   DeliveryDriver({super.key});
 
-  final delivery = Get.put(DeliveryDriverController());
+  final delivery = Get.find<DeliveryDriverController>();
 
   @override
   Widget build(BuildContext context) {

@@ -1,39 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucky_depot/model/stat_card.dart';
-import 'package:lucky_depot/repository/customer_repository.dart';
-import 'package:lucky_depot/view/widgets/chart_widget.dart';
+import 'package:lucky_depot/view/widgets/dashboard_chart_widget.dart';
 import 'package:lucky_depot/view/widgets/coustom_drawer.dart';
 import 'package:lucky_depot/view/widgets/recent_orders_table.dart';
 import 'package:lucky_depot/view/widgets/stat_Card_widget.dart';
 import 'package:lucky_depot/vm/chartController.dart';
-import 'package:lucky_depot/vm/custom_drawer_controller.dart';
 
-class Dashboard extends StatefulWidget {
+class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
 
   @override
-  State<Dashboard> createState() => _DashboardState();
-}
-
-class _DashboardState extends State<Dashboard> {
-  final ChartController chartController = Get.put(ChartController());
-  final CustomDrawerController drawerController = Get.put(CustomDrawerController());
-
-  @override
-  void initState() {
-    super.initState();
-    Get.put(CustomerRepository());
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final chartController = Get.find<ChartController>();
+
     return Scaffold(
       body: Row(
         children: [
-          Obx(() => drawerController.isExpanded
-              ? const CustomDrawer()
-              : Container(width: 60)), // 축소된 드로워
+          CustomDrawer(),
           Expanded(
             child: Container(
               color: Colors.grey[100],
@@ -42,6 +26,7 @@ class _DashboardState extends State<Dashboard> {
                 if (chartController.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
+                
                 return SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,8 +46,7 @@ class _DashboardState extends State<Dashboard> {
                             child: StatCardWidget(
                               data: StatCard(
                                 title: 'Total Payment',
-                                value:
-                                    '\$${chartController.totalPayment.toStringAsFixed(0)}',
+                                value: '\$${chartController.totalPayment.toStringAsFixed(0)}',
                               ),
                             ),
                           ),
@@ -80,7 +64,7 @@ class _DashboardState extends State<Dashboard> {
                       const SizedBox(height: 24),
                       // 차트 영역
                       Container(
-                        margin: const EdgeInsets.only(bottom: 24),
+                        height: 400,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
@@ -93,10 +77,12 @@ class _DashboardState extends State<Dashboard> {
                             ),
                           ],
                         ),
-                        child: const ChartWidget(),
+                        child: const DashboardChartWidget(),  // 수정
                       ),
+                      const SizedBox(height: 24),
                       // 최근 주문 목록
                       Container(
+                        width: double.infinity,
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
                           color: Colors.white,

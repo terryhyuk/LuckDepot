@@ -5,7 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:lucky_depot/model/customer.dart';
 
 class CustomerController extends GetxController {
-  final customerRepository = CustomerRepository();
+  final CustomerRepository customerRepository = Get.put(CustomerRepository());
+  
   final searchController = TextEditingController();
 
   final Rx<CustomerResponse?> customerResponse = Rx<CustomerResponse?>(null);
@@ -25,6 +26,8 @@ class CustomerController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    if(!Get.isRegistered<CustomerRepository>()) Get.put(CustomerRepository());
+
     fetchCustomerStats();
     fetchRecentOrders();
     loadCustomers();

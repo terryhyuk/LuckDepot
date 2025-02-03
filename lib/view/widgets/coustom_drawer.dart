@@ -6,7 +6,7 @@ import '../../vm/custom_drawer_controller.dart';
 class CustomDrawer extends StatelessWidget {
   CustomDrawer({super.key});
 
-  final drawerController = Get.put(CustomDrawerController());
+  final drawerController = Get.find<CustomDrawerController>();
   final inventory = Get.put(InventoryController());
 
   @override
@@ -22,7 +22,7 @@ class CustomDrawer extends StatelessWidget {
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 50, 
+                      width: 50,
                       height: 50,
                       child: Image(
                         image: AssetImage('images/luckydepot.png'),

@@ -2,13 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:lucky_depot/model/driver.dart';
+import 'package:lucky_depot/model/driver_repository.dart';
 import 'package:lucky_depot/model/truck.dart';
+import 'package:lucky_depot/repository/customer_repository.dart';
+import 'package:lucky_depot/repository/product_detail.dart';
+import 'package:lucky_depot/repository/product_repository.dart';
 import 'package:lucky_depot/view/widgets/customer_management.dart';
 import 'package:lucky_depot/view/page/dashboard.dart';
 import 'package:lucky_depot/view/page/delivery_driver.dart';
 import 'package:lucky_depot/view/page/inventory_management.dart';
 import 'package:lucky_depot/view/page/logistics_hub.dart';
 import 'package:lucky_depot/view/page/sales_analytics.dart';
+import 'package:lucky_depot/vm/chartController.dart';
+import 'package:lucky_depot/vm/custom_drawer_controller.dart';
+import 'package:lucky_depot/vm/customer_controller.dart';
+import 'package:lucky_depot/vm/delivery_driver_controller.dart';
+import 'package:lucky_depot/vm/inventory_controller.dart';
+import 'package:lucky_depot/vm/recent_order_controller.dart';
+import 'package:lucky_depot/vm/sales_controller.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 void main() async {
@@ -17,6 +28,22 @@ void main() async {
   Hive.registerAdapter(TruckAdapter());
   await Hive.openBox<Driver>('drivers');
   await Hive.openBox<Truck>('trucks');
+
+  // 리포지토리 초기화
+Get.put(CustomerRepository());
+Get.put(ProductRepository());
+Get.put(ProductDetailRepository());
+Get.put(DriverRepository());
+
+// 컨트롤러 초기화
+Get.put(CustomDrawerController());
+Get.put(ChartController());
+Get.put(DeliveryDriverController());  // 한 번만 초기화
+Get.put(CustomerController());
+Get.put(InventoryController());
+Get.put(SalesController());
+Get.put(RecentOrderController());
+
   runApp(const MyApp());
 }
 
