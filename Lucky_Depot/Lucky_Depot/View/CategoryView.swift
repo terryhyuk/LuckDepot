@@ -15,7 +15,7 @@ struct CategoryView: View {
     @State var selectedTypeTest: Int = 0
     
     @ObservedObject var categoryViewModel: CategoryViewModel = CategoryViewModel()
-    @ObservedObject var productViewModel: ProductViewModel = ProductViewModel()
+    @EnvironmentObject var productViewModel: ProductViewModel
     @State var productList: [Product] = []
     @State var categories : [Categories] = [
         Categories(name: "All", id: 0)

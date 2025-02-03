@@ -66,7 +66,7 @@ struct ContentView: View {
                 } else if destination == "OrderHistoryView" {
                     OrderHistory(navigationPath: $navigationPath)
                 } else if destination == "DetailView" {
-                    DetailView( productViewModel: productViewModel, navigationPath: $navigationPath)
+                    DetailView(navigationPath: $navigationPath)
                 }else if destination == "ShippingStatusView"{
                     ShippingStatusView()
                 } else if destination == "OrderDetailsView" {
