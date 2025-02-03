@@ -15,7 +15,7 @@ router = APIRouter()
 ## ----------------관리자용--------------------
 
 # 관리자용 유저 구매내역 조회
-@router.get("/select_all")
+@router.get("/select_all", status_code=200)
 async def get_orders(session: Session = Depends(db.session)):
     """
     관리자용 \n
@@ -42,7 +42,7 @@ async def get_orders(session: Session = Depends(db.session)):
             desc('total_payment')
         ).all()
         if not orders:
-            raise HTTPException(status_code=400, detail="admin order list not found")
+            raise HTTPException(status_code=404, detail="admin order list not found")
         return { "result": 
                 [
                     {
@@ -63,7 +63,7 @@ async def get_orders(session: Session = Depends(db.session)):
 
 # 관리자 dash board, 매출관리 월별 그래프
 @router.get('/month', status_code=200)
-def test(session: Session = Depends(db.session)):
+def month(session: Session = Depends(db.session)):
     try:
         current_date = datetime.now()
         
@@ -83,9 +83,9 @@ def test(session: Session = Depends(db.session)):
         ).all()
 
         if not months_data:
-            raise HTTPException(status_code=400, detail='months not found')
+            raise HTTPException(status_code=404, detail='months not found')
             
-        # 월별 매출 데이터를 딕셔너리로 변환
+        # 월별 매출 데이터 변환
         sales_dict = {month[0]: month[1] for month in months_data}
 
         # 최근 6개월의 월 리스트 생성
@@ -131,7 +131,7 @@ async def update(session : Session = Depends(db.session), order_id : str = None,
 ##----------------------- 유저 ----------------------------
 
 # 사용자에 따른 주문 조회
-@router.get('/{user_seq}')
+@router.get('/{user_seq}', status_code=200)
 async def order_select(user_seq : int, session : Session = Depends(db.session)):
     """
     사용자용 \n
@@ -152,7 +152,7 @@ async def order_select(user_seq : int, session : Session = Depends(db.session)):
             Order.user_seq == user_seq
             ).all()
         if not orders:
-            raise HTTPException(status_code=400, detail="user order not found")
+            raise HTTPException(status_code=404, detail="user order not found")
         return {'result' : 
                 [
                     {
@@ -188,7 +188,7 @@ async def insert(session : Session = Depends(db.session), id : str = None,user_s
             address = address, # 배송지
             order_date = datetime.now(), # 주문일자
             status = "배송전", # 배송 상태
-            delivery_type = delivery_type
+            delivery_type = delivery_type  # 배송 유형 
         )
         session.add(new_order)
         session.commit()

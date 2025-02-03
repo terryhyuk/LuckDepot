@@ -9,7 +9,7 @@ from sqlalchemy.sql import func
 
 router = APIRouter()
 
-@router.get('/{order_id}')
+@router.get('/{order_id}', status_code=200)
 def user(session: Session = Depends(db.session), order_id: str = None):
     """
     배송현황 페이지
@@ -39,7 +39,7 @@ def user(session: Session = Depends(db.session), order_id: str = None):
             OrderDetail.id == order_id
         ).all()
         if not delivers:
-            raise HTTPException(status_code=400, detail="deliverlist not found")
+            raise HTTPException(status_code=404, detail="deliverlist not found")
             
         return {'result': [
             {
@@ -85,7 +85,7 @@ def user_deliver(session: Session = Depends(db.session), user_seq: int = None, o
         )
         
         if deliver_count is None or deliver_count == 0:
-            raise HTTPException(status_code=400, detail="🚨 배송 데이터 없음 (deliverlist not found)")
+            raise HTTPException(status_code=404, detail="🚨 배송 데이터 없음 (deliverlist not found)")
             
         return {"order_id": order_id, "deliver_count": deliver_count}
             
