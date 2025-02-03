@@ -34,11 +34,4 @@ class CategoryViewModel: ObservableObject {
             throw error
         }
     }
-    
- 
-//    func fetchDetail() async throws -> Product{
-//        let url = URL(string: baseURL+"/product?product_id=\(productId)")!
-//        let (data, _) = try await URLSession.shared.data(from: url)
-//        return try JSONDecoder().decode(Product.self, from: data)
-//    }
 }

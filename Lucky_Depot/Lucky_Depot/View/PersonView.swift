@@ -12,10 +12,14 @@ struct PersonView: View {
     @Binding var selectedTab: Tab
     @Binding var navigationPath: NavigationPath
     @ObservedObject var userRealM: UserLoginViewModel
+    @ObservedObject var orderViewModel: OrderViewModel
     
+    @State var userOrder: [Order] = []
     @State var userName: String = ""
     @State var userEmail: String = ""
-    @State var showAlert: Bool = false
+    
+    @State var shipping : Int = 0
+    
     var body: some View {
                ZStack {
                    backgroundColor
@@ -27,6 +31,7 @@ struct PersonView: View {
                                .bold()
                                .font(.title2)
                            Text(userEmail)
+                           //Text(String(userRealM.realMUser[0].id))
                            
                        })
                        .padding(30)
@@ -34,6 +39,8 @@ struct PersonView: View {
                        .frame(maxWidth: .infinity, alignment: .leading)
                        .background(.white)
                        .clipShape(.rect(cornerRadius: 10))
+                       .shadow(color: .black.opacity(0.08), radius: 5, x: 2, y: 2)
+
                        
                        // 주문 배송 현황
                        VStack(spacing: 20, content: {
@@ -43,8 +50,8 @@ struct PersonView: View {
 
                            HStack(content:{
                                VStack(spacing:5, content:{
-                                   Text("5")
-                                       .foregroundStyle(.price)
+                                   Text(String(userOrder.count))
+                                       .foregroundStyle(.blue)
                                        .bold()
                                        .font(.title2)
                                    Text("Ordered")
@@ -55,8 +62,8 @@ struct PersonView: View {
                                    .padding(.horizontal, 30)
                                
                                VStack(spacing:5, content:{
-                                   Text("1")
-                                       .foregroundStyle(.price)
+                                   Text(String(shipping))
+                                       .foregroundStyle(.blue)
                                        .bold()
                                        .font(.title2)
 
@@ -69,6 +76,8 @@ struct PersonView: View {
                        .frame(maxWidth:.infinity)
                        .background(.white)
                        .clipShape(.rect(cornerRadius: 10))
+                       .shadow(color: .black.opacity(0.08), radius: 5, x: 2, y: 2)
+
                        
                        VStack(spacing:10,content: {
                        
@@ -90,10 +99,8 @@ struct PersonView: View {
                            Button(action:{
                                viewModel.signOut()
                                userRealM.deleteUser(user: userRealM.realMUser[0])
-//                               userRealM.deleteAll()
                                navigationPathInit()
-                               showAlert = true
-                               
+                                                            
                            }) {
                                    Label("Logout", systemImage: "arrow.right.circle")
                                }
@@ -103,10 +110,8 @@ struct PersonView: View {
                            .frame(maxWidth:.infinity)
                            .background(.white)
                            .clipShape(.rect(cornerRadius: 10))
-//                           .alert("",isPresented: $showAlert){
-//                               Button("OK", role: .cancel) { }
-//                           }
-                       
+                           .shadow(color: .black.opacity(0.08), radius: 5, x: 2, y: 2)
+
                        
                        
                        Spacer()
@@ -131,6 +136,16 @@ struct PersonView: View {
                    userRealM.fetchUser()
                    userName = userRealM.realMUser[0].name
                    userEmail = userRealM.realMUser[0].email
+                   Task{
+                       userOrder = try await orderViewModel.fetchUserOrders(userSeq: userRealM.realMUser[0].id)
+                       for i in 0..<userOrder.count{
+                           if  userOrder[i].status == "배송중" {
+                               shipping += 1
+                           }
+                           
+                       }
+                   }
+                   
                })
                
         }
