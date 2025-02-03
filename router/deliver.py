@@ -10,7 +10,7 @@ from sqlalchemy.sql import func
 router = APIRouter()
 
 @router.get('/{order_id}')
-def user_deliver(session: Session = Depends(db.session), order_id: str = None):
+def user(session: Session = Depends(db.session), order_id: str = None):
     """
     배송현황 페이지
     orderid 입력해서 사용
@@ -56,10 +56,10 @@ def user_deliver(session: Session = Depends(db.session), order_id: str = None):
         'order_date' : {
                         'month': int(delivers[0][6].strftime('%m')),
                         'year': int(delivers[0][6].strftime('%Y')),
+                        'weekday': (int(delivers[0][6].strftime('%w'))-1)%7,
                         },
-        'weekday': (int(delivers[0][6].strftime('%w'))-1)%7,
-        'delivery_type' : delivers[0][7],
-        'address' : delivers[0][8]
+        'address' : delivers[0][7],
+        'delivery_type' : delivers[0][8]
         }
         
     except Exception as e:

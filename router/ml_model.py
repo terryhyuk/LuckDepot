@@ -14,7 +14,7 @@ model = load('./machine_learning/model/cluster_ny_gb.joblib')
 
 
 def get_prediction_features(order_id, session=Session):
-    result = deliver.user_deliver(order_id=order_id, session=session)
+    result = deliver.user(order_id=order_id, session=session)
     year = result['order_date']['year']
     month = result['order_date']['month']
     weekday = result['order_date']['weekday']
