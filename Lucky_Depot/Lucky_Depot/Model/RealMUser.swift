@@ -8,7 +8,8 @@
 import Foundation
 import RealmSwift
 
-class RealMUser: Object , Identifiable{
-    @Persisted(primaryKey: true) var email: String
+class RealMUser: Object{
+    @Persisted var id: Int
+    @Persisted var email: String
     @Persisted var name: String
 }

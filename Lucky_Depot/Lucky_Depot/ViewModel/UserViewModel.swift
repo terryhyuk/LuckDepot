@@ -11,7 +11,7 @@ class UserViewModel: ObservableObject {
 
     // 서버에 이메일, 이름 전송 후 JSON 응답
     func sendUserData(idToken: String?, type: String?) async throws -> [String: Any] {
-        guard let url = URL(string: "http://127.0.0.1:8000/login/google") else {
+        guard let url = URL(string: "http://192.168.50.38:8000/login/google") else {
             throw URLError(.badURL)
         }
 
@@ -50,6 +50,19 @@ class UserViewModel: ObservableObject {
         }
     }
 
+    
+    func getUserSeq(email: String) async throws -> JsonResult<Int> {
+        guard let url = URL(string: "http://192.168.50.38:8000/login/seq?request=" + email) else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
 
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try JSONDecoder().decode(JsonResult<Int>.self, from: data)
+    }
 
 }

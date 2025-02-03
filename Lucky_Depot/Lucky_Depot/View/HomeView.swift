@@ -9,7 +9,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct HomeView: View {
-    @ObservedObject var productViewModel: ProductViewModel = ProductViewModel()
+    @EnvironmentObject var productViewModel: ProductViewModel
     
     @State var productList: [Product] = []
     @Binding var navigationPath: NavigationPath
@@ -60,8 +60,6 @@ struct HomeView: View {
                 
             }
             .onAppear(perform: {
-//                testApi.fetchProducts()
-//                print(testApi.errorMessage)
                 Task{
                     productList = try await productViewModel.fetchProduct()
                 }

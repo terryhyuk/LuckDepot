@@ -71,9 +71,16 @@ class AuthenticationViewModel: ObservableObject {
                     print("✅ 로그인된 사용자: \(firebaseUser.email ?? "unknown")")
                     
                     let loginUser = LoginUser(email: firebaseUser.email ?? "", name: firebaseUser.displayName ?? "Unknown User")
+                    Task{
+                        var seq = try await self.userModel.getUserSeq(email: firebaseUser.email ?? "")
+                        print(seq.result)
+                    }
                     
                     // ✅ 기존 Realm addUser() 메서드 활용
                     self.userRealM.addUser(user: loginUser)
+                    
+                    self.userRealM.fetchUser()
+                    print(self.userRealM.realMUser.count)
                 } else {
                     print("❌ 로그아웃됨 - Realm 데이터 정리")
                     

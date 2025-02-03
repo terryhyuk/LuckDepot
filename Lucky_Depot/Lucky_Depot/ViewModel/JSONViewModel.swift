@@ -10,7 +10,7 @@ import Foundation
 struct JSONViewModel {
     // JsonResult를 data로 반환
     // 각각의 ViewModel에서 data를 Decode하면 됌.
-    let baseURL = "http://127.0.0.1:8000"
+    let baseURL = "http://192.168.50.38:8000"
     
     // path는 / 부터 시작
     // result : [] 일때

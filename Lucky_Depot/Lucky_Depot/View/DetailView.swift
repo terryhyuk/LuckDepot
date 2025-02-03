@@ -9,11 +9,14 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct DetailView: View {
-    @ObservedObject var productViewModel :ProductViewModel
+    @EnvironmentObject var productViewModel :ProductViewModel
     @Binding var navigationPath: NavigationPath
+    @ObservedObject var shoppingBasketViewModel: ShoppingBasketViewModel = ShoppingBasketViewModel()
     
     @State var product: Product?
     @State private var quantity: Int = 1
+    
+    @State var isAlert: Bool = false
 
     var body: some View {
         VStack {
@@ -22,40 +25,30 @@ struct DetailView: View {
                     .progressViewStyle(CircularProgressViewStyle())
                     .frame(height: 200)
                     .padding()
-                    .onAppear{
-                        print("onAppear")
-                        Task{
-                            do{
-                                product = try await productViewModel.fetchDetail()
-                            }catch{
-                                print("nil")
-                            }
-                        }
-                    }
+                
             } else {
                 ScrollView {
                     VStack(spacing: 20) {
                         // Product Image
-                        WebImage(url: URL(string: product!.image))
+                        WebImage(url: URL(string: product!.imagePath))
                             .resizable()
                             .scaledToFit()
-                            .frame(width: .infinity, height: 300)
+                            .frame(width: 300, height: 300)
                             .cornerRadius(8)
-                        
                         // Title and Price
                         VStack(alignment: .leading, spacing: 5) {
-                            Text("프리미엄 메쉬 사무용 의자")
+                            Text(product!.name)
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            Text("289,000원")
+                            Text("$\(String(format: "%.2f", product!.price))")
                                 .font(.title3)
                                 .foregroundColor(.blue)
                         }
                         
                         // Quantity Selector
                         HStack {
-                            Stepper(value: $quantity, in: 1...10) {
-                                Text("수량: \(quantity)")
+                            Stepper(value: $quantity, in: 1...Int.max) {
+                                Text("quntity: \(quantity)")
                                     .font(.body)
                             }
                             .frame(width: 150)
@@ -77,8 +70,11 @@ struct DetailView: View {
                             
                             Button(action: {
                                 // Add to Cart Action
+                                isAlert = true
+                                // 알러트 확인시 수행으로 변경
+                                shoppingBasketViewModel.addProduct(product: product!, quantity: quantity)
                             }) {
-                                Text("장바구니 담기")
+                                Text("Add to Cart")
                                     .font(.headline)
                                     .foregroundColor(.blue)
                                     .frame(maxWidth: .infinity)
@@ -88,25 +84,21 @@ struct DetailView: View {
                                             .stroke(Color.blue, lineWidth: 2)
                                     )
                             }
+                            .alert("Result", isPresented: $isAlert) {
+                                Button("OK", role: .cancel) {}
+                            } message: {
+                                Text("Item added to cart")
+                            }
                         }
+                        
                         
                         // Icons Section
                         HStack(spacing: 20) {
                             VStack {
-                                Image(systemName: "shippingbox")
-                                    .font(.title)
-                                    .foregroundColor(.gray)
-                                Text("무료 배송\n평균 3일 이내 도착")
-                                    .font(.footnote)
-                                    .multilineTextAlignment(.center)
-                            }
-                            .frame(maxWidth: .infinity)
-                            
-                            VStack {
                                 Image(systemName: "shield")
                                     .font(.title)
                                     .foregroundColor(.gray)
-                                Text("1년 제품 보증")
+                                Text("1년 제품 보증(?)")
                                     .font(.footnote)
                                     .multilineTextAlignment(.center)
                             }
@@ -131,26 +123,26 @@ struct DetailView: View {
                     .padding()
                 }
                 .navigationTitle("제품 상세")
-                .onAppear{
-                    print("onAppear")
-                    Task{
-                        do{
-                            product = try await productViewModel.fetchDetail()
-                        }catch{
-                            print("nil")
-                        }
-                    }
-                    
+            }
+        }
+        .onAppear{
+            print("onAppear")
+            product = nil
+            Task{
+                do{
+                    product = try await productViewModel.fetchDetail()
+                }catch{
+                    print("nil \(error)")
                 }
             }
         }
     }
 }
 
-#Preview {
-    DetailView(
-//        product: Product(id: "1", name: "제품", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1")
-        productViewModel: ProductViewModel(),
-        navigationPath: .constant(NavigationPath())
-    )
-}
+//#Preview {
+//    DetailView(
+////        product: Product(id: "1", name: "제품", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1")
+//        productViewModel: ProductViewModel(),
+//        navigationPath: .constant(NavigationPath())
+//    )
+//}

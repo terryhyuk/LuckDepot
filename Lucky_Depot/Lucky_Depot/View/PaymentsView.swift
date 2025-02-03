@@ -60,6 +60,8 @@ struct PaymentsView: View {
                     })
                     
                     TextField("주소를 입력하세요", text: $deliveryAddress)
+                    
+                    
                 }
                 
                 VStack(alignment: .leading) {

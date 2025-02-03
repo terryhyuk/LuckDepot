@@ -78,6 +78,7 @@ struct CartView: View {
             })
         }
         .onAppear(perform: {
+            shoppingBasketViewModel.productCountsUpdate()
 //            shoppingBasketViewModel.addProduct(product: Product(id: "1", name: "제품1", price: 3000, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"))
 //            shoppingBasketViewModel.addProduct(product: Product(id: "3", name: "제품3", price: 2000, imagePath: "https://zeushahn.github.io/Test/images/mov03.jpg", quantity: 2, category: "1"))
 //            shoppingBasketViewModel.fetchProduct()

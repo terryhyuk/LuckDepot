@@ -21,7 +21,7 @@ struct ContentView: View {
     @StateObject private var shoppingBasketViewModel = ShoppingBasketViewModel()
     @State var userRealM : UserLoginViewModel = UserLoginViewModel()
     
-    @StateObject private var productViewModel = ProductViewModel()
+//    @StateObject private var productViewModel = ProductViewModel()
     
     var body: some View {
         NavigationStack(path: $navigationPath){
@@ -66,7 +66,7 @@ struct ContentView: View {
                 } else if destination == "OrderHistoryView" {
                     OrderHistory()
                 } else if destination == "DetailView" {
-                    DetailView(productViewModel: productViewModel, navigationPath: $navigationPath)
+                    DetailView(navigationPath: $navigationPath)
                 }
             }
             

@@ -55,7 +55,7 @@ class OrderViewModel: ObservableObject {
         }
     }
     
-    func insertOrderDetail(user_id:String, order_id:String, product_id:String, price:Double, quantity:Int) async{
+    func insertOrderDetail(user_id:String, order_id:String, product_id:Int, price:Double, quantity:Int) async{
         // 데이터 전달 값 URL 설정
         var urlPath = baseURL + "insertOrderDetail?user_id=\(user_id)&order_id=\(order_id)&product_id=\(product_id)&price=\(price)&quantity=\(quantity)"
         urlPath = urlPath.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!

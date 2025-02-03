@@ -8,7 +8,7 @@
 import Foundation
 
 class ProductViewModel: ObservableObject {
-    let baseURL = "http://127.0.0.1:8000/"
+    let baseURL = "http://192.168.50.38:8000/"
     @Published var productId: Int = 0
     var jsonViewModel: JSONViewModel = JSONViewModel()
     
@@ -50,7 +50,7 @@ class ProductViewModel: ObservableObject {
     
     /// ✅ JWT 포함하여 제품 상세 정보 가져오기
     func fetchDetail() async throws -> Product {
-        let path = "/product/\(productId+1)/"
+        let path = "/product/\(productId)/"
         let result: JsonResult<Product> = try await jsonViewModel.fetchJSON(path: path)
         return result.result
     }
