@@ -23,19 +23,6 @@ class CategoryViewModel: ObservableObject {
         }
     }
     
-    func fetchCategory() async throws -> [Categories]{
-        do {
-
-            let result: JsonResult<[Categories]> = try await jsonViewModel.fetchJSON(path: "/product/category")
-            let cateogoies = result.result
-            return cateogoies
-        } catch {
-            print("Error: \(error)")
-            throw error
-        }
-    }
-    
-    
     func fetchCategories() async throws -> [Categories]{
         do {
 

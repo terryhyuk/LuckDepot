@@ -14,7 +14,6 @@ struct ProductHomeItem: View {
         VStack(alignment: .leading) {
             WebImage(url: URL(string: "http://192.168.50.38:8000/product/view/\(product.image)"))
                 .resizable()
-                .aspectRatio(contentMode: .fill)
                 .frame(width: 170, height: 150)
             
             VStack(alignment: .leading) {

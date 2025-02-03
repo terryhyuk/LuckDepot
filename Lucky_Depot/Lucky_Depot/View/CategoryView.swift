@@ -16,9 +16,9 @@ struct CategoryView: View {
     @ObservedObject var categoryViewModel: CategoryViewModel = CategoryViewModel()
     @EnvironmentObject var productViewModel: ProductViewModel
     @State var productList: [Product] = []
-    @State var categories : [Categories] = [
-        Categories(name: "All", id: 0)
-    ]
+    @State var categories : [Categories] = []
+    @Binding var navigationPath: NavigationPath
+
     
     var body: some View {
         
@@ -33,6 +33,7 @@ struct CategoryView: View {
                             let filteredProducts = productList.filter { product in
                                        selectedType == 0 || selectedType == product.category_id
                                    }
+                    
                                    // 필터링된 제품이 없으면
                                    if filteredProducts.isEmpty {
                                     
@@ -50,9 +51,15 @@ struct CategoryView: View {
                                        
                                    } else {
                                        // 필터링된 제품들이 있으면 ProductView를 표시
+                                       
                                        LazyVGrid(columns: columns, alignment: .center, spacing: 15, content: {
-                                           ForEach(filteredProducts, id: \.id) { product in
-                                               ProductView(product: product)
+                                           ForEach(filteredProducts, id: \.name) { products in
+                                               ProductView(product: products)
+                                                   .onTapGesture {
+                                                       productViewModel.productId = products.id
+                                                       navigationPath.append("DetailView")
+                                                       print("Detail")
+                                                   }
                                            }
                                        })
                                    }
@@ -68,7 +75,9 @@ struct CategoryView: View {
             .onAppear(perform: {
                 Task{
                     productList = try await productViewModel.fetchProduct()
-                    categories.append(contentsOf: try await categoryViewModel.fetchCategories())
+                    let fetchedCategories = try await categoryViewModel.fetchCategories()
+                    // "All" 카테고리 제외하고 갱신
+                    categories = [Categories(name: "All", id: 0)] + fetchedCategories
                 }
                 
             })
@@ -78,9 +87,9 @@ struct CategoryView: View {
     }
 }
 
-#Preview {
-    CategoryView()
-}
+//#Preview {
+//    CategoryView( navigationPath: <#Binding<NavigationPath>#>)
+//}
 
 struct CategoryButton: View {
     @Binding var selectedType: Int
@@ -88,7 +97,7 @@ struct CategoryButton: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing:10){
-                ForEach(categories, id: \.name){ category in
+                ForEach(categories, id: \.id){ category in
                     Button(category.name, action: {
                         self.selectedType = category.id
 

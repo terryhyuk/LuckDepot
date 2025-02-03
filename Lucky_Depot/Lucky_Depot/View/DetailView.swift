@@ -48,10 +48,10 @@ struct DetailView: View {
                         // Quantity Selector
                         HStack {
                             Stepper(value: $quantity, in: 1...Int.max) {
-                                Text("quntity: \(quantity)")
+                                Text("quantity: \(quantity)")
                                     .font(.body)
                             }
-                            .frame(width: 150)
+                            .frame(width: 200)
                         }
                         
                         // Action Buttons

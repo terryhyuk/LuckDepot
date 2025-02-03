@@ -33,7 +33,7 @@ struct ContentView: View {
                         HomeView(navigationPath: $navigationPath)
                             .tag(Tab.home)
                         
-                        CategoryView()
+                        CategoryView(navigationPath: $navigationPath)
                             .tag(Tab.category)
                         
                         
