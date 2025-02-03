@@ -287,7 +287,7 @@ async def dashboard(session : Session = Depends(db.session)):
             OrderDetail.id,
             OrderDetail.name
         ).order_by(
-            func.substring(OrderDetail.id, 1, 6).desc()
+            func.substring(OrderDetail.id, 0, 12).desc()
         ).all()
         if not dashs : 
             raise HTTPException(status_code=404, detail='dashs not found')
@@ -363,7 +363,7 @@ async def select_orderlist(session : Session = Depends(db.session), user_seq : i
                 OrderDetail.id,
                 OrderDetail.user_seq
             ).order_by(
-                func.substring(OrderDetail.id,0,6).desc()
+                func.substring(OrderDetail.id,0,12).desc()
             )
         if not lists :
             raise HTTPException(status_code=404, detail="orderlist not found")

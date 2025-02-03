@@ -26,6 +26,7 @@ def user(session: Session = Depends(db.session), order_id: str = None):
             Order.order_date, # 주문날짜
             Order.address, # 배송지            
             Order.delivery_type, # Ship Mode
+            OrderDetail.price
         ).join(
             Product,
             OrderDetail.product_id == Product.id
@@ -46,6 +47,7 @@ def user(session: Session = Depends(db.session), order_id: str = None):
                 'product_name': deliver[0],
                 'image': deliver[1], 
                 'quantity': deliver[2],
+                'price': deliver[9],
                 
             }
             for deliver in delivers
