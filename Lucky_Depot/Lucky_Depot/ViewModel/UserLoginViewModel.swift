@@ -24,7 +24,7 @@ class UserLoginViewModel: ObservableObject {
     }
     
     // 유저 추가 함수
-    func addUser(user: LoginUser) {
+    func addUser(user: LoginUser, seq: Int) {
         let realm = try! Realm()
 
         try! realm.write {
@@ -37,6 +37,7 @@ class UserLoginViewModel: ObservableObject {
                 let loginUser = RealMUser()
                 loginUser.email = user.email
                 loginUser.name = user.name
+                loginUser.id = seq
                 realm.add(loginUser)
                 print("✅ Realm에 사용자 추가됨: \(user.email)")
             }

@@ -9,19 +9,28 @@ import SwiftUI
 import TossPayments
 
 struct PaymentsView: View {
-//    @State var productList: [Product] = [
-//        Product(id: "1", name: "제품", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
-//        Product(id: "2", name: "제품2", price: 2334, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
-//    ]
     static let clientKey: String = "test_ck_DpexMgkW367ekQZ9PG4BVGbR5ozO"
 
     @ObservedObject var shoppingBasketViewModel: ShoppingBasketViewModel
+    @StateObject var userLoginViewModel: UserLoginViewModel = UserLoginViewModel()
+    
     @StateObject var orderViewModel: OrderViewModel = OrderViewModel()
     
     @Binding var navigationPath: NavigationPath
     
     // 텍스트 필드
     @State private var deliveryAddress: String = ""
+    
+    // 배송 유형
+    @State private var selectedValue: Int = 3
+    // 옵션 리스트 (텍스트와 매칭되는 값)
+    let options: [(label: String, value: Int)] = [
+        ("Standard Class", 3),
+        ("Second Class", 2),
+        ("First Class", 1),
+        ("Same Day", 0)
+    ]
+
     
     // 에러 알람
     @State var errorAlert: Bool = false
@@ -61,7 +70,14 @@ struct PaymentsView: View {
                     
                     TextField("주소를 입력하세요", text: $deliveryAddress)
                     
-                    
+//                    Text("Selected: \(selectedValue)") // 선택된 값 표시
+
+                    Picker("Select an option", selection: $selectedValue) {
+                        ForEach(options, id: \.value) { option in
+                            Text(option.label).tag(option.value)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
                 }
                 
                 VStack(alignment: .leading) {
@@ -112,7 +128,7 @@ struct PaymentsView: View {
                                 errorAlert = true
                             } else {
                                 Task{
-                                    await orderViewModel.insertOrder(user_id: "1", order_id: orderId, payment_type: "card", price: totalPrice, address: deliveryAddress)
+                                    await orderViewModel.insertOrder(user_id: userLoginViewModel.realMUser[0].id, order_id: orderId, payment_type: "card", price: totalPrice, address: deliveryAddress, delivery_type: selectedValue)
 
                                     await insertDetails()
                                 }
@@ -156,7 +172,7 @@ struct PaymentsView: View {
         }
         .onAppear(perform: {
             totalPrice = shoppingBasketViewModel.totalPrice()
-            orderId = orderViewModel.createOrderNum()
+            orderId = orderViewModel.createOrderNum(user_seq: userLoginViewModel.realMUser[0].id)
         })
     }
     
@@ -172,11 +188,12 @@ struct PaymentsView: View {
     func insertDetails() async {
         for i in 0..<shoppingBasketViewModel.productCounts {
             await orderViewModel.insertOrderDetail(
-                user_id: "1",
+                user_id: userLoginViewModel.realMUser[0].id,
                 order_id: orderId,
                 product_id: shoppingBasketViewModel.products[i].id,
                 price: shoppingBasketViewModel.products[i].price,
-                quantity: shoppingBasketViewModel.products[i].quantity
+                quantity: shoppingBasketViewModel.products[i].quantity,
+                name: shoppingBasketViewModel.products[i].name
             )
         }
     }
@@ -188,7 +205,7 @@ struct PaymentsView: View {
             amount: totalPrice,
             orderId: orderId,
             orderName: orderName,
-            customerName: "박토스" // 유저 이름
+            customerName: userLoginViewModel.realMUser[0].name // 유저 이름
         )
     }
 }
@@ -197,14 +214,14 @@ struct PaymentsView: View {
 ////    PaymentsView()
 //}
 
-struct PaymentsView_Previews: PreviewProvider {
-    @State static var navigationPath = NavigationPath()
-    @StateObject static var shoppingBasketViewModel = ShoppingBasketViewModel()
-
-    static var previews: some View {
-        PaymentsView(
-            shoppingBasketViewModel: shoppingBasketViewModel,
-            navigationPath: $navigationPath
-        )
-    }
-}
+//struct PaymentsView_Previews: PreviewProvider {
+//    @State static var navigationPath = NavigationPath()
+//    @StateObject static var shoppingBasketViewModel = ShoppingBasketViewModel()
+//
+//    static var previews: some View {
+//        PaymentsView(
+//            shoppingBasketViewModel: shoppingBasketViewModel,
+//            navigationPath: $navigationPath
+//        )
+//    }
+//}
