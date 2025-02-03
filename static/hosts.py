@@ -18,9 +18,9 @@ EXCEPT_PATH_LIST = [
     "/login/google",  # ✅ 로그인 API
     "/signup",  # ✅ 회원가입 API
     "/healthcheck",  # ✅ 서버 상태 확인 API,
-    "/product/"
+    # "/product/"
 ]
 
-EXCEPT_PATH_REGEX = r"^(/docs|/redoc|/auth|/login/google|/signup|/healthcheck)$"
+EXCEPT_PATH_REGEX = r"^(/docs|/redoc|/auth|/login/google|/signup|/healthcheck|/product/image|/product/view/.*|/order/.*|/hub/.*|/driver/.*|/deliver/.*|/category/.*|/ml.*)$"
 TRUSTED_HOSTS = ["*"]
 ALLOW_SITE = ["*"]
