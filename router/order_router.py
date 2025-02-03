@@ -61,53 +61,6 @@ async def get_orders(session: Session = Depends(db.session)):
         return {'result' : e}
     
 
-# 관리자 dash board, 매출관리 월별 그래프
-@router.get('/month', status_code=200)
-def month(session: Session = Depends(db.session)):
-    try:
-        current_date = datetime.now()
-        
-        # 월별 매출 쿼리
-        months_data = session.query(
-            func.substring(func.min(Order.id),3,2).label('month'),
-            func.sum(Order.price).label('month_price'),
-        ).filter(
-            cast(func.substring(Order.id, 1, 4), String).between(
-                (current_date - relativedelta(months=5)).strftime('%y%m'),
-                current_date.strftime('%y%m')
-            )
-        ).group_by(
-            func.substring(Order.id,3,2)
-        ).order_by(
-            func.substring(Order.id,3,2).desc()
-        ).all()
-
-        if not months_data:
-            raise HTTPException(status_code=404, detail='months not found')
-            
-        # 월별 매출 데이터 변환
-        sales_dict = {month[0]: month[1] for month in months_data}
-
-        # 최근 6개월의 월 리스트 생성
-        months_list = []
-        for i in range(6):
-            past_date = current_date - relativedelta(months=i)
-            months_list.append(past_date.strftime('%Y%m'))
-            
-        
-        # 최근 6개월 데이터 생성 (없는 월은 0으로 설정)
-        month_sales_list = [
-            {
-                'month': f"{month[:4]}.{month[-2:]}",
-                'sales': sales_dict.get(month[-2:], 0)
-            }
-            for month in reversed(months_list)
-        ]
-        return {'result': month_sales_list}
-        
-    except Exception as e:
-        print(e)
-        return {'result': e}
 
 
 @router.put('/')

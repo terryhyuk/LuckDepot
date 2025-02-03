@@ -20,16 +20,17 @@ def user(session: Session = Depends(db.session), order_id: str = None):
             Product.name, # 상품 이름
             Product.image,  # 상품 이미지
             OrderDetail.quantity,  # 상품별 구매 수량
-            Deliver.id, # 배송 번호
+            # Deliver.id, # 배송 번호
+            func.coalesce(Deliver.id, "None"),
             OrderDetail.id, # 주문 번호
             Order.status, # 배송 상태
             Order.order_date, # 주문날짜
             Order.address, # 배송지            
-            Deliver.delivery_type, # Ship Mode
+            Order.delivery_type, # Ship Mode
         ).join(
             Product,
             OrderDetail.product_id == Product.id
-        ).join(
+        ).outerjoin(
             Deliver,
             Deliver.order_id == OrderDetail.id
         ).join(
@@ -50,7 +51,7 @@ def user(session: Session = Depends(db.session), order_id: str = None):
             }
             for deliver in delivers
         ],
-        'deliver_id': delivers[0][2],
+        'deliver_id': delivers[0][3], # 빈 값 = "None"
         'order_id': delivers[0][4],
         'status': delivers[0][5],
         'order_date' : {

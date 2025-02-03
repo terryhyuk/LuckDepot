@@ -168,7 +168,8 @@ async def week(session: Session = Depends(db.session)):
         }}
     except Exception as e:
         return {'result': e}    
-
+    
+    
 # 관리자용 매출 관리 월별 조회 (상품별 매출 표)
 @router.get('/month', status_code=200)
 async def month(session : Session = Depends(db.session)):
@@ -182,7 +183,7 @@ async def month(session : Session = Depends(db.session)):
     """
     try :
         # 현재 시간 기준 월
-        current = datetime.now().strftime('%y%m')
+        current = datetime.now()
         orders = session.query(
             Product.name, # 상품 이름
             func.sum(OrderDetail.quantity).label('order_count'), # 판매 수량
@@ -191,22 +192,62 @@ async def month(session : Session = Depends(db.session)):
             Product, 
             Product.id == OrderDetail.product_id
         ).filter(
-            func.substring(OrderDetail.id, 3, 2) == current[2:],
-            func.substring(OrderDetail.id,1,2) == current[:2]
+            func.substring(OrderDetail.id, 1, 2) == current.strftime("%y"),
+            func.substring(OrderDetail.id,3,2) == current.strftime("%m")
         ).group_by(
         Product.name
         ).order_by(desc('order_count'))
         if not orders :
             raise HTTPException(status_code=404, detail="detail month not found")
+        
+         # 월별 매출 쿼리
+        months_data = session.query(
+            func.substring(func.min(Order.id),3,2).label('month'),
+            func.sum(Order.price).label('month_price'),
+        ).filter(
+            cast(func.substring(Order.id, 1, 4), String).between(
+                (current - relativedelta(months=5)).strftime('%y%m'),
+                current.strftime('%y%m')
+            )
+        ).group_by(
+            func.substring(Order.id,3,2)
+        ).order_by(
+            func.substring(Order.id,3,2).desc()
+        ).all()
+
+        if not months_data:
+            raise HTTPException(status_code=404, detail='months not found')
+            
+        # 월별 매출 데이터 변환
+        sales_dict = {month[0]: month[1] for month in months_data}
+
+        # 최근 6개월의 월 리스트 생성
+        months_list = []
+        for i in range(6):
+            past_date = current - relativedelta(months=i)
+            months_list.append(past_date.strftime('%Y%m'))
+            
+        
+        # 최근 6개월 데이터 생성 (없는 월은 0으로 설정)
+        month_sales_list = [
+            {
+                'month': f"{month[:4]}.{month[-2:]}",
+                'sales': sales_dict.get(month[-2:], 0)
+            }
+            for month in reversed(months_list)
+        ]
+
         return {'result' : 
-                    [
+                    { "products":[
                         {
                             'name' : order[0],
                             'order_count' : order[1],
                             'total_price' : order[2]
                         }
                         for order in orders
-                    ]
+                    ],
+                    "month_sales" : month_sales_list
+                    }
                 }
     except Exception as e:
         return {'result' : e}
@@ -291,22 +332,6 @@ async def insert(session : Session = Depends(db.session), id : str = None,user_s
             name = name
         )
         session.add(new_order)
-        session.commit()
-        return {'result' : 'ok'}
-    except Exception as e:
-        return {'result' : e}
-
-
-@router.delete('/{id}')
-async def delete(session : Session = Depends(db.session), id : str = None):
-    """
-    필요시 사용
-    orderdetail 정보 삭제 
-    orderdetail_id (pk) 사용
-    """
-    try :
-        orderdetail = session.query(OrderDetail).filter(OrderDetail.id == id).first()
-        session.delete(orderdetail)
         session.commit()
         return {'result' : 'ok'}
     except Exception as e:
