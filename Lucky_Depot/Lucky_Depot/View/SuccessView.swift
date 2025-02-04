@@ -8,13 +8,11 @@
 import SwiftUI
 
 struct SuccessView: View {
-//    @State var productList: [Product] = [
-//        Product(id: "1", name: "제품", price: 1234, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
-//        Product(id: "2", name: "제품2", price: 2334, imagePath: "https://zeushahn.github.io/Test/images/mov01.jpg", quantity: 1, category: "1"),
-//    ]
     @ObservedObject var shoppingBasketViewModel: ShoppingBasketViewModel
     
     @Binding var navigationPath: NavigationPath
+    @State var productList: [RealMProduct] = []
+    @State var totalPrice:Double = 0
     
     var body: some View {
         VStack(content: {
@@ -29,33 +27,33 @@ struct SuccessView: View {
             })
             .padding(.top, 64)
             
-            Text("결제가 완료되었습니다")
+            Text("Payment is complete")
                 .fontWeight(.bold)
                 .font(.system(size: 28))
                 .padding(.top, 16)
                 .padding(.bottom, 4)
             
-            Text("주문해 주셔서 감사합니다")
+            Text("Thank you for your order")
                 .font(.system(size: 20))
                 .foregroundStyle(.gray)
                 .padding(.bottom, 16)
                 
             Form{
                 Section{
-                    Text("주문 상품")
+                    Text("Products ordered")
                         .font(.system(size: 17))
                         .foregroundStyle(.gray)
                     
-                    ForEach(shoppingBasketViewModel.products, id: \.id) { product in
+                    ForEach(productList, id: \.id) { product in
                         OrderProduct(product: product)
                     }
                 }
             }
             
             HStack(content: {
-                Text("총 결제금액")
+                Text("Total Price")
                 Spacer()
-                Text("\(10000)원")
+                Text("$"+String(format : "%.2f", totalPrice))
             })
             .padding()
             
@@ -64,7 +62,7 @@ struct SuccessView: View {
             Button(action: {
                 navigationPath = NavigationPath()
             }, label: {
-                Text("확인")
+                Text("OK")
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity) // 화면 너비에 맞게 확장
@@ -76,7 +74,17 @@ struct SuccessView: View {
             .padding()
             
         })
+        .onAppear(perform: {
+            // 보여줄 데이터를 따로 저장한뒤 장바구니 데이터 삭제
+            productList = shoppingBasketViewModel.products.map{ RealMProduct(value: $0) }
+            shoppingBasketViewModel.deleteAllProducts()
+            totalPrice = 0
+            for product in productList {
+                totalPrice += product.price * Double(product.quantity)
+            }
+        })
     }
+        
 }
 
 #Preview {

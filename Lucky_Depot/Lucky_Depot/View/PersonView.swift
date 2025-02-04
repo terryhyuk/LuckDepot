@@ -134,6 +134,10 @@ struct PersonView: View {
                    
                }.onAppear(perform: {
                    userRealM.fetchUser()
+//                   if !userRealM.realMUser.isEmpty {
+//                       userName = userRealM.realMUser[0].name
+//                       userEmail = userRealM.realMUser[0].email
+//                   }
                    userName = userRealM.realMUser[0].name
                    userEmail = userRealM.realMUser[0].email
                    Task{

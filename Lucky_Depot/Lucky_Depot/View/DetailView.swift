@@ -86,47 +86,50 @@ struct DetailView: View {
                             }
                             .alert("Result", isPresented: $isAlert) {
                                 Button("OK", role: .cancel) {}
+                                Button("Go to Cart"){
+                                    navigationPath = NavigationPath()
+                                    navigationPath.append("CartView")
+                                }
                             } message: {
                                 Text("Item added to cart")
                             }
                         }
                         
                         
-                        // Icons Section
-                        HStack(spacing: 20) {
-                            VStack {
-                                Image(systemName: "shield")
-                                    .font(.title)
-                                    .foregroundColor(.gray)
-                                Text("1년 제품 보증(?)")
-                                    .font(.footnote)
-                                    .multilineTextAlignment(.center)
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        
-                        Divider()
-                        
-                        // Product Details
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("제품 상세 정보")
-                                .font(.headline)
-                            
-                            Text("최고급 메쉬 소재를 사용한 프리미엄 사무용 의자입니다. 인체공학적 설계로 장시간 착석에도 편안함을 제공합니다. 통기성이 우수한 메쉬 소재로 쾌적한 사용이 가능합니다.")
-                                .font(.body)
-                            
-                            Text("- 인체공학적 설계\n- 고급 메쉬 소재 사용\n- 조절 가능한 팔걸이\n- 최대 하중: 120kg")
-                                .font(.body)
-                                .lineSpacing(5)
-                        }
+//                        // Icons Section
+//                        HStack(spacing: 20) {
+//                            VStack {
+//                                Image(systemName: "shield")
+//                                    .font(.title)
+//                                    .foregroundColor(.gray)
+//                                Text("1년 제품 보증(?)")
+//                                    .font(.footnote)
+//                                    .multilineTextAlignment(.center)
+//                            }
+//                            .frame(maxWidth: .infinity)
+//                        }
+//                        
+//                        Divider()
+//                        
+//                        // Product Details
+//                        VStack(alignment: .leading, spacing: 10) {
+//                            Text("제품 상세 정보")
+//                                .font(.headline)
+//                            
+//                            Text("최고급 메쉬 소재를 사용한 프리미엄 사무용 의자입니다. 인체공학적 설계로 장시간 착석에도 편안함을 제공합니다. 통기성이 우수한 메쉬 소재로 쾌적한 사용이 가능합니다.")
+//                                .font(.body)
+//                            
+//                            Text("- 인체공학적 설계\n- 고급 메쉬 소재 사용\n- 조절 가능한 팔걸이\n- 최대 하중: 120kg")
+//                                .font(.body)
+//                                .lineSpacing(5)
+//                        }
                     }
                     .padding()
                 }
-                .navigationTitle("제품 상세")
+                .navigationTitle("Product Detail")
             }
         }
         .onAppear{
-            print("onAppear")
             product = nil
             Task{
                 do{

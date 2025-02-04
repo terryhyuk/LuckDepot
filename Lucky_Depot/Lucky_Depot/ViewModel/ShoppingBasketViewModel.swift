@@ -77,11 +77,18 @@ class ShoppingBasketViewModel: ObservableObject {
     }
     
     // 상품 전체 삭제
-    func deleteAll() {
+//    func deleteAll() {
+//        try! realm.write {
+//            realm.deleteAll()
+//        }
+//    }
+    func deleteAllProducts() {
         try! realm.write {
-            realm.deleteAll()
+            let allProducts = realm.objects(RealMProduct.self)
+            realm.delete(allProducts) // RealMProduct 테이블 데이터만 삭제
         }
     }
+
     
     // 상품 종류 수 업데이트
     func productCountsUpdate(){

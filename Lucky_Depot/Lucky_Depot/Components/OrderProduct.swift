@@ -24,7 +24,7 @@ struct OrderProduct: View {
                 Text(product.name)
                   
                 HStack(content: {
-                    Text("수량: \(product.quantity)")
+                    Text("quantity: \(product.quantity)")
                     
                     Spacer()
                     
@@ -40,14 +40,6 @@ struct OrderProduct: View {
                     Text("$"+String(format : "%.2f", product.price * Double(product.quantity)))
                         .bold()
                         .foregroundStyle(.blue)
-                })
-                
-                
-                HStack(content: {
-                    Image(systemName: "clock.arrow.circlepath")
-                    
-                    Text("예상 도착일: 2024. 1. 16.")
-                        .foregroundStyle(.gray)
                 })
             })
             

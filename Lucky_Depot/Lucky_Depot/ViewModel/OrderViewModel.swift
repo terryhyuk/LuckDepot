@@ -123,7 +123,7 @@ class OrderViewModel: ObservableObject {
         }
 
         let (data, _) = try await URLSession.shared.data(from: url)
-        var duration = try JSONDecoder().decode(PredictDeliverDuration.self, from: data)
+        let duration = try JSONDecoder().decode(PredictDeliverDuration.self, from: data)
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy.MM.dd"

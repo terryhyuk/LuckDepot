@@ -125,11 +125,7 @@ struct PaymentsView: View {
                                 errorMessage = "Insert to Address."
                                 errorAlert = true
                             } else {
-                                Task{
-                                    await orderViewModel.insertOrder(user_id: userLoginViewModel.realMUser[0].id, order_id: orderId, payment_type: "card", price: totalPrice, address: deliveryAddress, delivery_type: selectedValue)
-
-                                    await insertDetails()
-                                }
+                                
                                 showPaymentView = true
                             }
                         }, label: {
@@ -154,8 +150,14 @@ struct PaymentsView: View {
                                 isPresented: $showPaymentView)
                             .onSuccess { key, id, amount in
                                 //                                print(key,id,amount)
-                                navigationPath.append("SuccessView")
-                                
+                                Task{
+                                    await orderViewModel.insertOrder(user_id: userLoginViewModel.realMUser[0].id, order_id: orderId, payment_type: "card", price: totalPrice, address: deliveryAddress, delivery_type: selectedValue)
+
+                                    await insertDetails()
+                                    
+                                    navigationPath.append("SuccessView")
+                                }
+                                                                
                                 // 주문 정보 입력
                                                             }
                             .onFail({code, message, id in
@@ -184,14 +186,15 @@ struct PaymentsView: View {
     }
     
     func insertDetails() async {
-        for i in 0..<shoppingBasketViewModel.productCounts {
+        let productList:[RealMProduct] = shoppingBasketViewModel.products.map{ RealMProduct(value: $0) }
+        for i in 0..<productList.count {
             await orderViewModel.insertOrderDetail(
                 user_id: userLoginViewModel.realMUser[0].id,
                 order_id: orderId,
-                product_id: shoppingBasketViewModel.products[i].id,
-                price: shoppingBasketViewModel.products[i].price,
-                quantity: shoppingBasketViewModel.products[i].quantity,
-                name: shoppingBasketViewModel.products[i].name
+                product_id: productList[i].id,
+                price: productList[i].price,
+                quantity: productList[i].quantity,
+                name: productList[i].name
             )
         }
     }
