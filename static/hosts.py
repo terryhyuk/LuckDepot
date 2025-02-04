@@ -8,7 +8,7 @@ from firebase_admin import credentials, auth
 firebase_auth = auth
 
 load_dotenv()
-LUCKYDEPOT_SDK = os.getenv("LUCKYDEPOT-SDK")
+LUCKYDEPOT_SDK = os.getenv("LUCKYDEPOT_SDK")
 POSTGRESQL_HOST = os.getenv('POSTGRESQL_HOST')
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
@@ -16,7 +16,7 @@ EXCEPT_PATH_LIST = [
     "/openapi.json", 
 ]
 
-firebase_key_json = os.getenv("LUCKYDEPOT-SDK")
+firebase_key_json = os.getenv("LUCKYDEPOT_SDK")
 if not firebase_key_json:
     cred = credentials.Certificate("lucky-depot-firebase-adminsdk-fbsvc-f5947922f7.json")
 else:
