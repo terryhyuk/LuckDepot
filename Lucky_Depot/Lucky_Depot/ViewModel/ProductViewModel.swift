@@ -31,14 +31,15 @@ class ProductViewModel: ObservableObject {
     
     
     /// ✅ JWT 포함하여 제품 목록 가져오기
-    func fetchProduct() async throws -> [Product] {
+    func fetchProduct(search: String? = nil) async throws -> [Product] {
         if let jwtToken = UserDefaults.standard.string(forKey: "jwtToken") {
         } else {
             print("⚠️ API 요청 시 JWT 없음")
         }
+        let keyword: String = search ?? ""
         
         do {
-            let result: JsonResult<[Product]> = try await jsonViewModel.fetchJSONList(path: "/product/")
+            let result: JsonResult<[Product]> = try await jsonViewModel.fetchJSONList(path: "/product/?keyword=\(keyword)")
             let products = result.result
             return products
         } catch {

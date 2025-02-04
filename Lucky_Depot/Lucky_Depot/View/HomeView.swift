@@ -22,7 +22,7 @@ struct HomeView: View {
               .ignoresSafeArea()
             
             VStack(alignment:.leading){
-                SearchBar()
+                SearchBar(productList: $productList)
                 Text("Recommended Items")
                     .alignmentGuide(.bottom) { $0[VerticalAlignment.bottom] }
                     .font(.system(size: 24, design: .rounded))
