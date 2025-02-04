@@ -7,6 +7,7 @@ import 'package:lucky_depot/model/truck.dart';
 import 'package:lucky_depot/repository/customer_repository.dart';
 import 'package:lucky_depot/repository/product_detail.dart';
 import 'package:lucky_depot/repository/product_repository.dart';
+import 'package:lucky_depot/view/page/login.dart';
 import 'package:lucky_depot/view/widgets/customer_management.dart';
 import 'package:lucky_depot/view/page/dashboard.dart';
 import 'package:lucky_depot/view/page/delivery_driver.dart';
@@ -76,12 +77,17 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/login',
       defaultTransition: Transition.noTransition,
       getPages: [
         GetPage(
           name: '/',
           page: () => const Dashboard(),
+          transition: Transition.noTransition,
+        ),
+        GetPage(
+          name: '/login',
+          page: () => const LoginPage(),
           transition: Transition.noTransition,
         ),
         GetPage(
