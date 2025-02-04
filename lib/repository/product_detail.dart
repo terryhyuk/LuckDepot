@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ProductDetailRepository {
-  final String baseUrl = 'http://192.168.50.38:8000';
+  final String baseUrl = 'https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app';
 
   Future<Map<String, dynamic>> getDetailYear() async =>
       _fetchData('/detail/year');

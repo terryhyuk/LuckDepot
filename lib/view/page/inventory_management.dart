@@ -183,7 +183,7 @@ class InventoryManagement extends StatelessWidget {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                             child: Image.network(
-                                              'http://192.168.50.38:8000/product/view/${product.image}',
+                                              'https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/product/view/${product.image}',
                                               width: 300,
                                               height: 300,
                                               fit: BoxFit.cover,
@@ -341,7 +341,7 @@ class InventoryManagement extends StatelessWidget {
                                     Expanded(
                                       child: Center(
                                         child: Image.network(
-                                          'http://192.168.50.38:8000/product/view/${product.image}',
+                                          'https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/product/view/${product.image}',
                                           fit: BoxFit.cover,
                                         ),
                                       ),

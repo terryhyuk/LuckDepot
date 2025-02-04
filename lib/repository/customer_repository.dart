@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class CustomerRepository {
-  final String url = 'http://192.168.50.38:8000';
+  final String url = 'https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app';
 
   Future<Map<String, dynamic>> getCustomerStats() async {
     try {

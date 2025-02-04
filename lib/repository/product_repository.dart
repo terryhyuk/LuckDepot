@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../model/product.dart';
 
 class ProductRepository {
-  final String url = 'http://192.168.50.38:8000';
+  final String url = 'https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app';
 
   Future<List<Product>> getProducts() async {
     try {
