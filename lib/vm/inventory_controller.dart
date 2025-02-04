@@ -42,28 +42,23 @@ class InventoryController extends GetxController {
 
   // 카테고리 목록 로드
   loadCategories() async {
-    try {
-      final categoryList = await productRepository.getCategories();
-      if (categoryList.isNotEmpty) {
-        categories.clear();
-        categories.add('All');
-        categories.addAll(categoryList);
-        categories.refresh();  // UI 업데이트
-      }
-    } catch (e) {
-      print('Error loading categories: $e');
+
+    final categoryList = await productRepository.getCategories();
+    if (categoryList.isNotEmpty) {
+      categories.clear();
+      categories.add('All');
+      categories.addAll(categoryList);
+      categories.refresh();  // UI 업데이트
     }
+
   }
 
   // 상품 목록 로드
   loadProducts() async {
-    try {
-      final productList = await productRepository.getProducts();
-      products.assignAll(productList);
-      filterProducts();
-    } catch (e) {
-      print('Error loading products: $e');
-    }
+    final productList = await productRepository.getProducts();
+    products.assignAll(productList);
+    filterProducts();
+
   }
 
   // 상품 필터링 (검색 및 카테고리)
@@ -99,7 +94,6 @@ class InventoryController extends GetxController {
         await loadProducts();  // await 추가
       }
     } catch (e) {
-      print('Error updating quantity: $e');
       CustomDialog.show(
         Get.context!,
         DialogType.error,
@@ -120,7 +114,6 @@ class InventoryController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error deleting product: $e');
       CustomDialog.show(
         Get.context!,
         DialogType.error,
@@ -147,7 +140,6 @@ class InventoryController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error adding new category: $e');
       CustomDialog.show(
         Get.context!,
         DialogType.error,
@@ -201,7 +193,6 @@ class InventoryController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error adding product: $e');
       CustomDialog.show(
         Get.context!,
         DialogType.error,

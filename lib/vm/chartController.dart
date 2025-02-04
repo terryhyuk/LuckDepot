@@ -32,7 +32,6 @@ loadData() async {
 
     // CustomerRepository에서 통계 데이터 가져오기
     final customerStats = await customerRepository.getCustomerStats();
-    print('Customer Stats: $customerStats');
     totalPayment.value = (customerStats['sum'] as num?)?.toDouble() ?? 0.0;
 
     // order_count 합계 계산
@@ -45,7 +44,6 @@ loadData() async {
     }
 
     final monthData = await repository.getDetailMonth();
-    print('Month Data: $monthData');
 
     // 월간 데이터 처리
     if (monthData['products'] != null) {
@@ -59,16 +57,13 @@ loadData() async {
                 'sales': item['total_price'] ?? 0,
               })
           .toList();
-      print('Recent Sales: ${recentMonthSales.value}');
     }
 
     final yearData = await repository.getDetailYear();
-    print('Year Data: $yearData');
 
     // 연간 매출 데이터 처리
     if (yearData['year_sales'] != null) {
       yearSales.value = List<Map<String, dynamic>>.from(yearData['year_sales']);
-      print('Year Sales after setting: ${yearSales.value}');
     }
 
     // 제품 및 카테고리 데이터 처리
@@ -96,11 +91,9 @@ loadData() async {
         categoryStats.value = categoryStats.take(6).toList();
       }
       
-      print('Category Stats: ${categoryStats.value}');
     }
 
   } catch (e) {
-    print('Error loading data: $e');
     Get.snackbar('Error', 'Failed to load data');
   } finally {
     isLoading(false);

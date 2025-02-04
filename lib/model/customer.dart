@@ -47,7 +47,6 @@ factory CustomerResponse.fromJson(Map<String, dynamic> json) {
       avg: (json['avg'] as num?)?.toDouble() ?? 0.0,
     );
   } catch (e) {
-    print('Error parsing JSON: $e');
     return CustomerResponse(
       customers: [],
       sum: 0.0,

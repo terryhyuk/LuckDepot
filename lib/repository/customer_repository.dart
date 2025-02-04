@@ -17,7 +17,6 @@ class CustomerRepository {
         'avg': 0,
       };
     } catch (e) {
-      print('Error fetching customer stats: $e');
       return {
         'result': [],
         'sum': 0,
@@ -38,7 +37,6 @@ class CustomerRepository {
       'total_order':0,
     };
     }catch (e){
-      print('Error fetching resentOrder : $e');
       return{
       'result':[],
       'total_price':0,

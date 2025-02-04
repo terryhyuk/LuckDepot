@@ -40,36 +40,29 @@ class CustomerController extends GetxController {
     super.onClose();
   }
 
-    fetchRecentOrders() async {
-    try {
-      final response = await customerRepository.resentOrder();
-      if (response['result'] != null) {
-        recentOrders.value = List<Map<String, dynamic>>.from(response['result']);
-      }
-    } catch (e) {
-      print('Error fetching recent orders: $e');
+  fetchRecentOrders() async {
+    final response = await customerRepository.resentOrder();
+    if (response['result'] != null) {
+      recentOrders.value = List<Map<String, dynamic>>.from(response['result']);
     }
+
   }
 
 
   // 통계 데이터 로드
   fetchCustomerStats() async {
     final stats = await customerRepository.getCustomerStats();
-    print(stats);
     totalCustomers.value = stats['sum'];
     averagePurchase.value = stats['avg'];
   }
 
   // 고객 데이터 로드
   loadCustomers() async {
-    try {
-      final response = await customerRepository.getCustomerStats();
-      customerResponse.value = CustomerResponse.fromJson(response);
-      customers.assignAll(customerResponse.value?.customers ?? []);
-      filteredCustomers.assignAll(customers);
-    } catch (e) {
-      print('Error loading customers: $e');
-    }
+    final response = await customerRepository.getCustomerStats();
+    customerResponse.value = CustomerResponse.fromJson(response);
+    customers.assignAll(customerResponse.value?.customers ?? []);
+    filteredCustomers.assignAll(customers);
+
   }
 
   // 정렬 관련

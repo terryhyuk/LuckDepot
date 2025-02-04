@@ -57,12 +57,7 @@ class SalesController extends GetxController {
               List<Map<String, dynamic>>.from(response['products'] ?? []);
           break;
       }
-
-      print('Period: ${selectedPeriod.value}');
-      print('Sales Data: ${salesData.value}');
-      print('Top Products: ${topProducts.value}');
     } catch (e) {
-      print('Error loading data: $e');
       salesData.clear();
       topProducts.clear();
     } finally {

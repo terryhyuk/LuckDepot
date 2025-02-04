@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lucky_depot/view/widgets/coustom_drawer.dart';
 import 'package:lucky_depot/view/widgets/salesTrendschart.dart';
 import 'package:lucky_depot/view/widgets/topSellingBarChart.dart';
 import 'package:lucky_depot/view/widgets/topsellingtable.dart';
-import 'package:lucky_depot/vm/custom_drawer_controller.dart';
-import 'package:lucky_depot/vm/sales_controller.dart';
-
 class SalesAnalytics extends StatelessWidget {
   const SalesAnalytics({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final CustomDrawerController drawerController = Get.find<CustomDrawerController>();
-    final SalesController salesController = Get.put(SalesController());
 
     return Scaffold(
       body: Row(

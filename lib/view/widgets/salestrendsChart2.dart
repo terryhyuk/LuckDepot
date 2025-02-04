@@ -170,7 +170,7 @@ class SalesTrendsChart extends StatelessWidget {
                     // 라인 아래 영역 색상
                     belowBarData: BarAreaData(
                       show: true,
-                      color: Colors.blue.withOpacity(0.1),
+                      color: Colors.blue.withValues(alpha:0.1),
                     ),
                   ),
                 ],

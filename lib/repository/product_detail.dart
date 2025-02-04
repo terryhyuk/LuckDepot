@@ -20,7 +20,6 @@ class ProductDetailRepository {
       }
       return _defaultResponse();
     } catch (e) {
-      print('Error fetching data from $endpoint: $e');
       return _defaultResponse();
     }
   }

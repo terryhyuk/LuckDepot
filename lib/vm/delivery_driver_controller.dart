@@ -23,10 +23,6 @@ class DeliveryDriverController extends GetxController {
   final FocusNode passwordFocusNode = FocusNode();
   final FocusNode emailFocusNode = FocusNode();
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   @override
   onClose() {
@@ -91,9 +87,8 @@ class DeliveryDriverController extends GetxController {
   deleteDriver(BuildContext context, int index) async {
     try {
       await _repository.deleteDriver(index); // 삭제 요청
-      await getDriverListenable();
+      getDriverListenable();
     } catch (e) {
-      print('Error deleting driver: $e');
       if (context.mounted) {
         CustomDialog.show(
           context,

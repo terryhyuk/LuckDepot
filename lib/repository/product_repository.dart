@@ -18,7 +18,6 @@ class ProductRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching products: $e');
       return [];
     }
   }
@@ -30,7 +29,6 @@ class ProductRepository {
       );
       return response.statusCode == 200;
     } catch (e) {
-      print('Error deleting product: $e');
       return false;
     }
   }
@@ -53,7 +51,6 @@ class ProductRepository {
     );
     
     var imageResponse = await imageRequest.send();
-    print('Image upload status: ${imageResponse.statusCode}');
     
     if (imageResponse.statusCode == 200) {
       // 2. 상품 정보 저장
@@ -69,12 +66,10 @@ class ProductRepository {
         }),
       );
       
-      print('Product creation status: ${response.statusCode}');
       return response.statusCode == 201;
     }
     return false;
   } catch (e) {
-    print('Error adding product: $e');
     return false;
   }
 }
@@ -95,14 +90,11 @@ class ProductRepository {
             Uri.parse('$url/product/$productId/?quantity=$newQuantity'),
             headers: {'Content-Type': 'application/json'},
           );
-          print('Response status: ${response.statusCode}');
-          print('Response body: ${utf8.decode(response.bodyBytes)}');
           return response.statusCode == 200;
         }
       }
       return false;
     } catch (e) {
-      print('Error updating quantity: $e');
       return false;
     }
   }
@@ -117,11 +109,8 @@ class ProductRepository {
           'name': categoryName
         }),
       );
-      print('Category Response status: ${response.statusCode}');
-      print('Category Response body: ${response.body}');
       return response.statusCode == 201;
     } catch (e) {
-      print('Error adding category: $e');
       return false;
     }
   }
@@ -139,7 +128,6 @@ class ProductRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching categories: $e');
       return [];
     }
   }
