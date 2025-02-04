@@ -50,6 +50,7 @@ private struct TabsLayoutView: View {
         var namespace: Namespace.ID
         @Binding var navigationPath: NavigationPath
         @EnvironmentObject var viewModel: AuthenticationViewModel
+        @StateObject var userLoginViewModel: UserLoginViewModel = UserLoginViewModel()
 
         var body: some View {
             Button {
@@ -67,7 +68,7 @@ private struct TabsLayoutView: View {
                     } else if tab == .cart {
                         navigationPath.append("CartView")
                     } else if tab == .person {
-                        if viewModel.authenticationState == .unauthenticated {
+                        if viewModel.authenticationState == .unauthenticated || userLoginViewModel.realMUser.isEmpty {
                             navigationPath.append("LoginView")
                         } else {
                             navigationPath.append("PersonView")

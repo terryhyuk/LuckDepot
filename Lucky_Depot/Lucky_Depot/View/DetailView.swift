@@ -21,7 +21,7 @@ struct DetailView: View {
     var body: some View {
         VStack {
             if product == nil {
-                ProgressView("데이터 로딩 중...")
+                ProgressView("Loading...")
                     .progressViewStyle(CircularProgressViewStyle())
                     .frame(height: 200)
                     .padding()
@@ -56,18 +56,18 @@ struct DetailView: View {
                         
                         // Action Buttons
                         VStack(spacing: 10) {
-                            Button(action: {
-                                // Immediate Purchase Action
-                            }) {
-                                Text("바로 구매하기")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .cornerRadius(10)
-                            }
-                            
+//                            Button(action: {
+//                                // Immediate Purchase Action
+//                            }) {
+//                                Text("바로 구매하기")
+//                                    .font(.headline)
+//                                    .foregroundColor(.white)
+//                                    .frame(maxWidth: .infinity)
+//                                    .padding()
+//                                    .background(Color.blue)
+//                                    .cornerRadius(10)
+//                            }
+//                            
                             Button(action: {
                                 // Add to Cart Action
                                 isAlert = true

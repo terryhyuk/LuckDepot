@@ -48,7 +48,7 @@ struct CartView: View {
                     VStack(content: {
                         CartProductCell(shoppingBasketViewModel: shoppingBasketViewModel)
                         
-                        Button("결제하기"){
+                        Button("Payments"){
                             navigationPath.append("PaymentsView") // 페이지2로 이동
                         }
                         .font(.headline)

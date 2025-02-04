@@ -31,7 +31,7 @@ struct OrderHistoryItem: View {
             
             Divider()
             HStack(spacing: 20) {
-                WebImage(url: URL(string: "http://192.168.50.38:8000/product/view/\(order.image)"))
+                WebImage(url: URL(string: "https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/\(order.image)"))
                     .resizable()
                     .frame(width: 70, height: 70)
                     .clipShape(RoundedRectangle(cornerRadius: 10))

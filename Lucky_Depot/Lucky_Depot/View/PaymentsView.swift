@@ -50,7 +50,7 @@ struct PaymentsView: View {
                     HStack(content: {
                         Image(systemName: "shippingbox")
                         
-                        Text("주문 상품")
+                        Text("Products")
                     })
                     
                     ForEach(shoppingBasketViewModel.products, id: \.id) { product in
@@ -65,12 +65,10 @@ struct PaymentsView: View {
                             .scaledToFit()
                             .frame(width: 24, height: 32)
                         
-                        Text("배송지")
+                        Text("Address")
                     })
                     
-                    TextField("주소를 입력하세요", text: $deliveryAddress)
-                    
-//                    Text("Selected: \(selectedValue)") // 선택된 값 표시
+                    TextField("ex) New York/Postal code", text: $deliveryAddress)
 
                     Picker("Select an option", selection: $selectedValue) {
                         ForEach(options, id: \.value) { option in
@@ -85,14 +83,14 @@ struct PaymentsView: View {
                         Image(systemName: "creditcard")
                             .frame(width: 20, height: 20)
                         
-                        Text("결제 정보")
+                        Text("Payments Info")
                             .bold()
                             .font(.system(size: 20))
                     })
                     .padding(.vertical)
                     
                     HStack {
-                        Text("상품 금액")
+                        Text("Product Price")
                         Spacer()
 //                        Text("₩488,000")
                         Text("$"+String(format : "%.2f", totalPrice))
@@ -101,9 +99,9 @@ struct PaymentsView: View {
                     
                     HStack {
                         // 어떻게 할지 물어보기
-                        Text("배송비")
+                        Text("shipping cost")
                         Spacer()
-                        Text("무료")
+                        Text("Free")
                             .foregroundColor(.gray)
                     }
                     .padding(.vertical, 4)
@@ -111,7 +109,7 @@ struct PaymentsView: View {
                     Divider()
                     
                     HStack {
-                        Text("총 결제금액")
+                        Text("Total Price")
                             .fontWeight(.bold)
                         Spacer()
 //                        Text("₩488,000")
@@ -124,7 +122,7 @@ struct PaymentsView: View {
                     VStack {
                         Button(action: {
                             if deliveryAddress.isEmpty {
-                                errorMessage = "주소를 입력해주세요."
+                                errorMessage = "Insert to Address."
                                 errorAlert = true
                             } else {
                                 Task{
@@ -135,7 +133,7 @@ struct PaymentsView: View {
                                 showPaymentView = true
                             }
                         }, label: {
-                            Text("결제하기")
+                            Text("Payments")
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity) // 화면 너비에 맞게 확장
@@ -143,7 +141,7 @@ struct PaymentsView: View {
                                 .background(Color.green)
                                 .cornerRadius(10)
                         })
-                        .alert("오류", isPresented: $errorAlert) {
+                        .alert("Error", isPresented: $errorAlert) {
                             Button("OK", role: .cancel) {}
                         } message: {
                             Text(errorMessage)
