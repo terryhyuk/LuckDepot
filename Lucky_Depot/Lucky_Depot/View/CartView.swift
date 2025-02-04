@@ -10,7 +10,7 @@ import SwiftUI
 struct CartView: View {
     @Binding var selectedTab: Tab
     @Binding var navigationPath: NavigationPath
-    
+    @StateObject var realMUser: UserLoginViewModel = UserLoginViewModel()
     @ObservedObject var shoppingBasketViewModel: ShoppingBasketViewModel
     
     var body: some View {
@@ -49,7 +49,12 @@ struct CartView: View {
                         CartProductCell(shoppingBasketViewModel: shoppingBasketViewModel)
                         
                         Button("Payments"){
-                            navigationPath.append("PaymentsView") // 페이지2로 이동
+                            if realMUser.realMUser.isEmpty{
+                                navigationPath.append("LoginView")
+                            } else {
+                                navigationPath.append("PaymentsView")
+                            }
+                             // 페이지2로 이동
                         }
                         .font(.headline)
                         .foregroundColor(.white)
