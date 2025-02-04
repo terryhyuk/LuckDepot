@@ -430,3 +430,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/flutter,macos,swift,python,visualstudiocode,windows,linux,redis,jupyternotebooks
+machine_learning/Analysis/0127_nyImprove.ipynb
