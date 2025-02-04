@@ -5,9 +5,8 @@ from starlette.middleware.cors import CORSMiddleware
 from middlewares.trusted_hosts import TrustedHostMiddleware
 from database.conn import connection
 from middlewares.token_validator import access_control
-from static.hosts import TRUSTED_HOSTS
+from static.hosts import TRUSTED_HOSTS, LUCKYDEPOT_SDK
 import uvicorn
-
 
 # router
 from router.auth import router as auth_router
@@ -44,7 +43,6 @@ def create_app():
         allow_headers=["*"],
     )
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=TRUSTED_HOSTS, except_path=["/health"])
-
     return app
 
 
