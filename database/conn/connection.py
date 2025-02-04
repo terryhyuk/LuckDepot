@@ -20,7 +20,7 @@ class SQLAlchemy:
         :param kwargs:
         :return:
         """
-        database_url = f'postgresql://postgres:qwer1234@{hosts.POSTGRESQL_HOST}:5432/postgres'
+        database_url = f'postgresql://root:qwer1234@{hosts.POSTGRESQL_HOST}:30146/postgres'
         # postgresql://유저이름:비밀번호@ip주소:port/데이터베이스이름
         pool_recycle = 900
 

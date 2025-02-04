@@ -7,7 +7,7 @@ from firebase_admin import credentials, auth
 
 firebase_auth = auth
 
-load_dotenv()
+load_dotenv(override=True)
 LUCKYDEPOT_SDK = os.getenv("LUCKYDEPOT_SDK")
 POSTGRESQL_HOST = os.getenv('POSTGRESQL_HOST')
 JWT_SECRET = os.getenv("JWT_SECRET")
