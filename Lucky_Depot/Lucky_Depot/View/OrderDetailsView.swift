@@ -12,7 +12,8 @@ struct OrderDetailsView: View {
     @StateObject var orderViewModel: OrderViewModel = OrderViewModel()
     
     @State var orderDetail: OrderDetail?
-    @State var order_id = "2502031602274b22"
+    @State var estimatedDeliveryDate: String?
+    @Binding var order_id: String// = "2502031602274b22"
     
     var body: some View {
         VStack(content: {
@@ -36,11 +37,11 @@ struct OrderDetailsView: View {
                                 
                                 Spacer()
                                 
-                                Text(orderDetail!.status)
+                                Text(statusText(for: orderDetail!.status))
                                     .padding(10)
                                     .font(.system(size: 14))
                                     .foregroundStyle(.blue)
-                                    .background(.blue.opacity(0.4))
+                                    .background(statusColor(for: orderDetail!.status))
                                     .clipShape(.rect(cornerRadius: 20))
                             })
                             // 물건 종류수 만큼 반복
@@ -58,7 +59,7 @@ struct OrderDetailsView: View {
                                             HStack(content: {
                                                 Text("Price: ")
                                                 Spacer()
-                                                Text("$\(product.price)")
+                                                Text("$\(String(format: "%.2f", product.price))")
                                             })
                                             .bold()
 
@@ -68,14 +69,21 @@ struct OrderDetailsView: View {
                                 }
                             })
                             
-                            // http://192.168.50.38:8000/ml/duration/2502031602274b22
-                            // 변경하기
                             VStack (alignment: .leading, spacing: 10, content: {
                                 Text("Estimated Delivery Date")
-                                Text("2025.2.1")
-                                    .foregroundStyle(.blue)
-                                    .bold()
-                                    .font(.system(size:20))
+                                if estimatedDeliveryDate == nil {
+                                    ProgressView("loading...")
+                                        .progressViewStyle(CircularProgressViewStyle())
+                                        .frame(height: 200)
+                                        .padding()
+
+                                } else {
+                                    Text(estimatedDeliveryDate!)
+                                        .foregroundStyle(.blue)
+                                        .bold()
+                                        .font(.system(size:20))
+                                }
+                                
                             })
                         })
                     })
@@ -87,13 +95,41 @@ struct OrderDetailsView: View {
             Task{
                 try await orderDetail = orderViewModel.orderDetailInfo(order_id: order_id)
                 print(orderDetail!.result[0].product_name)
+                try await estimatedDeliveryDate = orderViewModel.predictDeliverDurationCalc(order_id: order_id, order_date: orderDetail!.order_date.date)
+                print(estimatedDeliveryDate!)
             }
         })
         
     }
+    
+    func statusColor(for status: String) -> Color {
+        switch status {
+        case "배송전":
+            return Color.gray.opacity(0.4) // 배송전 (회색)
+        case "배송중":
+            return Color.blue.opacity(0.4) // 배송중 (파란색)
+        case "배송완료":
+            return Color.green.opacity(0.4) // 배송완료 (녹색)
+        default:
+            return Color.black.opacity(0.4) // 기본값 (검정색)
+        }
+    }
+    
+    func statusText(for status: String) -> String {
+        switch status {
+        case "배송전":
+            return "Pending"  // 배송전 → Pending
+        case "배송중":
+            return "In Transit"  // 배송중 → In Transit
+        case "배송완료":
+            return "Delivered"  // 배송완료 → Delivered
+        default:
+            return "Unknown"  // 기본값
+        }
+    }
 }
 
 
-#Preview {
-    OrderDetailsView()
-}
+//#Preview {
+//    OrderDetailsView()
+//}

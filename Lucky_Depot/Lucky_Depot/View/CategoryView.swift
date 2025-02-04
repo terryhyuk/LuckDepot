@@ -127,7 +127,7 @@ struct ProductView: View {
     var body: some View {
         VStack(alignment:.leading,content: {
             
-            WebImage(url: URL(string: "http://192.168.50.38:8000/product/view/\(product.image)"))
+            WebImage(url: URL(string: product.imagePath))
                 .resizable()
                 .frame(width:170, height: 150)
             

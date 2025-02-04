@@ -22,6 +22,8 @@ struct ContentView: View {
     @State var userRealM : UserLoginViewModel = UserLoginViewModel()
     @State var orderViewModel : OrderViewModel = OrderViewModel()
     
+    @State var order_id: String = ""
+    
 //    @StateObject private var productViewModel = ProductViewModel()
     
     var body: some View {
@@ -65,13 +67,13 @@ struct ContentView: View {
                 } else if destination == "PersonView" {
                     PersonView(selectedTab: $selectedTab, navigationPath: $navigationPath, userRealM: userRealM, orderViewModel: orderViewModel)
                 } else if destination == "OrderHistoryView" {
-                    OrderHistory(navigationPath: $navigationPath,userRealM: userRealM, orderViewModel: orderViewModel )
+                    OrderHistory(navigationPath: $navigationPath,userRealM: userRealM, orderViewModel: orderViewModel, order_id: $order_id)
                 } else if destination == "DetailView" {
                     DetailView(navigationPath: $navigationPath)
                 }else if destination == "ShippingStatusView"{
                     ShippingStatusView()
                 } else if destination == "OrderDetailsView" {
-                    OrderDetailsView()
+                    OrderDetailsView(order_id: $order_id)
                 }
             }
             

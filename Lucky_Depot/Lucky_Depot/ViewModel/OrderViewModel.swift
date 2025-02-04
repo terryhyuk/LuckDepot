@@ -94,9 +94,10 @@ class OrderViewModel: ObservableObject {
             throw error
         }
     }
+    
     func fetchUserDetailOrders(userSeq:Int) async throws -> [UserOrder]{
         do {
-
+            
             let result: JsonResult<[UserOrder]> = try await jsonViewModel.fetchJSON(path: "/detail/\(userSeq)")
             let order = result.result
             return order
@@ -104,6 +105,8 @@ class OrderViewModel: ObservableObject {
             print("Error: \(error)")
             throw error
         }
+    }
+    
     func orderDetailInfo(order_id: String) async throws -> OrderDetail{
         guard let url = URL(string: baseURL + "deliver/" + order_id) else {
             throw URLError(.badURL)
@@ -112,5 +115,25 @@ class OrderViewModel: ObservableObject {
         let (data, _) = try await URLSession.shared.data(from: url)
         
         return try JSONDecoder().decode(OrderDetail.self, from: data)
+    }
+    
+    func predictDeliverDurationCalc(order_id: String, order_date: String) async throws -> String{
+        guard let url = URL(string: baseURL + "ml/duration/" + order_id) else {
+            throw URLError(.badURL)
+        }
+
+        let (data, _) = try await URLSession.shared.data(from: url)
+        var duration = try JSONDecoder().decode(PredictDeliverDuration.self, from: data)
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        dateFormatter.locale = Locale(identifier: "ko_KR") // 한국 시간 기준 설정
+        
+        // 🟢 문자열 → Date 변환
+        let date = dateFormatter.date(from: order_date)
+        
+        let newDate = Calendar.current.date(byAdding: .day, value: duration.predicted_value, to: date!)
+        
+        return newDate.map { dateFormatter.string(from: $0) }!
     }
 }
