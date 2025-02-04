@@ -96,8 +96,10 @@ async def week(session: Session = Depends(db.session)):
 
     <key>
     전체 key : 'result' \n
-    상품 매출 표 key : 'products' - (name, order_count, total_price) \n
-    그래프 key : 'weekday_sales' - (weekday, sales) \n
+    상품 매출 표 key : 'products' 
+    -  (name, order_count, total_price) \n
+    그래프 key : 'weekday_sales' 
+    - (weekday, sales) \n
     """
     try:
         current_date = datetime.now()
@@ -178,7 +180,8 @@ async def month(session : Session = Depends(db.session)):
     매출관리 페이지 월별 매출 표 \n
 
 
-    key : result - (name, order_count, total_price)
+    key : result \n
+    -  (name, order_count, total_price)
     
     """
     try :
@@ -255,16 +258,16 @@ async def month(session : Session = Depends(db.session)):
 @router.get('/home', status_code=200)
 async def dashboard(session : Session = Depends(db.session)): 
     """
-    관리자 dashboard 
-    1. 최근 주문 key = result
-    count : 대표 상품 외 상품 갯수
-    price : 주문별 금액
-    quantity : \n
+    관리자 dashboard \n
+    1. 최근 주문  "key" = result \n
+    - count : 대표 상품 외 상품 갯수 \n
+    - price : 주문별 금액 \n
+    - quantity : \n
 
-    2. 카테고리별 판매율 key = category_sales
-    category_id : 카테고리 id,
-    category_name: 카테고리명,
-    total_sales : 카테고리별 매출 \n
+    2. 카테고리별 판매율 key = category_sales \n
+    - category_id : 카테고리 id, \n
+    - category_name: 카테고리명, \n
+    - total_sales : 카테고리별 매출 \n
 
     """
     try :   
@@ -321,6 +324,12 @@ async def insert(session : Session = Depends(db.session), id : str = None,user_s
     """
     사용자용 \n
     주문시 orderdetail 입력 \n
+    - id : 주문번호 \n
+    - user_seq : 유저 seq \n
+    - product_id : 상품 코드 \n
+    - price : 상품 가격 \n
+    - quantity : 주문수량 \n
+    - name : 유저 이름 
     """
     try :
         new_order = OrderDetail(
@@ -341,10 +350,10 @@ async def insert(session : Session = Depends(db.session), id : str = None,user_s
 @router.get('/{user_seq}', status_code=200)
 async def select_orderlist(session : Session = Depends(db.session), user_seq : int = None):
     """
-    주문내역 불러오기
-    대표상품 : name, quantity,image
-    총 합 : price
-    count : 주문 상품 갯수 -1 
+    주문내역 불러오기 \n
+    대표상품 : name, quantity,image \n
+    총 합 : price \n
+    count : 주문 상품 갯수 -1  \n
     """
     try:
         lists = session.query(
