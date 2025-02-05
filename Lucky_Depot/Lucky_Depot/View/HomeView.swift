@@ -60,9 +60,17 @@ struct HomeView: View {
                 
             }
             .onAppear(perform: {
-                Task{
-                    productList = try await productViewModel.fetchProduct()
-                }
+                Task {
+                       do {
+                           var products = try await productViewModel.fetchProduct()
+                           // 상품 목록을 랜덤으로 섞기
+                           products.shuffle()
+                           productList = products
+                       } catch {
+                           // 에러 처리
+                           print("Error fetching products: \(error)")
+                       }
+                   }
                 
             })
         }

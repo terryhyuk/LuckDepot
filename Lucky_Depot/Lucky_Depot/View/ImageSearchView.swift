@@ -34,6 +34,7 @@ struct ImageSearchView: View {
             VStack {
                 Text("Discover Similar Products")
                     .font(.title)
+                    .padding(.top, 10)
                 
                 if let image = image {
                     Image(uiImage: image)
@@ -82,12 +83,8 @@ struct ImageSearchView: View {
                     Button(action: {
                         isImagePickerPresented = true
                         reset = false
+                        finishSearch = false
                         
-                        if !listLabel.isEmpty {
-                                    finishSearch = true
-                                } else {
-                                    finishSearch = false
-                                }
                     }, label: {
                         Image(systemName: "photo.badge.plus.fill")
                     })
@@ -115,16 +112,8 @@ struct ImageSearchView: View {
                     .cornerRadius(10)
                 })
                 .padding()
-                
-                // 비슷한 제품이 없다면 Text로 알려줌
-                if similarProducts.isEmpty {
-                    Text(listLabel)
-                        .padding(.vertical)
-                    
-                
-                // 비슷한 제품이 있다면 비슷한 모든 제품을 찾은 후 보여줌
-                } else {
-                    if finishSearch {
+
+                if finishSearch && !similarProducts.isEmpty {
                         List(similarProducts, id:\.self){
                             product in
                             
@@ -152,19 +141,23 @@ struct ImageSearchView: View {
                                 print("Detail")
                             }
                         }
-                    } else {
-                        Image(systemName: "progress.indicator")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .symbolEffect(.variableColor.iterative.hideInactiveLayers.nonReversing, options: .repeat(.continuous))
-                            .foregroundStyle(.button2)
-                            .padding()
-                    }
+                } else if !finishSearch {
+                    
+                    Image(systemName: "progress.indicator")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .symbolEffect(.variableColor.iterative.hideInactiveLayers.nonReversing, options: .repeat(.continuous))
+                        .foregroundStyle(.button2)
+                        .padding()
+                    
+                } else if finishSearch && similarProducts.isEmpty {
+                    Text(listLabel)
+                        .padding(.vertical)
                 }
                 
-            if !productList.isEmpty {
+           
                 Spacer()
-                }
+ 
               
             }
             .onAppear(perform: {

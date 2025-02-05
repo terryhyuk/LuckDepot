@@ -21,7 +21,15 @@ struct SearchBar: View {
                     .padding()
                     .onChange(of: search, {
                         Task{
-                            productList = try await productViewModel.fetchProduct(search: search)
+                            
+                            if search.isEmpty {
+                                var products = try await productViewModel.fetchProduct()
+                                // 상품 목록을 랜덤으로 섞기
+                                products.shuffle()
+                                productList = products
+                            } else {
+                                productList = try await productViewModel.fetchProduct(search: search)
+                            }
                         }
                     })
             }

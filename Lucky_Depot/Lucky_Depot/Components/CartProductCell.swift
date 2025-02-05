@@ -70,7 +70,9 @@ struct CartProductCell: View {
                         })
                         .padding(.horizontal)
                     })
+                    Divider()
                 }
+                
             })
             .padding(.horizontal)
         }
