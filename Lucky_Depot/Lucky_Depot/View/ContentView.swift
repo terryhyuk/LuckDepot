@@ -40,6 +40,8 @@ struct ContentView: View {
                         
 //                        PersonView()
 //                            .tag(Tab.person)
+                        ImageSearchView( navigationPath: $navigationPath)
+                            .tag(Tab.camera)
                         
                     })
                 })
@@ -88,7 +90,7 @@ enum Tab: Int, Identifiable, CaseIterable, Comparable {
         lhs.rawValue < rhs.rawValue
     }
     
-    case  home, category, person, cart
+    case  home, category, person, cart, camera
     
     internal var id: Int { rawValue }
     
@@ -102,6 +104,8 @@ enum Tab: Int, Identifiable, CaseIterable, Comparable {
             return "person.fill"
         case .cart:
             return "cart.fill"
+        case .camera:
+            return "camera.viewfinder"
 
         }
     }
@@ -116,7 +120,8 @@ enum Tab: Int, Identifiable, CaseIterable, Comparable {
             return "Person"
         case .cart:
             return "Cart"
-
+        case .camera:
+            return "camera"
         }
     }
     
