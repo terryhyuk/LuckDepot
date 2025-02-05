@@ -97,19 +97,23 @@ class CustomDialog {
     VoidCallback? onConfirm,
   }) {
     final config = _dialogConfigs[type]!;
-    
-    final TextEditingController categoryNameController = TextEditingController();
+
+    final TextEditingController categoryNameController =
+        TextEditingController();
     final TextEditingController nameController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
     final TextEditingController quantityController = TextEditingController();
     final TextEditingController inputController = TextEditingController();
-    
+
     final ValueNotifier<String> selectedImage = ValueNotifier<String>('');
-    final ValueNotifier<Uint8List?> imageBytes = ValueNotifier<Uint8List?>(null);
-    
+    final ValueNotifier<Uint8List?> imageBytes =
+        ValueNotifier<Uint8List?>(null);
+
     final categories = Get.find<InventoryController>().categories;
-    final initialCategory = categories.where((c) => c != 'All').firstOrNull ?? categories[1];
-    final ValueNotifier<String> selectedCategory = ValueNotifier<String>(initialCategory);
+    final initialCategory =
+        categories.where((c) => c != 'All').firstOrNull ?? categories[1];
+    final ValueNotifier<String> selectedCategory =
+        ValueNotifier<String>(initialCategory);
 
     showDialog(
       context: context,
@@ -143,7 +147,6 @@ class CustomDialog {
               ),
               const Divider(),
               const SizedBox(height: 16),
-
               if (type == DialogType.addCategory) ...[
                 TextField(
                   controller: categoryNameController,
@@ -153,8 +156,9 @@ class CustomDialog {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text('Current Categories:', 
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const Text('Current Categories:',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Container(
                   height: 200,
@@ -172,7 +176,6 @@ class CustomDialog {
                   ),
                 ),
               ],
-
               if (type == DialogType.addProduct) ...[
                 DropdownButtonFormField<String>(
                   value: selectedCategory.value,
@@ -232,7 +235,7 @@ class CustomDialog {
                               type: FileType.image,
                               allowMultiple: false,
                             );
-                            
+
                             if (result != null) {
                               final file = result.files.first;
                               selectedImage.value = file.name;
@@ -240,9 +243,11 @@ class CustomDialog {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green[50]
+                              backgroundColor: Colors.white),
+                          child: Text(
+                            value.isEmpty ? 'Select Image' : 'Change Image',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          child: Text(value.isEmpty ? 'Select Image' : 'Change Image'),
                         ),
                         if (value.isNotEmpty) ...[
                           const SizedBox(height: 16),
@@ -270,7 +275,6 @@ class CustomDialog {
                   },
                 ),
               ],
-
               if (type == DialogType.input) ...[
                 TextField(
                   controller: inputController,
@@ -284,7 +288,6 @@ class CustomDialog {
                   ],
                 ),
               ],
-
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -312,25 +315,31 @@ class CustomDialog {
                             'price': priceController.text,
                             'image': selectedImage.value,
                             'quantity': quantityController.text,
-                            'category_id': '${categories.indexOf(selectedCategory.value)}',
-                            'imageBytes': base64Encode(imageBytes.value ?? Uint8List(0)),
+                            'category_id':
+                                '${categories.indexOf(selectedCategory.value)}',
+                            'imageBytes':
+                                base64Encode(imageBytes.value ?? Uint8List(0)),
                           });
                         }
-                      } else if (type == DialogType.input && onInputConfirm != null) {
+                      } else if (type == DialogType.input &&
+                          onInputConfirm != null) {
                         onInputConfirm(inputController.text);
-                      } else if (type == DialogType.delete && onConfirm != null) {
+                      } else if (type == DialogType.delete &&
+                          onConfirm != null) {
                         onConfirm();
                       }
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(120, 40),
-                      backgroundColor: Colors.white,
-                      foregroundColor: type == DialogType.delete ? Colors.red : Colors.green,
-                      
-                      side: BorderSide(color: type==DialogType.delete ? Colors.red : Colors.green)
-                      
-                    ),
+                        minimumSize: const Size(120, 40),
+                        backgroundColor: Colors.white,
+                        foregroundColor: type == DialogType.delete
+                            ? Colors.red
+                            : Colors.green,
+                        side: BorderSide(
+                            color: type == DialogType.delete
+                                ? Colors.red
+                                : Colors.green)),
                     child: Text(config.confirmText ?? 'OK'),
                   ),
                 ],
