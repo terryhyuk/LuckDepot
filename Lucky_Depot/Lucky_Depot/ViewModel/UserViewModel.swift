@@ -11,7 +11,7 @@ class UserViewModel: ObservableObject {
 
     // 서버에 이메일, 이름 전송 후 JSON 응답
     func sendUserData(idToken: String?, type: String?) async throws -> [String: Any] {
-        guard let url = URL(string: "https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/login/google") else {
+        guard let url = URL(string: "https://fastapi.fre.today/login/google") else {
             throw URLError(.badURL)
         }
 
@@ -52,7 +52,7 @@ class UserViewModel: ObservableObject {
 
     
     func getUserSeq(email: String) async throws -> JsonResult<Int> {
-        guard let url = URL(string: "https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/login/seq?request=" + email) else {
+        guard let url = URL(string: "https://fastapi.fre.today/login/seq?request=" + email) else {
             throw URLError(.badURL)
         }
         

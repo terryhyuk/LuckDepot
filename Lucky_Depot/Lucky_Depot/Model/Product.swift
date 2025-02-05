@@ -19,7 +19,7 @@ struct Product: Identifiable, Decodable {
            return price * Double(quantity)
        }
     var imagePath: String{
-        return "https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/product/view/\(image)"
+        return "https://fastapi.fre.today/product/view/\(image)"
     }
 
     init(id: Int, image: String, category_id: Int, name: String, price: Double, quantity: Int) {

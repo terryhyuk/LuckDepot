@@ -194,7 +194,7 @@ struct PaymentsView: View {
                 product_id: productList[i].id,
                 price: productList[i].price,
                 quantity: productList[i].quantity,
-                name: productList[i].name
+                name: userLoginViewModel.realMUser[0].name
             )
         }
     }

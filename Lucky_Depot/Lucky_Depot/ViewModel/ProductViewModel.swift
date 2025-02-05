@@ -8,7 +8,7 @@
 import Foundation
 
 class ProductViewModel: ObservableObject {
-    let baseURL = "https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/"
+    let baseURL = "https://fastapi.fre.today/"
     @Published var productId: Int = 0
     var jsonViewModel: JSONViewModel = JSONViewModel()
     

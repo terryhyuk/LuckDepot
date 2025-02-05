@@ -9,7 +9,7 @@ import Foundation
 import CryptoKit
 
 class OrderViewModel: ObservableObject {
-    let baseURL = "https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/"
+    let baseURL = "https://fastapi.fre.today/"
     var jsonViewModel: JSONViewModel = JSONViewModel()
 
     func createOrderNum(user_seq: Int) -> String{
