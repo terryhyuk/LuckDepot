@@ -7,6 +7,7 @@ import 'package:lucky_depot/model/truck.dart';
 import 'package:lucky_depot/repository/customer_repository.dart';
 import 'package:lucky_depot/repository/product_detail.dart';
 import 'package:lucky_depot/repository/product_repository.dart';
+import 'package:lucky_depot/view/page/login.dart';
 import 'package:lucky_depot/view/widgets/customer_management.dart';
 import 'package:lucky_depot/view/page/dashboard.dart';
 import 'package:lucky_depot/view/page/delivery_driver.dart';
@@ -18,6 +19,7 @@ import 'package:lucky_depot/vm/custom_drawer_controller.dart';
 import 'package:lucky_depot/vm/customer_controller.dart';
 import 'package:lucky_depot/vm/delivery_driver_controller.dart';
 import 'package:lucky_depot/vm/inventory_controller.dart';
+import 'package:lucky_depot/vm/logincontroller.dart';
 import 'package:lucky_depot/vm/recent_order_controller.dart';
 import 'package:lucky_depot/vm/sales_controller.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -43,6 +45,7 @@ Get.put(CustomerController());
 Get.put(InventoryController());
 Get.put(SalesController());
 Get.put(RecentOrderController());
+Get.put(LoginController());
 
   runApp(const MyApp());
 }
@@ -76,12 +79,17 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/login',
       defaultTransition: Transition.noTransition,
       getPages: [
         GetPage(
           name: '/',
           page: () => const Dashboard(),
+          transition: Transition.noTransition,
+        ),
+        GetPage(
+          name: '/login',
+          page: () => const LoginPage(),
           transition: Transition.noTransition,
         ),
         GetPage(

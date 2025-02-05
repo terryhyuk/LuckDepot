@@ -4,7 +4,7 @@ import 'package:lucky_depot/model/stat_card.dart';
 import 'package:lucky_depot/view/widgets/dashboard_chart_widget.dart';
 import 'package:lucky_depot/view/widgets/coustom_drawer.dart';
 import 'package:lucky_depot/view/widgets/recent_orders_table.dart';
-import 'package:lucky_depot/view/widgets/stat_Card_widget.dart';
+import 'package:lucky_depot/view/widgets/stat_card_widget.dart';
 import 'package:lucky_depot/vm/chartController.dart';
 
 class Dashboard extends StatelessWidget {

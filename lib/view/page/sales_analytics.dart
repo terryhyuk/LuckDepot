@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_depot/view/widgets/coustom_drawer.dart';
 import 'package:lucky_depot/view/widgets/salesTrendschart.dart';
-import 'package:lucky_depot/view/widgets/topSellingBarChart.dart';
+import 'package:lucky_depot/view/widgets/topsellingbarchart.dart';
 import 'package:lucky_depot/view/widgets/topsellingtable.dart';
 class SalesAnalytics extends StatelessWidget {
   const SalesAnalytics({super.key});
