@@ -19,7 +19,6 @@ struct ImageSearchView: View {
 
     @State var productList: [Product] = []
     @State var similarProducts: [Product] = []
-    @State var similarImages: [UIImage] = []
     @State var productImages: [UIImage] = []
     
     @Binding var navigationPath: NavigationPath
@@ -39,24 +38,47 @@ struct ImageSearchView: View {
                 if let image = image {
                     Image(uiImage: image)
                         .resizable()
-                        .scaledToFill()
                         .frame(width: finishSearch ? 150 : 300, height: finishSearch ? 100 : 300)
+                        .scaledToFill()
                         .padding()
                         .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(style: StrokeStyle(lineWidth: 2, dash: [5])) // 점선 테두리 유지
+                                .foregroundColor(.green)
+                        )
+                        .padding()
+                    
                 } else {
                     Rectangle()
-                            .fill(Color.gray.opacity(0.2)) // 회색 박스
-                            .frame(height: 300)
-                            .cornerRadius(10) // 모서리 둥글게
-                            .padding()
-                            .overlay(
-                                Text("Please upload a photo from your gallery") // 이미지가 없을 때 텍스트 추가
+                        .fill(Color.green.opacity(0.1))
+                        .frame(height: 300)
+                        .cornerRadius(10)
+                        .padding()
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(style: StrokeStyle(lineWidth: 2, dash: [5])) // 점선 테두리 유지
+                                .foregroundColor(.green)
+                        )
+                        .overlay(
+                            VStack(spacing: 15) {
+                                Image(systemName: "photo.on.rectangle.angled")
+                                    .font(.system(size: 50))
+                                    .foregroundColor(.black.opacity(0.7))
+                                Text("Upload a photo of your item")
                                     .bold()
+                                    .foregroundColor(.black.opacity(0.7))
+                                Text("We'll find similar products for you!")
+                                    .font(.subheadline)
                                     .foregroundColor(.gray)
-                                    .font(.caption)
-                            )
+                            }
+                        )
+                        .padding()
+
+
                 }
                 HStack(content: {
+                // 이미지 선택 추가 버튼
                     Button(action: {
                         isImagePickerPresented = true
                         reset = false
@@ -73,13 +95,13 @@ struct ImageSearchView: View {
                     .padding()
                     .frame(maxWidth: .infinity) // 버튼의 너비를 가득 차게 만듦
                     .foregroundColor(.white) // 텍스트 색상
-                    .background(finishSearch ? Color.blue.opacity(0.7): Color.gray)
+                    .background(finishSearch ? Color.button2.opacity(0.8): Color.gray)
                     .cornerRadius(10)
                     
+                // 모든 상태 리셋
                     Button("Reset") {
                         isImagePickerPresented = false
                         image = nil
-                        similarImages.removeAll()
                         similarProducts.removeAll()
                         finishSearch = true
                         reset = true
@@ -94,30 +116,34 @@ struct ImageSearchView: View {
                 })
                 .padding()
                 
+                // 비슷한 제품이 없다면 Text로 알려줌
                 if similarProducts.isEmpty {
                     Text(listLabel)
+                        .padding(.vertical)
+                    
+                
+                // 비슷한 제품이 있다면 비슷한 모든 제품을 찾은 후 보여줌
                 } else {
                     if finishSearch {
                         List(similarProducts, id:\.self){
                             product in
+                            
                             HStack(content: {
                                 WebImage(url: URL(string: product.imagePath))
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 100, height: 100)
                                     .cornerRadius(8)
+                                
                                 VStack(alignment: .leading, content: {
                                     Text(product.name)
                                       
                                     HStack(content: {
-                                        
                                         Spacer()
                                         
                                         Text("$"+String(format : "%.2f", product.price))
                                             .bold()
                                     })
-                                    
-                           
                                 })
                             })
                             .onTapGesture {
@@ -127,11 +153,15 @@ struct ImageSearchView: View {
                             }
                         }
                     } else {
-                        ProgressView()
+                        Image(systemName: "progress.indicator")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .symbolEffect(.variableColor.iterative.hideInactiveLayers.nonReversing, options: .repeat(.continuous))
+                            .foregroundStyle(.button2)
+                            .padding()
                     }
-                    
-                    
                 }
+                
             if !productList.isEmpty {
                 Spacer()
                 }
@@ -155,17 +185,13 @@ struct ImageSearchView: View {
                     Task {
                         await findSimilarImages(identifier: predictionLabel)
                         if similarProducts.isEmpty {
-                            listLabel = "No similar products found"
+                            listLabel = "Oops! No similar products found."
                             
                         }
                     }
                 }
-                
             })
-                       
         }
-        
-        
     }
 
     // 이미지 다운로드 함수
@@ -183,6 +209,7 @@ struct ImageSearchView: View {
             
             return nil
         }
+    
     
     private func classifyURLImage(_ image: UIImage) async -> String? {
         guard let ciImage = CIImage(image: image) else {
@@ -207,8 +234,8 @@ struct ImageSearchView: View {
         }
     }
     
+    // productList에서 사진을 가져와서 비슷한 사진 찾음
     private func findSimilarImages(identifier: String) async {
-        similarImages.removeAll()
         similarProducts.removeAll()
 
         // 1. productList의 각 제품에 이미지를 다운로드하여 비교
@@ -222,8 +249,7 @@ struct ImageSearchView: View {
             // 2. 이미지를 비교하여 유사한 이미지 찾기
             if let assetIdentifier = await classifyURLImage(image) {
                 if assetIdentifier == identifier {
-                    similarImages.append(image)
-
+                    
                     // 3. productList에서 동일한 이미지를 가진 제품 찾기
                     for otherProduct in productList {
                         // 다른 제품의 이미지를 다운로드하여 비교
@@ -237,14 +263,12 @@ struct ImageSearchView: View {
                     }
                 }
             }
-            
-            
         }
         finishSearch = true
     }
 
 
-    // Function to classify the image using Core ML
+    // 업로드된 사진 분류하여 예측 라벨 저장
     func classifyImage(_ image: UIImage) {
         
         guard let ciImage = CIImage(image: image) else {
@@ -264,7 +288,6 @@ struct ImageSearchView: View {
                     
                 }
             }
-            
             // Perform the request
             let handler = VNImageRequestHandler(ciImage: ciImage)
             
@@ -274,9 +297,6 @@ struct ImageSearchView: View {
             print("\(error.localizedDescription)")
         }
     }
-    
-    
-  
 }
 
 // ImagePicker helper to allow the user to pick an image
