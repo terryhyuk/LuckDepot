@@ -1,15 +1,13 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Depends
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.security import APIKeyHeader
 from starlette.middleware.cors import CORSMiddleware
 from middlewares.trusted_hosts import TrustedHostMiddleware
 from database.conn import connection
 from middlewares.token_validator import access_control
-from static.hosts import TRUSTED_HOSTS
+from static.hosts import TRUSTED_HOSTS, LUCKYDEPOT_SDK
 import uvicorn
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
+
 # router
 from router.auth import router as auth_router
 from router.product import router as product_router
@@ -23,8 +21,6 @@ from router.category import router as category_router
 from router.ml_model import router as ml_router
 
 static_dir = "../crawiling_img"
-templates = Jinja2Templates(directory="templates")
-
 API_KEY_HEADER = APIKeyHeader(name="Authorization", auto_error=False)
 
 def create_app():
@@ -51,16 +47,11 @@ def create_app():
 
 
 app = create_app()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/", StaticFiles(directory="templates", html=True), name="flutter")
-templates = Jinja2Templates(directory="templates")
 
-@app.get("/", response_class=HTMLResponse)
-async def main(request:Request):
-    return "templates/index.html"
 
 app.include_router(auth_router, tags=["Auth"], prefix="/auth")
 app.include_router(product_router, tags=["Product"],prefix="/product")
+                #    , dependencies=[Depends(API_KEY_HEADER)])
 app.include_router(od_router, tags=["Detail"], prefix="/detail")
 app.include_router(order_router, tags=["Order"], prefix="/order")
 app.include_router(login_router, tags=["Login"], prefix="/login")

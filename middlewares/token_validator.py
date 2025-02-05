@@ -26,31 +26,31 @@ async def access_control(request: Request, call_next):
     print(f"요청받은 url: {url}")
     
     # ✅ Authorization 헤더 가져오기
-    auth_header = headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        if url in EXCEPT_PATH_LIST or re.match(EXCEPT_PATH_REGEX, url):
-            return await call_next(request)
-        else:
-            print("❌ Authorization 헤더 없음 또는 형식 오류")
-            return JSONResponse(status_code=401, content={"detail": "Unauthorized: Missing token"})
+    # auth_header = headers.get("Authorization")
+    # if not auth_header or not auth_header.startswith("Bearer "):
+    #     if url in EXCEPT_PATH_LIST or re.match(EXCEPT_PATH_REGEX, url):
+    #         return await call_next(request)
+    #     else:
+    #         print("❌ Authorization 헤더 없음 또는 형식 오류")
+    #         return JSONResponse(status_code=401, content={"detail": "Unauthorized: Missing token"})
 
-    token = auth_header.split("Bearer ")[1]  # "Bearer {JWT}"에서 JWT 추출
+    # token = auth_header.split("Bearer ")[1]  # "Bearer {JWT}"에서 JWT 추출
 
-    try:
-        decoded_token = firebase_auth.verify_id_token(token)  # ✅ Firebase JWT 검증
-        request.state.user = decoded_token  # ✅ 사용자 정보 저장
+    # try:
+    #     decoded_token = firebase_auth.verify_id_token(token)  # ✅ Firebase JWT 검증
+    #     request.state.user = decoded_token  # ✅ 사용자 정보 저장
 
-    except firebase_auth.ExpiredIdTokenError:
-        print("❌ 만료된 토큰")
-        return JSONResponse(status_code=401, content={"detail": "Unauthorized: Expired token"})
+    # except firebase_auth.ExpiredIdTokenError:
+    #     print("❌ 만료된 토큰")
+    #     return JSONResponse(status_code=401, content={"detail": "Unauthorized: Expired token"})
 
-    except firebase_auth.InvalidIdTokenError:
-        print("❌ 잘못된 토큰")
-        return JSONResponse(status_code=401, content={"detail": "Unauthorized: Invalid token"})
+    # except firebase_auth.InvalidIdTokenError:
+    #     print("❌ 잘못된 토큰")
+    #     return JSONResponse(status_code=401, content={"detail": "Unauthorized: Invalid token"})
 
-    except Exception as e:
-        print(f"❌ Firebase 검증 중 오류 발생: {e}")
-        return JSONResponse(status_code=500, content={"detail": f"Firebase token verification error: {str(e)}"})
+    # except Exception as e:
+    #     print(f"❌ Firebase 검증 중 오류 발생: {e}")
+    #     return JSONResponse(status_code=500, content={"detail": f"Firebase token verification error: {str(e)}"})
 
     return await call_next(request)
 
