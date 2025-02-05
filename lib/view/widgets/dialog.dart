@@ -114,6 +114,7 @@ class CustomDialog {
     showDialog(
       context: context,
       builder: (context) => Dialog(
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
@@ -238,6 +239,9 @@ class CustomDialog {
                               imageBytes.value = file.bytes;
                             }
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green[50]
+                          ),
                           child: Text(value.isEmpty ? 'Select Image' : 'Change Image'),
                         ),
                         if (value.isNotEmpty) ...[
@@ -321,7 +325,11 @@ class CustomDialog {
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(120, 40),
-                      backgroundColor: type == DialogType.delete ? Colors.red : Colors.blue,
+                      backgroundColor: Colors.white,
+                      foregroundColor: type == DialogType.delete ? Colors.red : Colors.green,
+                      
+                      side: BorderSide(color: type==DialogType.delete ? Colors.red : Colors.green)
+                      
                     ),
                     child: Text(config.confirmText ?? 'OK'),
                   ),

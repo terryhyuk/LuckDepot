@@ -147,6 +147,7 @@ class InventoryManagement extends StatelessWidget {
                               showDialog(
                                 context: context,
                                 builder: (context) => Dialog(
+                                  backgroundColor: Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -256,8 +257,15 @@ class InventoryManagement extends StatelessWidget {
                                                         MainAxisAlignment.end,
                                                     children: [
                                                       ElevatedButton.icon(
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.white,
+                      foregroundColor : Colors.green,
+                      
+                      side: const  BorderSide(color: Colors.green)
+                                                        ),
                                                         onPressed: () =>
                                                             CustomDialog.show(
+                                                              
                                                           context,
                                                           DialogType.input,
                                                           customContent:
@@ -284,12 +292,18 @@ class InventoryManagement extends StatelessWidget {
                                                           },
                                                         ),
                                                         icon:
-                                                            const Icon(Icons.add),
+                                                            const Icon(Icons.add, color: Colors.green,),
                                                         label: const Text(
                                                             'Add Quantity'),
                                                       ),
                                                       const SizedBox(width: 16),
                                                       ElevatedButton.icon(
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.white,
+                      foregroundColor : Colors.red,
+                      
+                      side:const  BorderSide(color : Colors.red)
+                                                        ),
                                                         onPressed: () =>
                                                             CustomDialog.show(
                                                           context,

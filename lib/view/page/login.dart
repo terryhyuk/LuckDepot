@@ -44,6 +44,7 @@ class LoginPage extends HookWidget {
 
             // 로그인 폼
             Card(
+              color: Colors.white,
               elevation: 4,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
