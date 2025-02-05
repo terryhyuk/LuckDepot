@@ -11,6 +11,7 @@ import GoogleSignIn
 import GoogleSignInSwift
 import FBSDKLoginKit
 import SwiftUI
+import Security
 
 enum AuthenticationState {
     case unauthenticated
@@ -78,7 +79,7 @@ class AuthenticationViewModel: ObservableObject {
                         self.userRealM.addUser(user: loginUser, seq: seq.result)
                     }
                     self.userRealM.fetchUser()
-//                    print(self.userRealM.realMUser.count)
+                    //                    print(self.userRealM.realMUser.count)
                 } else {
                     print("❌ 로그아웃됨 - Realm 데이터 정리")
                     
@@ -96,14 +97,14 @@ class AuthenticationViewModel: ObservableObject {
             let name = firebaseUser.displayName ?? "Unknown User"
             print("✅ Firebase 로그인 상태 확인됨: \(email)")
             let loginUser = LoginUser(email: email, name: name)
-//            self.userRealM.addUser(user: loginUser, seq: <#T##Int#>)
+            //            self.userRealM.addUser(user: loginUser, seq: <#T##Int#>)
             Task{
                 let seq = try await self.userModel.getUserSeq(email: firebaseUser.email ?? "")
                 print(seq.result)
                 // ✅ 기존 Realm addUser() 메서드 활용
                 self.userRealM.addUser(user: loginUser, seq: seq.result)
             }
-
+            
         } else {
             print("❌ Firebase에 로그인된 사용자가 없음 - Realm 데이터 정리")
             
@@ -211,7 +212,7 @@ extension AuthenticationViewModel {
                     // ✅ 기존 Realm addUser() 메서드 활용
                     self.userRealM.addUser(user: loginUser, seq: seq.result)
                 }
-
+                
                 print("✅ Realm에 사용자 저장: \(email)")
                 
                 // ✅ JWT 토큰을 UserDefaults에 저장 (API 요청 시 활용)
@@ -242,80 +243,84 @@ extension AuthenticationViewModel {
     }
     
     
+
     func signInWithFacebook() async -> Bool {
         islogging = true
-        //withCheckedContinuation 비동기 클로저를 동기식으로 기다릴 수 있게 해주는 Swift의 비동기 API
-        // 클로저는 비동기 작업을 마친 후 continuation.resume(returning:)으로 결과를 반환
+
         return await withCheckedContinuation { continuation in
             manager.logIn(permissions: ["public_profile", "email"], from: getRootViewController()) { result, error in
                 if let error = error {
-                    print("Facebook Login Error: \(error.localizedDescription)")
+                    print("❌ Facebook Login Error: \(error.localizedDescription)")
                     self.islogging = false
-
                     continuation.resume(returning: false)
                     return
                 }
                 guard let result = result, !result.isCancelled else {
-                    print("Facebook login cancelled.")
+                    print("❌ Facebook login cancelled.")
                     self.islogging = false
                     continuation.resume(returning: false)
                     return
                 }
+
                 let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
-                
-                Auth.auth().signIn(with: credential) { [self] result, error in
-                    if let error = error {
-                        print("Firebase Auth Error: \(error.localizedDescription)")
+
+                Task {
+                    do {
+                        let authResult = try await Auth.auth().signIn(with: credential)
+                        let firebaseUser = authResult.user  // ✅ `guard let` 제거 (필수 아님)
+
+                        // ✅ Firebase에서 최신 ID Token 가져오기
+                        let idToken = try await firebaseUser.getIDToken(forcingRefresh: true)
+                        print("📡 FastAPI에 전송할 ID Token: \(idToken)")
+
+                        // ✅ FastAPI 서버에 사용자 데이터 전송
+                        let jsonResponse = try await self.userModel.sendUserData(idToken: idToken, type: "facebook")
+                        print("📡 서버 응답: \(jsonResponse)")
+
+                        // ✅ JWT 토큰을 UserDefaults에 저장
+                        UserDefaults.standard.set(idToken, forKey: "jwtToken")
+                        UserDefaults.standard.synchronize() // ⚠️ 디버깅용 동기화 (실제 앱에서는 불필요)
+                        print("✅ JWT 토큰 저장 완료: \(idToken)")
+
+                        // ✅ 저장된 토큰이 정상적으로 저장되었는지 즉시 확인
+                        if let savedToken = UserDefaults.standard.string(forKey: "jwtToken") {
+                            print("🔍 저장된 JWT 토큰 확인: \(savedToken)")
+                        } else {
+                            print("❌ JWT 토큰 저장 실패")
+                        }
+
+                        // ✅ 서버 응답에서 사용자 정보 추출 및 Realm 저장
+                        if let userData = jsonResponse["user"] as? [String: Any],
+                           let email = userData["id"] as? String,
+                           let name = userData["name"] as? String {
+                            
+                            let loginUser = LoginUser(email: email, name: name)
+
+                            // ✅ Realm에 사용자 정보 저장
+                            Task {
+                                let seq = try await self.userModel.getUserSeq(email: firebaseUser.email ?? "")
+                                print(seq.result)
+                                self.userRealM.addUser(user: loginUser, seq: seq.result)
+                            }
+
+                            print("✅ Realm에 사용자 저장: \(email)")
+                        }
+
+                        print("✅ Facebook 로그인 완료: \(firebaseUser.uid)")
+                        self.islogging = false
+                        continuation.resume(returning: true)
+                    } catch {
+                        print("❌ Firebase Auth Error: \(error.localizedDescription)")
                         self.islogging = false
                         continuation.resume(returning: false)
-                        return
                     }
-                    guard let firebaseUser = result?.user else {
-                                        print("Firebase user is nil")
-                                        continuation.resume(returning: false)
-                                        return
-                                    }
-                    firebaseUser.getIDToken { idToken, error in
-                        if let error = error {
-                        print("ID Token Error: \(error.localizedDescription)")
-                        continuation.resume(returning: false)
-                        return
-                        }
-                        if let idToken = idToken {
-                        //print("ID Token: \(idToken)")
-                        self.idToken = idToken
-                        }
-                    }
-                    
-                    Task{
-                        do{
-                            let jsonResponse = try await userModel.sendUserData(idToken: self.idToken, type: "facebook")
-                            print("서버 응답: \(jsonResponse)")
-                            print("facebook login 성공")
-                        }catch{
-                            print("서버 데이터 전송 오류: \(error.localizedDescription)")
-                        }
-                    }
-                    
-                    let loginUser: LoginUser = LoginUser(email: (result?.user.email)!, name: (result?.user.displayName)!)
-                    Task{
-                        let seq = try await self.userModel.getUserSeq(email: firebaseUser.email ?? "")
-                        print(seq.result)
-                        // ✅ 기존 Realm addUser() 메서드 활용
-                        self.userRealM.addUser(user: loginUser, seq: seq.result)
-                    }
-
-//                    userRealM.addUser(user: LoginUser(email: (result?.user.email)!, name: (result?.user.displayName)!))
-                    print("User signed in with Facebook: \(result?.user.uid ?? "")")
-                    print("User signed in with Facebook: \(result?.user.email ?? "")")
-                    print("User signed in with Facebook: \(result?.user.displayName ?? "")")
-                    islogging = false
-                    continuation.resume(returning: true)
                 }
-                
             }
         }
     }
+
+
+
     
     
     func getRootViewController() -> UIViewController? {

@@ -10,8 +10,8 @@ import Foundation
 class UserViewModel: ObservableObject {
 
     // 서버에 이메일, 이름 전송 후 JSON 응답
-    func sendUserData(idToken: String?, type: String?) async throws -> [String: Any] {
-        guard let url = URL(string: "https://fastapi.fre.today/login/google") else {
+    func sendUserData(idToken: String?, type: String) async throws -> [String: Any] {
+        guard let url = URL(string: "https://fastapi.fre.today/login/\(type)") else {
             throw URLError(.badURL)
         }
 
@@ -22,7 +22,7 @@ class UserViewModel: ObservableObject {
 
         let requestBody: [String: Any] = [
             "idToken": idToken ?? "",
-            "login_type": type ?? ""
+            "login_type": type
         ]
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody, options: [])
 
