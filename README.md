@@ -24,6 +24,14 @@
   
     # file_picker
     file_picker: ^8.1.7
+
+    # fl_chart
+    fl_chart: ^0.70.2
+    # intl
+    intl: ^0.20.2
+  
+    google_fonts: ^6.2.1
+    flutter_hooks: ^0.20.5
 ```
 ```
   SwiftUI
