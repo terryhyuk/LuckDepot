@@ -27,6 +27,9 @@
 
     # fl_chart
     fl_chart: ^0.70.2
+    # Chart
+    syncfusion_flutter_charts: ^28.2.4+1
+
     # intl
     intl: ^0.20.2
   
@@ -48,7 +51,7 @@
    GoogleSignin
    GoogleSigninSwift
 
-   # Locla Database RealM
+   # Local Database RealM
    RealmSwift
 
    # Network Image
