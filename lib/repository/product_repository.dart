@@ -76,28 +76,19 @@ class ProductRepository {
 
 
   // 수량 업데이트
-  updateQuantity(int productId, int additionalQuantity) async {
+  Future<bool> updateQuantity(int productId, int additionalQuantity) async {
     try {
-      // 현재 상품 정보 가져오기
-      final productResponse = await http.get(Uri.parse('$url/product/$productId'));
-      if (productResponse.statusCode == 200) {
-        final Map<String, dynamic> responseData = jsonDecode(productResponse.body);
-        if (responseData['result'] != null) {
-          final currentQuantity = responseData['result']['quantity'] as int;
-          final newQuantity = currentQuantity + additionalQuantity;
+      final response = await http.put(
+        Uri.parse('$url/product/$productId?quantity=$additionalQuantity'), 
+        headers: {'Content-Type': 'application/json'},
+      );
 
-          final response = await http.put(
-            Uri.parse('$url/product/$productId/?quantity=$newQuantity'),
-            headers: {'Content-Type': 'application/json'},
-          );
-          return response.statusCode == 200;
-        }
-      }
-      return false;
+      return response.statusCode == 200;
     } catch (e) {
       return false;
     }
   }
+
 
   // 카테고리 추가
   addNewCategory(String categoryName) async {
