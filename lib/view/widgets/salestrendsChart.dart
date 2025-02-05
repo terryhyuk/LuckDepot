@@ -105,8 +105,11 @@ class SalesTrendsChart extends StatelessWidget {
                                 ),
                               );
                             default:
+                            // final month = getMonthName(salesData[index]['month']);
+                            final month= salesController.getMonthName(salesData[index]['month'].toString().substring(5));
                               return Text(
-                                '${index + 1}월',
+                                // '${index + 1}월',
+                                month,
                                 style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 12,
