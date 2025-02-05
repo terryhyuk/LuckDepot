@@ -67,6 +67,12 @@ navigateToPage(int index) {
           '/delivery_driver',
           preventDuplicates: false,
         );
+      case 6:
+        updateRoute('/login');
+        Get.toNamed(
+          '/login',
+          preventDuplicates: true,
+        );  
     }
   }
 }

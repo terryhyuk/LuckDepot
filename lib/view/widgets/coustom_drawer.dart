@@ -14,8 +14,7 @@ class CustomDrawer extends StatelessWidget {
     return Drawer(
       backgroundColor: Colors.blue.shade50,
       child: Focus(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column( // ⬅ ListView 대신 Column 사용
           children: [
             const DrawerHeader(
               child: Center(
@@ -83,9 +82,42 @@ class CustomDrawer extends StatelessWidget {
                   title: const Text('Delivery Driver'),
                   onTap: () => drawerController.navigateToPage(5),
                 )),
+            
+            const Spacer(), // ⬅️ 여기에 Spacer() 추가하여 남은 공간을 밀어냄
+
+            ListTile(
+              selectedTileColor: Colors.white,
+              leading: const Icon(Icons.logout),
+              title: const Text('LogOut'),
+              onTap: () => logout(context),
+            ),
+            const SizedBox(height: 16), // ⬅️ 하단 간격 추가
           ],
         ),
       ),
+    );
+  }
+  void logout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Log Out"),
+          content: const Text("Are you sure you want to log out?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // 다이얼로그 닫기
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Get.offAllNamed('/login');
+              },
+              child: const Text("Logout"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

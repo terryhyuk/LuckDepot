@@ -19,6 +19,7 @@ import 'package:lucky_depot/vm/custom_drawer_controller.dart';
 import 'package:lucky_depot/vm/customer_controller.dart';
 import 'package:lucky_depot/vm/delivery_driver_controller.dart';
 import 'package:lucky_depot/vm/inventory_controller.dart';
+import 'package:lucky_depot/vm/logincontroller.dart';
 import 'package:lucky_depot/vm/recent_order_controller.dart';
 import 'package:lucky_depot/vm/sales_controller.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -44,6 +45,7 @@ Get.put(CustomerController());
 Get.put(InventoryController());
 Get.put(SalesController());
 Get.put(RecentOrderController());
+Get.put(LoginController());
 
   runApp(const MyApp());
 }
