@@ -57,9 +57,10 @@ class Dashboard extends StatelessWidget {
                                 title: 'Total Orders',
                                 value: chartController.totalOrders.toString(),
                               ),
+                              
                             ),
                           ),
-                        ],
+                        ]
                       ),
                       const SizedBox(height: 24),
                       // 차트 영역

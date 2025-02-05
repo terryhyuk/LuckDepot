@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:lucky_depot/model/stat_card.dart';
 
@@ -14,6 +16,7 @@ class StatCardWidget extends StatelessWidget {
     return Expanded(
       child: Card(
         elevation: 2,
+        color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -33,10 +36,9 @@ class StatCardWidget extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 data.value,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
                 ),
               ),
               if (data.subtitle.isNotEmpty) ...[

@@ -38,6 +38,7 @@ class DeliveryDriver extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: Card(
+                            color: Colors.white,
                             child: Padding(
                               padding: const EdgeInsets.all(16),
                               child: Form(
@@ -191,15 +192,19 @@ class DeliveryDriver extends StatelessWidget {
                                             ],
                                           ),
                                     )),
-                                    const SizedBox(height: 16),
-                                    ElevatedButton(
-                                      onPressed: () =>
-                                          delivery.saveDriver(context),
-                                      style: ElevatedButton.styleFrom(
-                                        minimumSize:
-                                            const Size(double.infinity, 50),
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(0,30,0,10),
+                                      child: ElevatedButton(
+                                        onPressed: () =>
+                                            delivery.saveDriver(context),
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize:
+                                              const Size(double.infinity, 50),
+                                              // backgroundColor: Colors.grey[200]
+                                              backgroundColor: Colors.green[50]
+                                        ),
+                                        child: const Text('Register'),
                                       ),
-                                      child: const Text('Register'),
                                     ),
                                   ],
                                 ),
@@ -211,6 +216,7 @@ class DeliveryDriver extends StatelessWidget {
                         Expanded(
                           flex: 2,
                           child: Card(
+                            color: Colors.white,
                             child: Padding(
                               padding: const EdgeInsets.all(16),
                               child: Column(

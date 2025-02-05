@@ -128,254 +128,258 @@ class InventoryManagement extends StatelessWidget {
                 ),
                 Expanded(
                   child: Obx(
-                    () => GridView.builder(
-                      padding: const EdgeInsets.all(16),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        childAspectRatio: 0.8,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                      ),
-                      itemCount: inventory.filteredProducts.length,
-                      itemBuilder: (context, index) {
-                        final product = inventory.filteredProducts[index];
-                        return GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => Dialog(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Container(
-                                  width: 1000,
-                                  padding: const EdgeInsets.all(24),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text(
-                                            'Product Details',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
+                    () => Container(
+                      color: Colors.grey[50],
+                      child: GridView.builder(
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          childAspectRatio: 0.8,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                        itemCount: inventory.filteredProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = inventory.filteredProducts[index];
+                          return GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Container(
+                                    width: 1000,
+                                    padding: const EdgeInsets.all(24),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              'Product Details',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.close),
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            splashRadius: 20,
-                                          ),
-                                        ],
-                                      ),
-                                      const Divider(),
-                                      const SizedBox(height: 16),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            child: Image.network(
-                                              'https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/product/view/${product.image}',
-                                              width: 300,
-                                              height: 300,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Container(
-                                                  width: 300,
-                                                  height: 300,
-                                                  color: Colors.grey[200],
-                                                  child: const Center(
-                                                    child: Icon(
-                                                        Icons
-                                                            .image_not_supported,
-                                                        size: 48),
-                                                  ),
-                                                );
-                                              },
+                                            IconButton(
+                                              icon: const Icon(Icons.close),
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              splashRadius: 20,
                                             ),
-                                          ),
-                                          const SizedBox(width: 24),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  product.name,
-                                                  style: const TextStyle(
-                                                    fontSize: 24,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 16),
-                                                Text(
-                                                  'Price: \$${product.price.toStringAsFixed(2)}',
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.blue,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 16),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      'Quantity: ${product.quantity}',
-                                                      style: TextStyle(
-                                                        fontSize: 18,
-                                                        color:
-                                                            product.quantity > 0
-                                                                ? Colors.green
-                                                                : Colors.red,
-                                                      ),
+                                          ],
+                                        ),
+                                        const Divider(),
+                                        const SizedBox(height: 16),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: Image.network(
+                                                'https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/product/view/${product.image}',
+                                                width: 300,
+                                                height: 300,
+                                                fit: BoxFit.cover,
+                                                errorBuilder:
+                                                    (context, error, stackTrace) {
+                                                  return Container(
+                                                    width: 300,
+                                                    height: 300,
+                                                    color: Colors.grey[200],
+                                                    child: const Center(
+                                                      child: Icon(
+                                                          Icons
+                                                              .image_not_supported,
+                                                          size: 48),
                                                     ),
-                                                    const Text(' pcs',
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            const SizedBox(width: 24),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    product.name,
+                                                    style: const TextStyle(
+                                                      fontSize: 24,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                  Text(
+                                                    'Price: \$${product.price.toStringAsFixed(2)}',
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                      color: Colors.blue,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        'Quantity: ${product.quantity}',
                                                         style: TextStyle(
-                                                            fontSize: 18)),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 16),
-                                                Text(
-                                                  'Category: ${product.category}',
-                                                  style: const TextStyle(
-                                                      fontSize: 18),
-                                                ),
-                                                const SizedBox(height: 24),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    ElevatedButton.icon(
-                                                      onPressed: () =>
-                                                          CustomDialog.show(
-                                                        context,
-                                                        DialogType.input,
-                                                        customContent:
-                                                            'Enter quantity to add for "${product.name}"',
-                                                        onInputConfirm:
-                                                            (String value) {
-                                                          if (value
-                                                              .isNotEmpty) {
-                                                            final quantity =
-                                                                int.tryParse(
-                                                                    value);
-                                                            if (quantity !=
-                                                                    null &&
-                                                                quantity > 0) {
-                                                              inventory
-                                                                  .updateQuantity(
-                                                                      product
-                                                                          .id,
-                                                                      quantity);
-                                                              Navigator.pop(
-                                                                  context);
+                                                          fontSize: 18,
+                                                          color:
+                                                              product.quantity > 0
+                                                                  ? Colors.green
+                                                                  : Colors.red,
+                                                        ),
+                                                      ),
+                                                      const Text(' pcs',
+                                                          style: TextStyle(
+                                                              fontSize: 18)),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                  Text(
+                                                    'Category: ${product.category}',
+                                                    style: const TextStyle(
+                                                        fontSize: 18),
+                                                  ),
+                                                  const SizedBox(height: 24),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      ElevatedButton.icon(
+                                                        onPressed: () =>
+                                                            CustomDialog.show(
+                                                          context,
+                                                          DialogType.input,
+                                                          customContent:
+                                                              'Enter quantity to add for "${product.name}"',
+                                                          onInputConfirm:
+                                                              (String value) {
+                                                            if (value
+                                                                .isNotEmpty) {
+                                                              final quantity =
+                                                                  int.tryParse(
+                                                                      value);
+                                                              if (quantity !=
+                                                                      null &&
+                                                                  quantity > 0) {
+                                                                inventory
+                                                                    .updateQuantity(
+                                                                        product
+                                                                            .id,
+                                                                        quantity);
+                                                                Navigator.pop(
+                                                                    context);
+                                                              }
                                                             }
-                                                          }
-                                                        },
+                                                          },
+                                                        ),
+                                                        icon:
+                                                            const Icon(Icons.add),
+                                                        label: const Text(
+                                                            'Add Quantity'),
                                                       ),
-                                                      icon:
-                                                          const Icon(Icons.add),
-                                                      label: const Text(
-                                                          'Add Quantity'),
-                                                    ),
-                                                    const SizedBox(width: 16),
-                                                    ElevatedButton.icon(
-                                                      onPressed: () =>
-                                                          CustomDialog.show(
-                                                        context,
-                                                        DialogType.delete,
-                                                        customContent:
-                                                            'Are you sure you want to delete "${product.name}"?',
-                                                        onConfirm: () {
-                                                          inventory
-                                                              .deleteProduct(
-                                                                  product.id);
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
+                                                      const SizedBox(width: 16),
+                                                      ElevatedButton.icon(
+                                                        onPressed: () =>
+                                                            CustomDialog.show(
+                                                          context,
+                                                          DialogType.delete,
+                                                          customContent:
+                                                              'Are you sure you want to delete "${product.name}"?',
+                                                          onConfirm: () {
+                                                            inventory
+                                                                .deleteProduct(
+                                                                    product.id);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                        icon: const Icon(
+                                                            Icons.delete,
+                                                            color: Colors.red),
+                                                        label: const Text(
+                                                            'Delete Product'),
                                                       ),
-                                                      icon: const Icon(
-                                                          Icons.delete,
-                                                          color: Colors.red),
-                                                      label: const Text(
-                                                          'Delete Product'),
-                                                    ),
-                                                    const SizedBox(width: 16),
-                                                    OutlinedButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context),
-                                                      child:
-                                                          const Text('Cancel'),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                      const SizedBox(width: 16),
+                                                      OutlinedButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context),
+                                                        child:
+                                                            const Text('Cancel'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Card(
+                                color: Colors.white,
+                                elevation: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Center(
+                                          child: Image.network(
+                                            'https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/product/view/${product.image}',
+                                            fit: BoxFit.cover,
                                           ),
-                                        ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        product.name,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '\$${product.price.toStringAsFixed(2)}',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Quantity: ${product.quantity}',
+                                        style: const TextStyle(fontSize: 14),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                            );
-                          },
-                          child: MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            child: Card(
-                              elevation: 2,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Center(
-                                        child: Image.network(
-                                          'https://port-0-luckydepot-m6q0n8sc55b3c20e.sel4.cloudtype.app/product/view/${product.image}',
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      product.name,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '\$${product.price.toStringAsFixed(2)}',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Quantity: ${product.quantity}',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
