@@ -1,13 +1,15 @@
 from database.model.orderdetail import OrderDetail
 from database.model.product import Product
 from database.model.order import Order
-from database.model.deliver import Deliver
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func, cast, String, Integer, asc
 from database.conn.connection import db
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+import calendar
+
+
 
 
 
@@ -234,7 +236,7 @@ async def month(session : Session = Depends(db.session)):
         # 최근 6개월 데이터 생성 (없는 월은 0으로 설정)
         month_sales_list = [
             {
-                'month': f"{month[:4]}.{month[-2:]}",
+                'month': calendar.month_abbr[month[-2:]],
                 'sales': sales_dict.get(month[-2:], 0)
             }
             for month in reversed(months_list)
@@ -251,6 +253,7 @@ async def month(session : Session = Depends(db.session)):
                     ],
                     "month_sales" : month_sales_list
                     }
+
                 }
     except Exception as e:
         return {'result' : e}
