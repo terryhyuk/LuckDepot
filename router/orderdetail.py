@@ -365,10 +365,14 @@ async def select_orderlist(session : Session = Depends(db.session), user_seq : i
             func.min(Product.name).label('name'),
             func.count(OrderDetail.name).label('count'),
             func.min(OrderDetail.quantity).label('quantity'),
-            func.sum(OrderDetail.price).label('price'),
+            # func.sum(OrderDetail.price).label('price'),
+            func.min(Order.price)
             ).join(
                 Product,
                 Product.id == OrderDetail.product_id,
+            ).join(
+                Order,
+                Order.id == OrderDetail.id
             ).filter(
                 OrderDetail.user_seq  == user_seq,
             ).group_by(
