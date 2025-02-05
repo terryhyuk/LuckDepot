@@ -205,7 +205,7 @@ async def month(session : Session = Depends(db.session)):
         if not orders :
             raise HTTPException(status_code=404, detail="detail month not found")
         
-         # 월별 매출 쿼리
+        #  # 월별 매출 쿼리
         months_data = session.query(
             func.substring(func.min(Order.id),3,2).label('month'),
             func.sum(Order.price).label('month_price'),
@@ -233,10 +233,10 @@ async def month(session : Session = Depends(db.session)):
             months_list.append(past_date.strftime('%Y%m'))
             
         
-        # 최근 6개월 데이터 생성 (없는 월은 0으로 설정)
+        # # # 최근 6개월 데이터 생성 (없는 월은 0으로 설정)
         month_sales_list = [
             {
-                'month': calendar.month_abbr[month[-2:]],
+                'month': f"{month[:4]}.{month[-2:]}",
                 'sales': sales_dict.get(month[-2:], 0)
             }
             for month in reversed(months_list)
