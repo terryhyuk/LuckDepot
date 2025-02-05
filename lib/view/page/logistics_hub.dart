@@ -17,7 +17,7 @@ class LogisticsHub extends StatefulWidget {
 }
 
 class _LogisticsHubState extends State<LogisticsHub> {
-  final controller = Get.put(HubController());
+  final controller = Get.find<HubController>();
 
   @override
   void initState() {
