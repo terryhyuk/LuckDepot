@@ -29,9 +29,9 @@ struct Loginview: View {
         } else {
             VStack(content:{
                 
-                Image(systemName: "applepencil.and.scribble")
+                Image("luckydepot")
                     .resizable()
-                    .frame(width: 80, height: 80)
+                    .frame(width: 150, height: 150)
                     .foregroundStyle(.blue, .green)
                 
                 Text("Lucky Depot")
