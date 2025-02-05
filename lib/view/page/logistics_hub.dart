@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:lucky_depot/constants/hub_location.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:lucky_depot/view/widgets/coustom_drawer.dart';
 import 'package:lucky_depot/vm/custom_drawer_controller.dart';
+import 'package:lucky_depot/vm/hubController.dart';
 
 class LogisticsHub extends StatefulWidget {
-  const LogisticsHub({super.key});
+   const LogisticsHub({super.key});
+
+  
+
 
   @override
   State<LogisticsHub> createState() => _LogisticsHubState();
 }
 
 class _LogisticsHubState extends State<LogisticsHub> {
+  final controller = Get.put(HubController());
+
   @override
   void initState() {
     super.initState();
@@ -52,89 +58,173 @@ class _LogisticsHubState extends State<LogisticsHub> {
                         // 왼쪽 지도
                         Expanded(
                           flex: 2,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withAlpha(20),
-                                  spreadRadius: 1,
-                                  blurRadius: 5,
-                                ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: FlutterMap(
-                                options: MapOptions(
-                                  initialCenter: HubLocations.getInitialLocation(),
-                                  initialZoom: 18,
-                                ),
-                                children: [
-                                  TileLayer(
-                                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                    userAgentPackageName: 'com.example.app',
-                                  ),
-                                  MarkerLayer(
-                                    markers: HubLocations.hubs.map((hub) => 
-                                      Marker(
-                                        point: hub['location'],
-                                        width: 80,
-                                        height: 80,
-                                        child: Column(
-                                          children: [
-                                            const Icon(Icons.location_on, color: Colors.red),
-                                            Container(
-                                              padding: const EdgeInsets.all(4),
-                                              color: Colors.white,
-                                              child: Text(
-                                                hub['name'],
-                                                style: const TextStyle(fontSize: 12),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ).toList(),
+                          child: Obx(() {
+                             return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withAlpha(20),
+                                    spreadRadius: 1,
+                                    blurRadius: 5,
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: FlutterMap(
+                                  options: MapOptions(
+                                    initialCenter: LatLng(controller.hubs.first.lat, controller.hubs.first.lng),
+                                    initialZoom: 18,
+                                  ),
+                                  children: [
+                                    TileLayer(
+                                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                      userAgentPackageName: 'com.example.app',
+                                    ),
+                                    MarkerLayer(
+                                      markers: controller.hubs.map((hub) => 
+                                        Marker(
+                                          point: LatLng(hub.lat, hub.lng),
+                                          width: 80,
+                                          height: 80,
+                                          child: Column(
+                                            children: [
+                                              const Icon(Icons.location_on, color: Colors.red),
+                                              Container(
+                                                padding: const EdgeInsets.all(4),
+                                                color: Colors.white,
+                                                child: Text(
+                                                  hub.name,
+                                                  style: const TextStyle(fontSize: 12),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ).toList(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
                         ),
+                      ),
                         
                         const SizedBox(width: 24),
                         
                         // 오른쪽 허브 정보
                         Expanded(
                           flex: 2,
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withAlpha(20),
-                                  spreadRadius: 1,
-                                  blurRadius: 5,
-                                ),
-                              ],
-                            ),
-                            child: ListView.builder(
-                              itemCount: HubLocations.hubs.length,
-                              itemBuilder: (context, index) {
-                                final hub = HubLocations.hubs[index];
-                                return Card(
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  child: ListTile(
-                                    title: Text(hub['name']),
-                                    subtitle: Text(hub['address']),
+                          child: Obx(
+                            () { 
+                            return  Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.blue.shade100),
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withAlpha(1),
+                                    blurRadius: 5,
+                                    spreadRadius: 1,
                                   ),
-                                );
-                              },
-                            ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        controller.hubs.first.name,
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    'contact',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey[400], // 흐리게 표시
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.person_outline, size: 20, color: Colors.grey[600]),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          controller.hubs.first.manager,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.phone_outlined, size: 20, color: Colors.grey[600]),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          controller.hubs.first.phone,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.email_outlined, size: 20, color: Colors.grey[600]),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          controller.hubs.first.mail,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    'business hours',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey[400], // 흐리게 표시
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${controller.hubs.first.start_time} ~ ${controller.hubs.first.end_time}",
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                            }
                           ),
                         ),
                       ],

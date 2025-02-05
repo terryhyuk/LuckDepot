@@ -45,14 +45,17 @@ class DeliveryDriver extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'New Driver Registration',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.03),
+                                      child: const Text(
+                                        'New Driver Registration',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(height: 16),
+                                    // const SizedBox(height: 16),
                                     FocusTraversalGroup(
                                       policy: OrderedTraversalPolicy(),
                                       child: Column(
@@ -135,38 +138,59 @@ class DeliveryDriver extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 16),
-                                    Obx(() => Row(
-                                          children: [
-                                            const Text(
-                                              'Employment Type:',
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                            Expanded(
-                                              child: RadioListTile<bool>(
-                                                title: const Text('Full-time'),
-                                                value: true,
-                                                groupValue:
-                                                    delivery.isRegular.value,
-                                                onChanged: (value) => delivery
-                                                    .isRegular.value = value!,
-                                                activeColor: Colors.blue,
-                                                dense: true,
+                                    Obx(() => Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                                      child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(0 ,MediaQuery.of(context).size.height * 0.01,0, MediaQuery.of(context).size.height * 0.01),
+                                                child: const Text(
+                                                  'Employment Type',
+                                                  style: TextStyle(fontSize: 16),
+                                                ),
                                               ),
-                                            ),
-                                            Expanded(
-                                              child: RadioListTile<bool>(
-                                                title: const Text('Part-time'),
-                                                value: false,
-                                                groupValue:
-                                                    delivery.isRegular.value,
-                                                onChanged: (value) => delivery
-                                                    .isRegular.value = value!,
-                                                activeColor: Colors.blue,
-                                                dense: true,
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: RadioListTile<bool>(
+                                                      title: const Column(
+                                                        children: [
+                                                           Text('Full-Time'),
+                                                        ],
+                                                      ),
+                                                      value: true,
+                                                      groupValue:
+                                                          delivery.isRegular.value,
+                                                      onChanged: (value) => delivery
+                                                          .isRegular.value = value!,
+                                                      activeColor: Colors.blue,
+                                                      dense: true,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: RadioListTile<bool>(
+                                                      title: const Column(
+                                                        children: [
+                                                           Text('Part-Time'),
+                                                        ],
+                                                      ),
+                                                      value: false,
+                                                      groupValue:
+                                                          delivery.isRegular.value,
+                                                      onChanged: (value) => delivery
+                                                          .isRegular.value = value!,
+                                                      activeColor: Colors.blue,
+                                                      dense: true,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                          ],
-                                        )),
+                                            ],
+                                          ),
+                                    )),
                                     const SizedBox(height: 16),
                                     ElevatedButton(
                                       onPressed: () =>
