@@ -30,9 +30,9 @@ async def get_orders(session: Session = Depends(db.session)):
             func.count(Order.user_seq).label('order_count'), 
             func.max(Order.order_date).label('last_order_date') , 
             func.sum(func.sum(Order.price)).over().label('sum'), 
-            func.sum(func.sum(Order.price)).over().label('sum'), 
+            # func.sum(func.sum(Order.price)).over().label('sum'), 
             func.avg(func.sum(Order.price)).over().label('avg'), 
-            func.avg(func.sum(Order.price)).over().label('avg'), 
+            # func.avg(func.sum(Order.price)).over().label('avg'), 
         ).join(
             User,
             Order.user_seq == User.seq
