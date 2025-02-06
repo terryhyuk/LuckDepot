@@ -179,7 +179,7 @@ async def get_file(image: str):
     return FileResponse(file_path, media_type="image/jpeg")
 
 
-@router.post("/image")
+@router.post("/image/")
 async def upload_file(file:UploadFile=File(...)):
     try:
         file_path = os.path.join(UPLOAD_FOLDER, file.filename)
