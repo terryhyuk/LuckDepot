@@ -58,3 +58,25 @@
    # Toss Payments API
    TossPayments  
 ```
+```
+  Python
+                    
+    # 머신러닝 모델 저장 및 로드
+    joblib: 1.4.2
+  
+    # DB ORM
+    SQLAlchemy: 2.0.30
+  
+    # JWT 토큰 
+    pyjwt: 2.10.1
+  
+    # 머신러닝 모델 학습
+    scikit-learn: 1.4.2
+
+    # Firebase AUthentification
+    firebase_admin: 6.6.0
+
+    # WAS
+    fastapi: 0.115.0
+```
+
