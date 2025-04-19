@@ -123,7 +123,7 @@ Tools:
 
 ## System Architecture
 
-![System Configuration](image/System Architecture.png)
+![System Configuration](image/System_Architecture.png)
 
 ---
 
@@ -146,11 +146,11 @@ _Only the EER diagram is provided; actual database dump is not included._
 
 ### Main Screenshots (Features I Developed)
 
-![Page 1](image/page1.png)
-![Page 2](image/page2.png)
-![Page 2](image/page2.png)
-![Page 2](image/page2.png)
-![Page 2](image/page2.png)
+![Page 1](image/DashBoard.png)
+![Page 2](image/Sales.png)
+![Page 2](image/Product_Addition_and_Modification.png)
+![Page 2](image/Customer_and_Hub.png)
+![Page 2](image/Driver_Management.png)
 
 ---
 
