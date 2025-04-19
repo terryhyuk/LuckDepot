@@ -98,8 +98,6 @@ Design/Planning:
 <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/>
 <img src="https://img.shields.io/badge/Miro-050038?style=for-the-badge&logo=miro&logoColor=white"/>
 
-필요하다면 아래처럼 Tools 항목도 추가할 수 있습니다.
-
 Tools:
 <img src="https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white"/>
 <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
@@ -107,21 +105,19 @@ Tools:
 
 ## Main Packages
 
-- `get`: State management
-- `http`: HTTP requests
-- `get_storage`: Local storage
-- `flutter_slidable`: Swipeable list items
-- `image_picker`: Image selection from gallery/camera
-- `firebase_core`, `cloud_firestore`, `firebase_storage`: Firebase integration
-- `audioplayers`: Audio playback
-- `intl`: Date/time formatting
-- `flutter_rating_bar`: Rating bar widget
-- `lottie`: Lottie animation
-- `chat_bubbles`: Chat UI widgets
-- `volume_controller`: System volume control
-- `file_picker`: File selection widget
-- `gif`: GIF image handling
-- `expandable_text`: Expandable text widget
+- `get`: Routing and state management (`^4.6.6`)
+- `hive_ce`: Hive Community Edition core package (`^2.9.0`)
+- `hive_ce_flutter`: Easy Hive_CE usage in Flutter (`^2.2.0`)
+- `responsive_framework`: Responsive framework for Flutter web (`^1.5.1`)
+- `flutter_map`: Flutter map package (`^7.0.2`)
+- `latlong2`: Latitude and longitude (`^0.9.1`)
+- `http`: HTTP client (`^1.2.2`)
+- `file_picker`: File picker (`^8.1.7`)
+- `syncfusion_flutter_charts`: Chart library (`^28.2.4+1`)
+- `intl`: Internationalization (`^0.20.2`)
+- `google_fonts`: Google Fonts (`^6.2.1`)
+- `flutter_hooks`: Hooks for Flutter (`^0.20.5`)
+
 
 ---
 
