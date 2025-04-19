@@ -123,7 +123,7 @@ Tools:
 
 ## System Architecture
 
-![System Configuration](image/System_Architecture.png)
+![System Configuration](image/System Architecture.png)
 
 ---
 
