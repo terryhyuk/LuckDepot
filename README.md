@@ -136,7 +136,7 @@ _Only the EER diagram is provided; actual database dump is not included._
 
 ---
 
-## Screen Flow Diagram
+## System Flow Diagram
 
 ![Screen Flow Diagram](image/SFD.png)
 
