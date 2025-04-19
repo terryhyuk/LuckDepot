@@ -123,19 +123,16 @@ Tools:
 
 ## System Architecture
 
-![System Configuration](image/system_configuration.png)
+![System Configuration](image/System_Architecture.png)
 
 ---
 
 ## Database
 
-### MySQL EER Diagram  
+### EER Diagram  
 _Only the EER diagram is provided; actual database dump is not included._
 
-![MySQL EER Diagram](image/MySQL_EER.png)
-
-### Firebase Structure  
-![Firebase Structure](image/Firebase.png)
+![EER Diagram](image/EER.png)
 
 ---
 
@@ -150,6 +147,9 @@ _Only the EER diagram is provided; actual database dump is not included._
 ### Main Screenshots (Features I Developed)
 
 ![Page 1](image/page1.png)
+![Page 2](image/page2.png)
+![Page 2](image/page2.png)
+![Page 2](image/page2.png)
 ![Page 2](image/page2.png)
 
 ---
