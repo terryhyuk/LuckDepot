@@ -46,12 +46,12 @@
 
 ## Overview
 
-CalmLake is a Flutter-based mobile app that provides a space for users to relieve stress by enjoying healing music and communicating with others.  
-Key features include music appreciation, social interaction, real-time chat, and friend management.
+Lucky Depot is a logistics management system with both a consumer app and an admin web.  
+Key features include delivery date prediction, product search using images, product registration, and driver management.
 
-- **Team Size:** 4 members  
-- **Project Duration:** October 2, 2024 – October 17, 2024
-
+- **Team Size:** 5 members  
+- **Project Duration:** January 10, 2025 – February 5, 2025
+  
 ---
 
 ## Demo Video
@@ -72,38 +72,37 @@ Key features include music appreciation, social interaction, real-time chat, and
 
 ## My Roles & Responsibilities
 
-- Implemented real-time private chat functionality
-- Developed open chat rooms for multiple users
-- Built user search and friend management system (add/delete features)
-- Integrated backend routing and APIs using FastAPI
-- Designed and implemented UI/UX for friend and chat features
-- Managed real-time state with GetX and Observer pattern
+- Delivery date prediction based on location
+- Product search using product images
+- Admin web for product registration and management
+- Driver and operational status management
+- Data visualization with Syncfusion Flutter Charts
 
 ---
 
 ## Tech Stack
 
-**Frameworks:**  
+Frameworks:
 <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white"/>
-<img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white"/>
 
-**Languages:**  
+Languages:
 <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white"/>
-<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
 
-**Database:**  
-<img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white"/>
-<img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"/>
-- **EER Diagram only is provided for MySQL.**
+Database:
+<img src="https://img.shields.io/badge/Hive-FFC107?style=for-the-badge&logo=hive&logoColor=white"/>
 
-**Design/Planning:**  
+Collaboration:
+<img src="https://img.shields.io/badge/Fork-181717?style=for-the-badge&logo=github&logoColor=white"/>
+
+Design/Planning:
 <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/>
 <img src="https://img.shields.io/badge/Miro-050038?style=for-the-badge&logo=miro&logoColor=white"/>
 
-**Tools:**  
+필요하다면 아래처럼 Tools 항목도 추가할 수 있습니다.
+
+Tools:
 <img src="https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white"/>
 <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
-
 ---
 
 ## Main Packages
