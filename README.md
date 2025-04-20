@@ -30,6 +30,7 @@
 ## Table of Contents
 
 - [Overview](#overview)
+- [Branch Structure](#Branch_Structure)
 - [Demo Video](#demo-video)
 - [Features](#features)
 - [My Roles & Responsibilities](#my-roles--responsibilities)
@@ -52,6 +53,12 @@ Key features include delivery date prediction, product search using images, prod
 - **Team Size:** 5 members  
 - **Project Duration:** January 10, 2025 – February 5, 2025
   
+---
+
+## Branch Structure
+
+
+
 ---
 
 ## Demo Video
