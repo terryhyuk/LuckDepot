@@ -57,6 +57,26 @@ Key features include delivery date prediction, product search using images, prod
 
 ## Branch Structure
 
+- `main`: Final merge/backup branch (no actual source code)
+- `yh`: Branch where I developed almost the entire admin web using Flutter and Hive (except for the login page)
+- `web`: Final branch where the admin web from `yh` was merged and deployed
+- Others: fastapi, angie, etc. for backend and other features
+
+> Except for the login page, I developed all admin web features in the `yh` branch.  
+> The final deliverable is available in the `web` branch.
+
+---
+
+## Database Structure & Execution Notice
+
+- The main database was **PostgreSQL** running in a Docker container on a Linux server.
+- **Hive** was used only for driver registration and deletion within the admin web (Flutter).
+- All other major data and features relied on PostgreSQL.
+
+> ⚠️ **Note:**  
+> The Linux server and Docker environment for PostgreSQL are no longer available.  
+> As a result, it is currently **not possible to run the full project or access the main database**.  
+> Please refer to the demo video for actual functionality and features.
 
 
 ---
@@ -64,7 +84,7 @@ Key features include delivery date prediction, product search using images, prod
 ## Demo Video
 
 **Links:**  
-- [Demo Video](https://youtu.be/zySfBs3fqRo)
+- [Demo Video](https://youtu.be/iPYmU4KXNjw)
 
 ---
 
@@ -163,25 +183,9 @@ _Only the EER diagram is provided; actual database dump is not included._
 
 ## How to Run
 
-1. Clone the repository  
-   `git clone https://github.com/terryhyuk/calmlake.git`
-2. Install dependencies  
-   `flutter pub get`
-3. Run the app  
-   `flutter run`
-4. Backend setup required for full functionality:
-   - The backend (FastAPI) source code is in the `/pythonSpace` directory.
-   - To run the backend:
-     1. Open a terminal and go to the `pythonSpace` folder.
-     2. (Optional) Create a virtual environment:
-        `python3 -m venv venv`
-        `source venv/bin/activate`
-     3. Install dependencies:
-        `pip install -r requirements.txt`
-     4. Start the FastAPI server:
-        `uvicorn calmlake:app --reload`
-   - The Flutter app uses Firebase directly; there is **no separate Firebase folder**.  
-     Make sure your Firebase project is set up and configured in your Flutter app as described in the Flutter/Firebase documentation.
+> ⚠️ The execution environment (Linux server and Docker-based PostgreSQL database) is no longer available, so it is not possible to run the project directly.
+> Please refer to the demo video to see the main features and functionality.
+
 
 ---
 
