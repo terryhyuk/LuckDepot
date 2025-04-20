@@ -175,7 +175,7 @@ _Only the EER diagram is provided; actual database dump is not included._
 
 ![DashBoard](image/DashBoard.png)
 ![Sales](image/Sales.png)
-![Product_Addition_and_Modification](image/Product_Addition_and_Modification.png.png)
+![Product_Addition_and_Modification](image/Product_Addition_and_Modification.png)
 ![Customer_and_Hub](image/Customer_and_Hub.png)
 ![Driver_Management](image/Driver_Management.png)
 
