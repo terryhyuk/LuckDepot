@@ -34,7 +34,7 @@
 - [Demo Video](#demo-video)
 - [Features](#features)
 - [My Roles & Responsibilities](#my-roles--responsibilities)
-- [Project Structure (MVVM)](#Project-Structure-(MVVM))
+- [Project Structure (MVVM)](#project-structure-mvvm)
 - [Tech Stack](#tech-stack)
 - [Main Packages](#main-packages)
 - [System Architecture](#system-architecture)
