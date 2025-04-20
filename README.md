@@ -34,6 +34,7 @@
 - [Demo Video](#demo-video)
 - [Features](#features)
 - [My Roles & Responsibilities](#my-roles--responsibilities)
+- [Project Structure (MVVM)](#Project-Structure-(MVVM))
 - [Tech Stack](#tech-stack)
 - [Main Packages](#main-packages)
 - [System Architecture](#system-architecture)
@@ -104,6 +105,18 @@ Key features include delivery date prediction, product search using images, prod
 - Admin web for product registration and management
 - Driver and operational status management
 - Data visualization with Syncfusion Flutter Charts
+
+---
+
+## Project Structure (MVVM)
+
+This project applies the MVVM (Model-View-ViewModel) architecture for clear separation of concerns and maintainability.
+
+- **Model (10 files):** Defines core data structures and business logic.
+- **View (19 files):** Implements UI pages and reusable widgets.
+- **ViewModel (9 files):** Handles state management and connects views with models.
+
+> All files were implemented in Dart, following Flutter best practices.
 
 ---
 
