@@ -91,10 +91,11 @@ Key features include delivery date prediction, product search using images, prod
 
 ## Features
 
-- Real-time private chat and open chat rooms
-- User search and friend management (add/delete/search)
-- Music appreciation and sharing
-- Backend powered by FastAPI & MySQL, with Firebase for chat and storage
+- Dashboard: View total sales, sales charts, and recent order details
+- Sales: Check product sales information, periodic sales charts, and top-selling products
+- Product Management: Add, update, and delete products with file picker support
+- Customer & Hub Management: View customer information, order history, and hub locations on a map
+- Driver Management: Save and delete driver information using Hive database
 
 ---
 
